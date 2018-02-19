@@ -43,13 +43,6 @@ COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
 # Use Amazon NTP servers
 COPY vendor/docker/ntp.conf /etc/ntp.conf
 
-# WORKDIR /tmp
-# ADD Gemfile Gemfile
-# ADD Gemfile.lock Gemfile.lock
-# RUN gem update --system && \
-#     gem install bundler && \
-#     /sbin/setuser app bundle install
-
 # Copy webapp folder
 COPY . /home/app/webapp/
 RUN mkdir -p /home/app/webapp/tmp/pids && \

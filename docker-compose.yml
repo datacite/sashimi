@@ -3,9 +3,9 @@ version: '2'
 services:
   web:
     env_file: .env
-    image: datacite/lupo
+    image: datacite/Sashimi
     ports:
-      - "8065:80"
+      - "8075:80"
     volumes:
       - ./app:/home/app/webapp/app
       - ./config:/home/app/webapp/config
