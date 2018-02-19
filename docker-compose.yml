@@ -1,0 +1,44 @@
+version: '2'
+
+services:
+  web:
+    env_file: .env
+    image: datacite/lupo
+    ports:
+      - "8065:80"
+    volumes:
+      - ./app:/home/app/webapp/app
+      - ./config:/home/app/webapp/config
+      - ./db:/home/app/webapp/db
+      - ./lib:/home/app/webapp/lib
+      - ./spec:/home/app/webapp/spec
+    networks:
+      - public
+  memcached:
+    image: memcached:1.4.31
+    networks:
+      - public
+  mysql:
+    environment:
+      MYSQL_DATABASE: datacite
+      MYSQL_USER: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    image: mysql:5.6
+    ports:
+      - "3309:3306"
+    networks:
+      - public
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - public
+networks:
+  public:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.0.40.0/24
+        gateway: 10.0.40.1
