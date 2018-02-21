@@ -32,7 +32,7 @@ if File.exist?(env_json_file)
 end
 
 # default values for some ENV variables
-ENV['APPLICATION'] ||= "dlm-api"
+ENV['APPLICATION'] ||= "mdc-api"
 ENV['HOSTNAME'] ||= "sashimi"
 ENV['MEMCACHE_SERVERS'] ||= "memcached:11211"
 ENV['SITE_TITLE'] ||= "DLM API"
@@ -51,8 +51,6 @@ ENV['MYSQL_PASSWORD'] ||= ""
 ENV['MYSQL_HOST'] ||= "mysql"
 ENV['MYSQL_PORT'] ||= "3306"
 ENV['TRUSTED_IP'] ||= "10.0.40.1"
-ENV['MG_FROM'] ||= "support@datacite.org"
-ENV['MG_DOMAIN'] ||= "mg.datacite.org"
 ENV['LEVRIERO_URL'] ||= "https://api.datacite.org"
 
 module Sashimi
