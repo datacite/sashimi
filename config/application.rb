@@ -32,7 +32,7 @@ if File.exist?(env_json_file)
 end
 
 # default values for some ENV variables
-ENV['APPLICATION'] ||= "mdc-api"
+ENV['APPLICATION'] ||= "metrics-api"
 ENV['HOSTNAME'] ||= "sashimi"
 ENV['MEMCACHE_SERVERS'] ||= "memcached:11211"
 ENV['SITE_TITLE'] ||= "DLM API"
