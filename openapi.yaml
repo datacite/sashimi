@@ -42,7 +42,6 @@ paths:
           in: query
           description: >-
             Name of the Platform the report data is being requested for.  This can be omitted if the service provides report data for only one platform.
-          required: false
           type: string
       responses:
         '200':
@@ -66,7 +65,6 @@ paths:
           in: query
           description: >-
             Name of the Platform the report data is being requested for.  This can be omitted if the service provides report data for only one platform.
-          required: false
           type: string
       responses:
         '200':
@@ -90,13 +88,11 @@ paths:
           in: query
           description: >-
             The name of the Platform the report data is being requested for.  This can be omitted if the service provides report data for only one platform.
-          required: false
           type: string
         - name: search
           in: query
           description: >-
             Keyword search filtered against report name. Allows for searching for a report by name.
-          required: false
           type: string
       responses:
         '200':
@@ -121,71 +117,34 @@ paths:
           in: query
           description: >-
             Name of the Platform the usage is being requested for.  This can be omitted if the service provides usage for only one platform.
-          required: false
           type: string
-        - name: begin_date
+        - name: report_name
           in: query
-          description: Usage start date in the form of yyyy-mm-dd or yyyy-mm.
-          required: true
           type: string
-        - name: end_date
-          in: query
-          description: Usage end date in the form of yyyy-mm-dd or yyyy-mm.
-          required: true
+          description: The long name of the report.
+          example: Dataset Report
+        - name: report_id
           type: string
-        - name: dataset_id
           in: query
           description: >-
-            Optional Report Filter. Identifier of a specific dataset usage is being requested for.  If omitted, all datasets on the platform with usage for the requested customer will be returned
-          required: false
+            The report ID or code or shortname. Typically this will be the same code provided in the Report parameter of the request.
+          example: DSR
+        - name: release
           type: string
-        - name: dataset_contributor
           in: query
-          description: >-
-            Optional Report Filter. Identifier of a specific contributor (e.g. author) usage is being requested for.  If omitted, all databases on the platform with usage for the requested customer will be returned
-          required: false
+          description: The release or version of the report.
+          example: 'RD1'
+        - name: created
           type: string
-        - name: metric_type
           in: query
-          description: >-
-            Optional Report Filter. A list of Metric_Types to return usage for.  Use | character to delimit multiple values. Omit this parameter to include all metric_types with statistics.
-          required: false
+          format: dateTime
+          description: Time the report was prepared. Format as defined by date-time - RFC3339
+          example: '2016-09-08T22:47:31Z'
+        - name: created_by
           type: string
-        - name: data_type
           in: query
-          description: >-
-            Optional Report Filter. A list of Data_Types to return usage for.  Use | character to delimit multiple values. Omit this parameter to include all Data_Types with statistics. 
-          required: false
-          type: string
-        - name: yop
-          in: query
-          description: >-
-            Optional Report Filter. A list or range of years of publication to return in response in format of yyyy|yyyy|yyyy-yyyy. Note that 0001 = unknown
-          required: false
-          type: string
-        - name: access_method
-          in: query
-          description: >-
-            Optional Report Filter. A list of Access_Methods to return usage for --  delimited with a | character.
-          required: false
-          type: string
-        - name: attributes_to_show
-          in: query
-          description: >-
-            Optional Report Attribute. A list of attributes to include as separate elements in response (usage will be broken out by attribute values).  Multiple attribute names are delimited with a | character. Options include  Access_Method and YOP. When fields are  included usage will be presented for each value of that field (with usage) otherwise usage will be rolled up for all values of a given field.
-          required: false
-          type: string
-        - name: exclude_report_header
-          in: query
-          description: Optional Report Attribute. Include this parameter with a value of 'true' to exclude the SUSHI Report_Header should be excluded with the response. Omitting the parameter will include the Report_Header.
-          required: false
-          type: boolean
-        - name: exclude_monthly_details
-          in: query
-          description: >-
-            Optional Report Attribute. Include this parameter with a value of 'true' to only show the Reporting Period Total for usage counts.
-          required: false
-          type: boolean
+          description: Name of the organization producing the report.
+          example: 'DataONE'
       responses:
         '200':
           description: 'Dataset Master Report (DSR).'
@@ -196,84 +155,21 @@ paths:
           schema:
             $ref: '#/definitions/SUSHI_error_model'
     post:
-      description: 'This resource creates a new of Dataset report.'
+      description: 'This resource returns a collection of Dataset reports.'
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
-        - name: platform
-          in: query
+        - name: report
+          in: body
           description: >-
-            Name of the Platform the usage is being requested for.  This can be omitted if the service provides usage for only one platform.
-          required: false
-          type: string
-        - name: begin_date
-          in: query
-          description: Usage start date in the form of yyyy-mm-dd or yyyy-mm.
-          required: true
-          type: string
-        - name: end_date
-          in: query
-          description: Usage end date in the form of yyyy-mm-dd or yyyy-mm.
-          required: true
-          type: string
-        - name: dataset_id
-          in: query
-          description: >-
-            Optional Report Filter. Identifier of a specific dataset usage is being requested for.  If omitted, all datasets on the platform with usage for the requested customer will be returned
-          required: false
-          type: string
-        - name: dataset_contributor
-          in: query
-          description: >-
-            Optional Report Filter. Identifier of a specific contributor (e.g. author) usage is being requested for.  If omitted, all databases on the platform with usage for the requested customer will be returned
-          required: false
-          type: string
-        - name: metric_type
-          in: query
-          description: >-
-            Optional Report Filter. A list of Metric_Types to return usage for.  Use | character to delimit multiple values. Omit this parameter to include all metric_types with statistics.
-          required: false
-          type: string
-        - name: data_type
-          in: query
-          description: >-
-            Optional Report Filter. A list of Data_Types to return usage for.  Use | character to delimit multiple values. Omit this parameter to include all Data_Types with statistics. 
-          required: false
-          type: string
-        - name: yop
-          in: query
-          description: >-
-            Optional Report Filter. A list or range of years of publication to return in response in format of yyyy|yyyy|yyyy-yyyy. Note that 0001 = unknown
-          required: false
-          type: string
-        - name: access_method
-          in: query
-          description: >-
-            Optional Report Filter. A list of Access_Methods to return usage for --  delimited with a | character.
-          required: false
-          type: string
-        - name: attributes_to_show
-          in: query
-          description: >-
-            Optional Report Attribute. A list of attributes to include as separate elements in response (usage will be broken out by attribute values).  Multiple attribute names are delimited with a | character. Options include  Access_Method and YOP. When fields are  included usage will be presented for each value of that field (with usage) otherwise usage will be rolled up for all values of a given field.
-          required: false
-          type: string
-        - name: exclude_report_header
-          in: query
-          description: Optional Report Attribute. Include this parameter with a value of 'true' to exclude the SUSHI Report_Header should be excluded with the response. Omitting the parameter will include the Report_Header.
-          required: false
-          type: boolean
-        - name: exclude_monthly_details
-          in: query
-          description: >-
-            Optional Report Attribute. Include this parameter with a value of 'true' to only show the Reporting Period Total for usage counts.
-          required: false
-          type: boolean
+            Report of metrics proccesed in SUSHI format.
+          schema:
+            $ref: "#/definitions/COUNTER_dataset_report"
       responses:
         '200':
-          description: 'Dataset Master Report (DSR).'
+          description: 'Collection of Dataset Reports'
           schema:
             $ref: '#/definitions/COUNTER_dataset_report'
         default:
@@ -291,12 +187,12 @@ paths:
         - name: id
           in: path
           description: >-
-            Optional Report Filter. Identifier of a specific dataset usage is being requested for.  If omitted, all datasets on the platform with usage for the requested customer will be returned
+            Report Unique ID. Identifier of a specific usage report is being requested for.  If omitted, all reports on the platform with usage will be returned.
           required: true
           type: string
       responses:
         '200':
-          description: 'Dataset Master Report (DSR).'
+          description: 'Usage Report Instance'
           schema:
             $ref: '#/definitions/COUNTER_dataset_report'
         default:
@@ -313,14 +209,12 @@ paths:
         - name: id
           in: path
           description: >-
-            Optional Report Filter. Identifier of a specific dataset usage is being requested for.  If omitted, all datasets on the platform with usage for the requested customer will be returned
+            Report Unique ID. Identifier of a specific usage report is being deleted.  If omitted, there should be a error.
           required: true
           type: string
       responses:
-        '200':
-          description: 'Dataset Master Report (DSR).'
-          schema:
-            $ref: '#/definitions/COUNTER_dataset_report'
+        '204':
+          description: The resource was deleted successfully.
         default:
           description: unexpected error
           schema:
@@ -335,22 +229,170 @@ paths:
         - name: id
           in: path
           description: >-
-            Optional Report Filter. Identifier of a specific dataset usage is being requested for.  If omitted, all datasets on the platform with usage for the requested customer will be returned
+            Report Unique ID. Identifier of a specific usage report is being modified.  If omitted, there should be a error.
           required: true
           type: string
       responses:
         '200':
-          description: 'Dataset Master Report (DSR).'
+          description: 'Report Updated.'
           schema:
             $ref: '#/definitions/COUNTER_dataset_report'
         default:
           description: unexpected error
           schema:
             $ref: '#/definitions/SUSHI_error_model'
+  /publishers:
+    get:
+      description: 'This resource returns a collection of reports publishers.'
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: platform
+          in: query
+          description: >-
+            Name of the Platform the usage is being requested for.  This can be omitted if the service provides usage for only one platform.
+          type: string
+        - name: report_id
+          type: string
+          in: query
+          description: >-
+            The report ID or code or shortname. Typically this will be the same code provided in the Report parameter of the request.
+          example: DSR
+      responses:
+        '200':
+          description: 'Collections of Usage Reports.'
+          schema:
+            $ref: '#/definitions/SASHIMI_publisher'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/SASHIMI_error_model'
+    post:
+      description: 'This resource creates a new of report publisher.'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: publisher_id
+          in: body
+          description: >-
+            The ID of  the organisation Content providers implementing the Code of Practice for Research Data.
+          schema:
+            $ref: '#/definitions/SASHIMI_publisher'
+      responses:
+        '200':
+          description: 'Publisher entity'
+          schema:
+            $ref: '#/definitions/SASHIMI_publisher'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/SASHIMI_error_model'
+  /publishers/{id}:
+    get:
+      description: 'This resource returns a specific report publisher.'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: >-
+            Publisher Unique ID. Identifier of a specific report publisher. 
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 'Publisher Instance'
+          schema:
+            $ref: '#/definitions/SASHIMI_publisher'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/SASHIMI_error_model'
+    delete:
+      description: 'This resource deletes a Publisher.'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: >-
+            Publisher Unique ID. Identifier of a specific report publisher. 
+          required: true
+          type: string
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/SASHIMI_error_model'
+    put:
+      description: 'This resource returns an updated Publisher Record.'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: >-
+            Publisher Unique ID. Identifier of a specific report publisher. 
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 'Report Updated.'
+          schema:
+            $ref: '#/definitions/SASHIMI_publisher'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/SASHIMI_error_model'
 definitions:
   SUSHI_error_model:
     type: object
     description: Generalized format for presenting errors and exceptions.
+    required:
+      - Code
+      - Severity
+      - Message
+    properties:
+      Code:
+        type: integer
+        format: int32
+        description: Error number. See table of error.
+        example: 3040
+      Severity:
+        type: string
+        description: Severity of the error.
+        example: Warning
+        enum:
+          - Warning
+          - Fatal
+          - Debug
+          - Info
+      Message:
+        type: string
+        description: Text describing the error.
+        example: Partial Data Returned.
+      Help_URL:
+        type: string
+        description: URL describing error details.
+      Data:
+        type: string
+        description: Additional data provided by the server to clarify the error.
+        example: Usage data has not been processed for all requested months.
+  SASHIMI_error_model:
+    type: object
+    description: Generalized format for presenting errors and exceptions for the API.
     required:
       - Code
       - Severity
@@ -482,6 +524,25 @@ definitions:
         type: string
         description: The path to use when requesting this report on this service.
         example: /reports/dsr
+  SASHIMI_publisher:
+    type: object
+    required:
+      - Publisher_ID
+      - Publisher_Name
+    properties:
+      Publisher_Name:
+        type: string
+        description: The long name of the publisher
+        example: CDL
+      Publisher_ID:
+        type: string
+        description: >-
+          The PID of the publisher.
+        example: CDLS3232323
+      Path:
+        type: string
+        description: The path to use when requesting this report on this service.
+        example: /reports/dsr
   SUSHI_service_status:
     type: object
     required:
@@ -534,3 +595,6 @@ definitions:
           $ref: ''
 host: metrics.test.datacite.org
 basePath: /
+
+
+
