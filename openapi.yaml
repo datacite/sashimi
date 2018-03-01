@@ -95,18 +95,13 @@ paths:
           description: >-
             The name of the Platform the report data is being requested for.  This can be omitted if the service provides report data for only one platform.
           type: string
-        - name: search
-          in: query
-          description: >-
-            Keyword search filtered against report name. Allows for searching for a report by name.
-          type: string
       responses:
         '200':
           description: List of reports supported by this service for this application.
           schema:
             type: array
             items:
-              $ref: '#/definitions/SUSHI_report_list'
+              $ref: '#/definitions/SUSHI_report_type_list'
         default:
           description: unexpected error
           schema:
@@ -454,39 +449,39 @@ definitions:
       - Report_ID
       - Release
     properties:
-      Report_Name:
+      report_name:
         type: string
         description: The long name of the report.
         example: Dataset Report
-      Report_ID:
+      report_id:
         type: string
         description: >-
           The report ID or code or shortname. Typically this will be the same code provided in the Report parameter of the request.
         example: DSR
-      Report_UID:
+      id:
         type: string
         description: >-
             Report Unique ID. Identifier of a specific usage report is being requested for.  If omitted, all reports on the platform with usage will be returned.
         example: '0000-0000-0000-0000'
-      Release:
+      release:
         type: string
         description: The release or version of the report.
         example: 'RD1'
-      Created:
+      created:
         type: string
         format: dateTime
         description: Time the report was prepared. Format as defined by date-time - RFC3339
         example: '2016-09-08T22:47:31Z'
-      Created_By:
+      created_By:
         type: string
         description: Name of the organization producing the report.
         example: 'DataONE'
-      Exceptions:
+      exceptions:
         type: array
         description: Series of exceptions encounted when preparing the report.
         items:
           $ref: '#/definitions/SUSHI_error_model'
-  SUSHI_report_list:
+  SUSHI_report_type_list:
     type: object
     required:
       - Report_ID
@@ -576,11 +571,14 @@ definitions:
     type: object
     description: Describes the formatting needs for the COUNTER Dataset Report. Response may include the Report_Header (optional), Report_Datasets (usage stats).
     required:
-      - Report_Datasets
+      - report_datasets
     properties:
-      Report_Header:
+      id:
+        type: string
+        example: "0000-0000-0000-0000"
+      report_header:
         $ref: '#/definitions/SUSHI_report_header'
-      Report_Datasets:
+      report_datasets:
         type: string
   SASHIMI_report_collection:
     type: array
