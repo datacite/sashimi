@@ -2,8 +2,8 @@ swagger: '2.0'
 info:
   title: METRICS API
   description: >-
-    The RESEARCH_DATA_SUSHI API represents a RESTful implementation of SUSHI
-    automation intended to returns COUNTER Research Data Release 1 reports and snippets of usage in JSON format
+    The SASHIMI API represents a RESTful implementation of SUSHI
+    automation intended to returns COUNTER Research Data Release 1 reports 
   termsOfService: ''
   contact:
     name: DataCite METRICS API
@@ -122,34 +122,29 @@ paths:
           in: query
           type: string
           description: The long name of the report.
-          example: Dataset Report
         - name: report_id
           type: string
           in: query
           description: >-
             The report ID or code or shortname. Typically this will be the same code provided in the Report parameter of the request.
-          example: DSR
         - name: release
           type: string
           in: query
           description: The release or version of the report.
-          example: 'RD1'
         - name: created
           type: string
           in: query
           format: dateTime
           description: Time the report was prepared. Format as defined by date-time - RFC3339
-          example: '2016-09-08T22:47:31Z'
         - name: created_by
           type: string
           in: query
           description: Name of the organization producing the report.
-          example: 'DataONE'
       responses:
         '200':
           description: 'Dataset Master Report (DSR).'
           schema:
-            $ref: '#/definitions/COUNTER_dataset_report'
+            $ref: '#/definitions/SASHIMI_report_collection'
         default:
           description: unexpected error
           schema:
@@ -259,7 +254,6 @@ paths:
           in: query
           description: >-
             The report ID or code or shortname. Typically this will be the same code provided in the Report parameter of the request.
-          example: DSR
       responses:
         '200':
           description: 'Collections of Usage Reports.'
@@ -443,6 +437,11 @@ definitions:
         description: >-
           The report ID or code or shortname. Typically this will be the same code provided in the Report parameter of the request.
         example: DSR
+      Report_UID:
+        type: string
+        description: >-
+            Report Unique ID. Identifier of a specific usage report is being requested for.  If omitted, all reports on the platform with usage will be returned.
+        example: '0000-0000-0000-0000'
       Release:
         type: string
         description: The release or version of the report.
@@ -456,40 +455,6 @@ definitions:
         type: string
         description: Name of the organization producing the report.
         example: 'DataONE'
-      Report_Filters:
-        type: array
-        description: >-
-          Zero or more report filters used for this report.  Typically  reflect filters provided on the Request.  Filters limit the data to be reported on.
-        items:
-          required:
-            - Name
-            - Value
-          properties:
-            Name:
-              type: string
-              description: Name of the report filter.
-              example: Begin_Date
-            Value:
-              type: string
-              description: Value of the report filter.
-              example: 2015-01
-      Report_Attributes:
-        type: array
-        description: >-
-          Zero or more additional attributes applied to the report. Attributes inform the level of detail in the report.
-        items:
-          required:
-            - Name
-            - Value
-          properties:
-            Name:
-              type: string
-              description: Name of the report attribute.
-              example: Exclude_Monthly_Details
-            Value:
-              type: string
-              description: Name of the report attribute.
-              example: 'True'
       Exceptions:
         type: array
         description: Series of exceptions encounted when preparing the report.
@@ -542,7 +507,7 @@ definitions:
       Path:
         type: string
         description: The path to use when requesting this report on this service.
-        example: /reports/dsr
+        example: /publishers
   SUSHI_service_status:
     type: object
     required:
@@ -590,11 +555,22 @@ definitions:
       Report_Header:
         $ref: '#/definitions/SUSHI_report_header'
       Report_Datasets:
+        type: string
+  SASHIMI_report_collection:
+    type: array
+    description: Describes the formatting needs for the collection of reports.
+    required:
+      - Reports
+    properties:
+      Reports:
         type: array
+        description: Collections of reports encounted.
         items:
-          $ref: ''
+          $ref: '#/definitions/COUNTER_dataset_report'
+    items:
+      $ref: '#/definitions/COUNTER_dataset_report'
 host: metrics.test.datacite.org
-basePath: /
+basePath: "/"
 
 
 
