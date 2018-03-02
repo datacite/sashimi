@@ -5,7 +5,7 @@ class ReportSerializer < ActiveModel::Serializer
   attributes :id, :report_name, :report_id, :created_by, :report_datasets
 
   def id
-    object.id
+    object.uid
   end
 
 end
