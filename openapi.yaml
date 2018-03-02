@@ -497,9 +497,15 @@ definitions:
         type: string
         description: Name of the organization producing the report.
         example: 'DataONE'
+      report_filters:
+        type: string
+        description: Zero or more report filters used for this report. Typically reflect filters provided on the Request. Filters limit the data to be reported on.
+      report_attributes:
+        type: string
+        description: Zero or more additional attributes applied to the report. Attributes inform the level of detail in the report.
       report_datasets:
         type: string
-        description: Collection of datasets from the report
+        description: Defines the output for the Report_Datasets being returned in a Dataset Report. Collection of datasets from the report.
       exceptions:
         type: array
         description: Series of exceptions encounted when preparing the report.
