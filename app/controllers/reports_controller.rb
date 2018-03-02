@@ -13,7 +13,7 @@ class ReportsController < ApplicationController
   def index
     # Your code here
 
-    render json: @report.all
+    render json: Report.all
   end
 
   def destroy
