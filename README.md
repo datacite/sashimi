@@ -21,6 +21,103 @@ docker run -p 8075:80 datacite/sashimi
 
 You can now point your browser to `http://localhost:8075` and use the application.
 
+
+## Usage
+
+To add a report, make a post call with the following body content:
+
+```shell
+curl -X POST https://metrics.test.datacite.org/reports
+```
+
+```json
+{
+  "report-header": {
+    "report-name": "Dataset Report",
+    "report-id": "DSR",
+    "release": "RD1",
+    "created": "2016-09-08T22:47:31Z",
+    "created-by": "DataONE",
+    "report-filters": [
+      {
+        "Name": "Begin-Date",
+        "Value": "2015-01"
+      }
+    ],
+    "report-attributes": [
+      {
+        "Name": "Exclude-Monthly-Details",
+        "Value": "True"
+      }
+    ],
+    "exceptions": [
+      {
+        "Code": 3040,
+        "Severity": "Warning",
+        "Message": "Partial Data Returned.",
+        "Help-URL": "string",
+        "Data": "Usage data has not been processed for all requested months."
+      }
+    ]
+  },
+  "report-datasets": [
+    {
+      "Dataset-Title": "Lake Erie Fish Community Data",
+      "Dataset-ID": [
+        {
+          "Type": "DOI",
+          "Value": "0931-865"
+        }
+      ],
+      "Dataset-Contributors": [
+        {
+          "Type": "Name",
+          "Value": "John Smith"
+        }
+      ],
+      "Dataset-Dates": [
+        {
+          "Type": "Pub-Date",
+          "Value": "2002-01-15"
+        }
+      ],
+      "Dataset-Attributes": [
+        {
+          "Type": "Dataset-Version",
+          "Value": "VoR"
+        }
+      ],
+      "Platform": "DataONE",
+      "Publisher": "DataONE",
+      "Publisher-ID": [
+        {
+          "Type": "ORCID",
+          "Value": "1234-1234-1234-1234"
+        }
+      ],
+      "Data-Type": "Dataset",
+      "YOP": "2010",
+      "Access-Method": "Regular",
+      "Performance": [
+        {
+          "Period": {
+            "Begin-Date": "2015-01-01",
+            "End-Date": "2015-01-31"
+          },
+          "Instance": [
+            {
+              "Metric-Type": "Total-Dataset-Requests",
+              "Count": 21
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+
 ## Development
 
 We use Rspec for unit and acceptance testing:
