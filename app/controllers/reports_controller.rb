@@ -13,7 +13,7 @@ class ReportsController < ApplicationController
   def index
     # Your code here
 
-    render json: {"message" => "yes, it worked"}
+    render json: @report.all
   end
 
   def destroy
@@ -23,20 +23,47 @@ class ReportsController < ApplicationController
   end
 
   def show
-    # Your code here
 
-    render json: {"message" => "yes, it worked"}
+    render json: @report
   end
 
   def update
-    # Your code here
-
-    render json: {"message" => "yes, it worked"}
+    if @report.update_attributes(safe_params)
+      render json: @report
+    else
+      Rails.logger.warn @report.errors.inspect
+      render json: serialize(@report.errors), status: :unprocessable_entity
+    end
   end
 
   def create
-    # Your code here
+    @report = Report.new(safe_params)
+    # authorize! :create, @report
 
-    render json: {"message" => "yes, it worked"}
+    if @report.save
+      render json: @report
+    else
+      Rails.logger.warn @report.errors.inspect
+      render json: @report.errors, status: :unprocessable_entity
+    end
+  end
+
+
+  protected
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_report
+    @report = Report.unscoped.where(symbol: params[:id]).first
+    fail ActiveRecord::RecordNotFound unless @report.present?
+  end
+
+  private
+
+  def safe_params
+    fail JSON::ParserError, "You need to provide a payload following the SUSHI spec" unless params[:report_header].present?
+    fail JSON::ParserError, "You need to provide a payload following the SUSHI spec" unless params[:report_datasets].present?
+    ActionController::Parameters.permit_all_parameters = true
+    header, datasets = params.require([:report_header, :report_datasets])   
+    header.merge!({report_datasets: datasets})
   end
 end
