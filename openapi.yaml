@@ -51,11 +51,11 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/SUSHI_service_status'
+              $ref: '#/definitions/Service_Status'
         default:
           description: unexpected error
           schema:
-            $ref: '#/definitions/SUSHI_error_model'
+            $ref: '#/definitions/Error_Model'
   /heartbeat:
     get:
       tags:
@@ -76,11 +76,11 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/SUSHI_service_status'
+              $ref: '#/definitions/Service_Status'
         default:
           description: unexpected error
           schema:
-            $ref: '#/definitions/SUSHI_error_model'
+            $ref: '#/definitions/Error_Model'
   /report_types:
     get:
       tags:
@@ -101,11 +101,11 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/SUSHI_report_type_list'
+              $ref: '#/definitions/Report_Types'
         default:
           description: unexpected error
           schema:
-            $ref: '#/definitions/SUSHI_error_model'
+            $ref: '#/definitions/Error_Model'
   /reports:
     get:
       tags:
@@ -147,11 +147,11 @@ paths:
         '200':
           description: 'Dataset Master Report (DSR).'
           schema:
-            $ref: '#/definitions/SASHIMI_report_collection'
+            $ref: '#/definitions/Report'
         default:
           description: unexpected error
           schema:
-            $ref: '#/definitions/SUSHI_error_model'
+            $ref: '#/definitions/Error_Model'
     post:
       tags:
         - reports
@@ -166,16 +166,16 @@ paths:
           description: >-
             Report of metrics proccesed in SUSHI format.
           schema:
-            $ref: "#/definitions/COUNTER_dataset_report"
+            $ref: "#/definitions/Report"
       responses:
         '200':
           description: 'Collection of Dataset Reports'
           schema:
-            $ref: '#/definitions/COUNTER_dataset_report'
+            $ref: '#/definitions/Report'
         default:
           description: unexpected error
           schema:
-            $ref: '#/definitions/SUSHI_error_model'
+            $ref: '#/definitions/Error_Model'
   /reports/{id}:
     get:
       tags:
@@ -196,11 +196,11 @@ paths:
         '200':
           description: 'Usage Report Instance'
           schema:
-            $ref: '#/definitions/COUNTER_dataset_report'
+            $ref: '#/definitions/Report'
         default:
           description: unexpected error
           schema:
-            $ref: '#/definitions/SUSHI_error_model'
+            $ref: '#/definitions/Error_Model'
     delete:
       tags:
         - reports
@@ -222,7 +222,7 @@ paths:
         default:
           description: unexpected error
           schema:
-            $ref: '#/definitions/SUSHI_error_model'
+            $ref: '#/definitions/Error_Model'
     put:
       tags:
         - reports
@@ -242,11 +242,11 @@ paths:
         '200':
           description: 'Report Updated.'
           schema:
-            $ref: '#/definitions/COUNTER_dataset_report'
+            $ref: '#/definitions/Report'
         default:
           description: unexpected error
           schema:
-            $ref: '#/definitions/SUSHI_error_model'
+            $ref: '#/definitions/Error_Model'
   /publishers:
     get:
       tags:
@@ -271,11 +271,11 @@ paths:
         '200':
           description: 'Collections of Usage Reports.'
           schema:
-            $ref: '#/definitions/SASHIMI_publisher'
+            $ref: '#/definitions/Publisher'
         default:
           description: unexpected error
           schema:
-            $ref: '#/definitions/SASHIMI_error_model'
+            $ref: '#/definitions/Error_Model'
     post:
       tags:
         - publishers
@@ -290,16 +290,16 @@ paths:
           description: >-
             The ID of  the organisation Content providers implementing the Code of Practice for Research Data.
           schema:
-            $ref: '#/definitions/SASHIMI_publisher'
+            $ref: '#/definitions/Publisher'
       responses:
         '200':
           description: 'Publisher entity'
           schema:
-            $ref: '#/definitions/SASHIMI_publisher'
+            $ref: '#/definitions/Publisher'
         default:
           description: unexpected error
           schema:
-            $ref: '#/definitions/SASHIMI_error_model'
+            $ref: '#/definitions/Error_Model'
   /publishers/{id}:
     get:
       tags:
@@ -320,11 +320,11 @@ paths:
         '200':
           description: 'Publisher Instance'
           schema:
-            $ref: '#/definitions/SASHIMI_publisher'
+            $ref: '#/definitions/Publisher'
         default:
           description: unexpected error
           schema:
-            $ref: '#/definitions/SASHIMI_error_model'
+            $ref: '#/definitions/Error_Model'
     delete:
       tags:
         - publishers
@@ -346,7 +346,7 @@ paths:
         default:
           description: unexpected error
           schema:
-            $ref: '#/definitions/SASHIMI_error_model'
+            $ref: '#/definitions/Error_Model'
     put:
       tags:
         - publishers
@@ -366,26 +366,26 @@ paths:
         '200':
           description: 'Report Updated.'
           schema:
-            $ref: '#/definitions/SASHIMI_publisher'
+            $ref: '#/definitions/Publisher'
         default:
           description: unexpected error
           schema:
-            $ref: '#/definitions/SASHIMI_error_model'
+            $ref: '#/definitions/Error_Model'
 definitions:
-  SUSHI_error_model:
+  Error_Model:
     type: object
     description: Generalized format for presenting errors and exceptions.
     required:
-      - Code
-      - Severity
-      - Message
+      - code
+      - severity
+      - message
     properties:
-      Code:
+      code:
         type: integer
         format: int32
         description: Error number. See table of error.
         example: 3040
-      Severity:
+      severity:
         type: string
         description: Severity of the error.
         example: Warning
@@ -394,61 +394,87 @@ definitions:
           - Fatal
           - Debug
           - Info
-      Message:
+      message:
         type: string
         description: Text describing the error.
         example: Partial Data Returned.
-      Help_URL:
+      help_url:
         type: string
         description: URL describing error details.
-      Data:
+      cata:
         type: string
         description: Additional data provided by the server to clarify the error.
         example: Usage data has not been processed for all requested months.
-  SASHIMI_error_model:
+  Publisher:
     type: object
-    description: Generalized format for presenting errors and exceptions for the API.
     required:
-      - Code
-      - Severity
-      - Message
+      - publisher_id
+      - publisher_name
     properties:
-      Code:
-        type: integer
-        format: int32
-        description: Error number. See table of error.
-        example: 3040
-      Severity:
+      publisher_name:
         type: string
-        description: Severity of the error.
-        example: Warning
-        enum:
-          - Warning
-          - Fatal
-          - Debug
-          - Info
-      Message:
+        description: The long name of the publisher
+        example: CDL
+      publisher_id:
         type: string
-        description: Text describing the error.
-        example: Partial Data Returned.
-      Help_URL:
+        description: >-
+          The PID of the publisher.
+        example: CDLS3232323
+      Path:
         type: string
-        description: URL describing error details.
-      Data:
-        type: string
-        description: Additional data provided by the server to clarify the error.
-        example: Usage data has not been processed for all requested months.
-  SUSHI_report_header:
+        description: The path to use when requesting this report on this service.
+        example: /publishers
+  Status:
     type: object
-    description: >-
-      Generalized report header that defines the requested report, the
-      requestor, the customer, filters applied, reportAttributes applied and any
-      exceptions.
     required:
-      - Report_Name
-      - Report_ID
-      - Release
+      - serviceactive
     properties:
+      description:
+        type: string
+        description: Description of the service.
+        example: COUNTER Research Data Usage Reports for the UK Data Service - ReShare.
+      serviceActive:
+        type: boolean
+        description: Indicator if the service is currently able to deliver reports.
+        example: true
+      registryURL:
+        type: string
+        description: >-
+          If available, the URL separate registry with additional information about the service.
+        example: 'https://www.projectcounter.org/counter-user/ebsco-database/'
+      note:
+        type: string
+        description: A general note about the service.
+        example: >-
+          A given customer can request a maximum of 5 requests per day for a given report
+      alerts:
+        type: array
+        description: Any alerts related to service interuptions and status.
+        items:
+          type: object
+          properties:
+            date_time:
+              type: string
+              format: dateTime
+              description: Date-time of the alert.
+              example: '2016-08-02: 12:54'
+            alert:
+              type: string
+              description: Text of the alert.
+              example: Service will be unavailable Sunday midnight...
+  Report:
+    type: object
+    description: Describes the formatting needs for the COUNTER Dataset Report. Response may include the Report_Header (optional), Report_Datasets (usage stats).
+    required:
+      - report_datasets
+      - report_id
+      - report_name
+      - release
+      - created_by
+    properties:
+      id:
+        type: string
+        example: "0000-0000-0000-0000"
       report_name:
         type: string
         description: The long name of the report.
@@ -458,11 +484,6 @@ definitions:
         description: >-
           The report ID or code or shortname. Typically this will be the same code provided in the Report parameter of the request.
         example: DSR
-      id:
-        type: string
-        description: >-
-            Report Unique ID. Identifier of a specific usage report is being requested for.  If omitted, all reports on the platform with usage will be returned.
-        example: '0000-0000-0000-0000'
       release:
         type: string
         description: The release or version of the report.
@@ -472,127 +493,41 @@ definitions:
         format: dateTime
         description: Time the report was prepared. Format as defined by date-time - RFC3339
         example: '2016-09-08T22:47:31Z'
-      created_By:
+      created_by:
         type: string
         description: Name of the organization producing the report.
         example: 'DataONE'
+      report_datasets:
+        type: string
+        description: Collection of datasets from the report
       exceptions:
         type: array
         description: Series of exceptions encounted when preparing the report.
         items:
-          $ref: '#/definitions/SUSHI_error_model'
-  SUSHI_report_type_list:
+          $ref: '#/definitions/Error_Model'
+  Report_Types:
     type: object
     required:
-      - Report_ID
-      - Report_Name
-      - Release
-      - Report_Description
+      - report_id
+      - report_name
     properties:
-      Report_Name:
-        type: string
-        description: The long name of the report
-        example: Dataset Report
-      Report_ID:
+      report_id:
         type: string
         description: >-
           The code, ID or short name of the report that is be used in the request to identify the report.
         example: DSR
-      Release:
+      release:
         type: string
         description: The release or version number of the report.
         example: 'RD1'
-      Report_Description:
+      report_description:
         type: string
         description: A short sentence describing the report.
         example: Usage by Month and Dataset
       Path:
         type: string
         description: The path to use when requesting this report on this service.
-        example: /reports/dsr
-  SASHIMI_publisher:
-    type: object
-    required:
-      - Publisher_ID
-      - Publisher_Name
-    properties:
-      Publisher_Name:
-        type: string
-        description: The long name of the publisher
-        example: CDL
-      Publisher_ID:
-        type: string
-        description: >-
-          The PID of the publisher.
-        example: CDLS3232323
-      Path:
-        type: string
-        description: The path to use when requesting this report on this service.
-        example: /publishers
-  SUSHI_service_status:
-    type: object
-    required:
-      - ServiceActive
-    properties:
-      Description:
-        type: string
-        description: Description of the service.
-        example: COUNTER Research Data Usage Reports for the UK Data Service - ReShare.
-      ServiceActive:
-        type: boolean
-        description: Indicator if the service is currently able to deliver reports.
-        example: true
-      RegistryURL:
-        type: string
-        description: >-
-          If available, the URL separate registry with additional information about the service.
-        example: 'https://www.projectcounter.org/counter-user/ebsco-database/'
-      Note:
-        type: string
-        description: A general note about the service.
-        example: >-
-          A given customer can request a maximum of 5 requests per day for a given report
-      Alerts:
-        type: array
-        description: Any alerts related to service interuptions and status.
-        items:
-          type: object
-          properties:
-            Date_Time:
-              type: string
-              format: dateTime
-              description: Date-time of the alert.
-              example: '2016-08-02: 12:54'
-            Alert:
-              type: string
-              description: Text of the alert.
-              example: Service will be unavailable Sunday midnight...
-  COUNTER_dataset_report:
-    type: object
-    description: Describes the formatting needs for the COUNTER Dataset Report. Response may include the Report_Header (optional), Report_Datasets (usage stats).
-    required:
-      - report_datasets
-    properties:
-      id:
-        type: string
-        example: "0000-0000-0000-0000"
-      report_header:
-        $ref: '#/definitions/SUSHI_report_header'
-      report_datasets:
-        type: string
-  SASHIMI_report_collection:
-    type: array
-    description: Describes the formatting needs for the collection of reports.
-    required:
-      - Reports
-    properties:
-      Reports:
-        type: array
-        description: Collections of reports encounted.
-        items:
-          $ref: '#/definitions/COUNTER_dataset_report'
-    items:
-      $ref: '#/definitions/COUNTER_dataset_report'
+        example: /report_types/dsr
 host: metrics.test.datacite.org
 basePath: "/"
 
