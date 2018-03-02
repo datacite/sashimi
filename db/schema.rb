@@ -46,7 +46,9 @@ ActiveRecord::Schema.define(version: 0) do
     t.string "release"
     t.string "created"
     t.string "created_by"
-    t.string "report_datasets"
+    t.json "report_filters"
+    t.json "report_attributes"
+    t.json "report_datasets"
     t.string "exceptions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
