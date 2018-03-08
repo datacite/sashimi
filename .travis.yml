@@ -37,7 +37,7 @@ before_script:
 
 script:
   # - bundle exec rspec
-  - bundle exec codeclimate-test-reporter
+  # - bundle exec codeclimate-test-reporter
 
 after_success:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
