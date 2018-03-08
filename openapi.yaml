@@ -3,7 +3,7 @@ info:
   title: METRICS API
   description: >-
     The SASHIMI API represents a RESTful implementation of SUSHI
-    automation intended to returns COUNTER Research Data Release 1 reports 
+    automation intended to returns COUNTER Research Data Release 1 reports
   termsOfService: ''
   contact:
     name: DataCite METRICS API
@@ -313,7 +313,7 @@ paths:
         - name: id
           in: path
           description: >-
-            Publisher Unique ID. Identifier of a specific report publisher. 
+            Publisher Unique ID. Identifier of a specific report publisher.
           required: true
           type: string
       responses:
@@ -337,7 +337,7 @@ paths:
         - name: id
           in: path
           description: >-
-            Publisher Unique ID. Identifier of a specific report publisher. 
+            Publisher Unique ID. Identifier of a specific report publisher.
           required: true
           type: string
       responses:
@@ -359,7 +359,7 @@ paths:
         - name: id
           in: path
           description: >-
-            Publisher Unique ID. Identifier of a specific report publisher. 
+            Publisher Unique ID. Identifier of a specific report publisher.
           required: true
           type: string
       responses:
@@ -536,6 +536,3 @@ definitions:
         example: /report_types/dsr
 host: metrics.test.datacite.org
 basePath: "/"
-
-
-
