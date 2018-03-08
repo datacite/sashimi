@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 20180307202908) do
 
-  create_table "error_models", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+  create_table "error_models", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.integer "code"
     t.string "severity"
     t.string "message"
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "publishers", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+  create_table "publishers", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.string "publisher_name"
     t.string "publisher_id"
     t.string "path"
@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "report_types", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+  create_table "report_types", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.string "report_id"
     t.string "release"
     t.string "report_description"
@@ -39,11 +39,12 @@ ActiveRecord::Schema.define(version: 0) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "reports", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
-    t.string "id"
-    t.string "report_name"
+  create_table "reports", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.string "report_name", default: "Dataset Report"
     t.string "report_id"
-    t.string "release"
+    t.string "client_id", null: false
+    t.string "provider_id", null: false
+    t.string "release", default: "RD1"
     t.string "created"
     t.string "created_by"
     t.json "report_filters"
@@ -54,14 +55,14 @@ ActiveRecord::Schema.define(version: 0) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "status_alerts", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+  create_table "status_alerts", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.string "date_time"
     t.string "alert"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "statuses", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+  create_table "statuses", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.string "description"
     t.boolean "service_active"
     t.string "registry_url"

@@ -37,7 +37,6 @@ ENV['HOSTNAME'] ||= "sashimi"
 ENV['MEMCACHE_SERVERS'] ||= "memcached:11211"
 ENV['SITE_TITLE'] ||= "DLM API"
 ENV['LOG_LEVEL'] ||= "info"
-ENV['REDIS_URL'] ||= "redis://redis:6379/8"
 ENV['CONCURRENCY'] ||= "25"
 ENV['CDN_URL'] ||= "https://assets.datacite.org"
 ENV['DOI_URL'] ||= "https://doi.datacite.org"
@@ -89,7 +88,7 @@ module Sashimi
     config.middleware.use Rack::Deflater
 
     # set Active Job queueing backend
-    config.active_job.queue_adapter = :sidekiq
+    config.active_job.queue_adapter = :inline
 
     config.generators do |g|
       g.fixture_replacement :factory_bot
