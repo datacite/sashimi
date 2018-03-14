@@ -1,10 +1,11 @@
+require "faker"
 FactoryBot.define do
   factory :report do
     sequence(:report_id) { |n| "dsr-12hd-zt#{n}" }
     client_id "datacite.datacite"
     provider_id "datacite"
-
-    created_by "DataCite"
+    sequence(:created_by) { |n| "datacite#{n}" }
+    created "2020-03-02"
     report_datasets [{
       "yop": "2010",
       "platform": "DataONE",

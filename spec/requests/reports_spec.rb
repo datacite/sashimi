@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'Reports', type: :request do
   let(:bearer) { User.generate_token(client_id: "datacite.datacite", provider_id: "datacite", role_id: "client_admin") }
-  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
+  let(:headers) { {'ACCEPT'=>'application/json', 'CONTENT_TYPE'=>'application/json', 'Authorization' => 'Bearer ' + bearer}}
 
   describe 'GET /reports' do
     let!(:report)  { create_list(:report, 3) }
@@ -12,9 +12,6 @@ describe 'Reports', type: :request do
     it 'returns reports' do
       expect(json).not_to be_empty
       expect(json['reports'].size).to eq(3)
-    end
-
-    it 'returns status code 200' do
       expect(response).to have_http_status(200)
     end
   end
@@ -26,10 +23,7 @@ describe 'Reports', type: :request do
 
     context 'when the record exists' do
       it 'returns the report' do
-        expect(json.dig("report", "report_id")).to eq(report.report_id)
-      end
-
-      it 'returns status code 200' do
+        expect(json.dig("report","report_header", "report_id")).to eq(report.report_id)
         expect(response).to have_http_status(200)
       end
     end
@@ -39,9 +33,6 @@ describe 'Reports', type: :request do
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
-      end
-
-      it 'returns a not found message' do
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
     end
@@ -49,9 +40,12 @@ describe 'Reports', type: :request do
 
   describe 'POST /reports' do
     let(:params) do
-      { "report_name": "Dataset Report",
+      { "report_header": {
+        "report_name": "Dataset Report",
         "report_id": "DSR",
-        "created_by": "CDL",
+        "created": "2018-01-01",
+        "created_by": "CDL"
+      },
         "report_datasets": [
           {
             "yop": "2010",
@@ -73,108 +67,141 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params.to_json, headers: headers }
 
       it 'creates a report' do
-        expect(json.dig("report", "report_id")).to eq("DSR")
+        expect(json.dig("report", "report_header", "report_id")).to eq("DSR")
+        expect(response).to have_http_status(201)
       end
+    end
 
-      it 'returns status code 201' do
+    context 'when the request is valid has random schema' do
+      let(:params) do
+        { "report_header": {
+          "report_name": "Dataset Report",
+          "report_id": "DSR",
+          "created": "2018-01-01",
+          "exceptions": [
+            {
+              "code": 3040,
+              "Severity": "Warning",
+              "Message": "Partial Data Returned",
+              "Help-URL": "String",
+              "Data": "Usage data has not been processed for the entire reporting period"
+            }
+          ],
+          "created_by": "CDL"
+        },
+          "report_datasets": [
+            {
+              "yop": "2010",
+              "platform": "DataONE",
+              "data_type": "Dataset",
+              "publisher": "DataONE",
+              "dataset_id": [
+                {
+                  "type": "DOI",
+                  "value": "0931-865"
+                }
+              ]
+            }
+          ]
+        }
+      end
+      before { post '/reports', params: params.to_json, headers: headers }
+
+      it 'creates a report' do
+        puts json
+        expect(json.dig("report", "report_header", "report_id")).to eq("DSR")
         expect(response).to have_http_status(201)
       end
     end
   end
 
-  # end
-  #
-  # describe 'PUT /clients/:id' do
-  #   context 'when the record exists' do
-  #     let(:params) do
-  #       { "data" => { "type" => "clients",
-  #                     "attributes" => {
-  #                       "name" => "Imperial College 2"}} }
-  #     end
-  #     before { put "/clients/#{client.symbol}", params: params.to_json, headers: headers }
-  #
-  #     it 'updates the record' do
-  #       expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
-  #       expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
-  #     end
-  #
-  #     it 'returns status code 200' do
-  #       expect(response).to have_http_status(200)
-  #     end
-  #   end
-  #
-  #   context 'using basic auth', vcr: true do
-  #     let(:params) do
-  #       { "data" => { "type" => "clients",
-  #                     "attributes" => {
-  #                       "name" => "Imperial College 2"}} }
-  #     end
-  #     let(:credentials) { provider.encode_auth_param(username: provider.symbol.downcase, password: "12345") }
-  #     let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Basic ' + credentials } }
-  #
-  #     before { put "/clients/#{client.symbol}", params: params.to_json, headers: headers }
-  #
-  #     it 'updates the record' do
-  #       expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
-  #       expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
-  #     end
-  #
-  #     it 'returns status code 200' do
-  #       expect(response).to have_http_status(200)
-  #     end
-  #   end
-  #
-  #   context 'when the request is invalid' do
-  #     let(:params) do
-  #       { "data" => { "type" => "clients",
-  #                     "attributes" => {
-  #                       "symbol" => client.symbol + "MegaCLient",
-  #                       "email" => "bob@example.com",
-  #                       "name" => "Imperial College"}} }
-  #     end
-  #
-  #     before { put "/clients/#{client.symbol}", params: params.to_json, headers: headers }
-  #
-  #     it 'returns status code 422' do
-  #       expect(response).to have_http_status(422)
-  #     end
-  #
-  #     it 'returns a validation failure message' do
-  #       expect(json["errors"].first).to eq("source"=>"symbol", "title"=>"Symbol cannot be changed")
-  #     end
-  #   end
-  # end
-  #
-  # # Test suite for DELETE /clients/:id
-  # describe 'DELETE /clients/:id' do
-  #   before { delete "/clients/#{client.uid}", headers: headers }
-  #
-  #   it 'returns status code 204' do
-  #     expect(response).to have_http_status(204)
-  #   end
-  #
-  #   context 'when the resources doesnt exist' do
-  #     before { delete '/clients/xxx', params: params.to_json, headers: headers }
-  #
-  #     it 'returns status code 404' do
-  #       expect(response).to have_http_status(404)
-  #     end
-  #
-  #     it 'returns a validation failure message' do
-  #       expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
-  #     end
-  #   end
-  # end
-  #
-  # describe 'POST /clients/set-test-prefix' do
-  #   before { post '/clients/set-test-prefix', headers: headers }
-  #
-  #   it 'returns success' do
-  #     expect(json['message']).to eq("Test prefix added.")
-  #   end
-  #
-  #   it 'returns status code 200' do
-  #     expect(response).to have_http_status(200)
-  #   end
-  # end
+
+  describe 'PUT /reports/:id' do
+    let!(:report)  { create(:report) }
+
+    context 'when the record exists' do
+      let(:params) do
+        { "report_header": {
+          "report_name": "Dataset Report",
+          "report_id": "DSR",
+          "created": "2018-01-01",
+          "created_by": "CDL"
+        },
+          "report_datasets": [
+            {
+              "yop": "2010",
+              "platform": "DataONE",
+              "data_type": "Dataset",
+              "publisher": "DataONE",
+              "dataset_id": [
+                {
+                  "type": "DOI",
+                  "value": "0931-865"
+                }
+              ]
+            }
+          ]
+        }
+      end
+      before { put "/reports/#{report.uid}", params: params.to_json, headers: headers }
+  
+      it 'updates the record' do
+        expect(json.dig('report', 'report_header', 'created_by')).to eq("CDL")
+        expect(response).to have_http_status(200)
+      end
+    end
+  
+
+    context 'when the request is invalid' do
+      let(:params) do
+        { "report_heasder": {
+          "report_name": "Dataset Report",
+          "created": "2018-01-01",
+          "report_id": "DSR",
+        },
+          "report_datasets": [
+            {
+              "yop": "2010",
+              "platform": "DataONE",
+              "data_type": "Dataset",
+              "publisher": "DataONE",
+              "dataset_id": [
+                {
+                  "type": "DOI",
+                  "value": "0931-865"
+                }
+              ]
+            }
+          ]
+        }
+      end
+  
+      before { put "/reports/#{report.uid}", params: params.to_json, headers: headers }
+  
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+        expect(json["errors"].first).to eq("status"=>"422", "title"=>"You need to provide a payload following the SUSHI specification")
+      end
+    end
+  end
+  # Test suite for DELETE /reports/:id
+  describe 'DELETE /reports/:id' do
+    let!(:report)  { create(:report) }
+
+    before { delete "/reports/#{report.uid}", headers: headers }
+  
+    it 'returns status code 204' do
+      expect(response).to have_http_status(204)
+    end
+  
+    context 'when the resources doesnt exist' do
+      before { delete '/reports/xxx', headers: headers }
+  
+      it 'returns status code 404' do
+        expect(response).to have_http_status(404)
+        expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
+      end
+    end
+  end
+  
 end

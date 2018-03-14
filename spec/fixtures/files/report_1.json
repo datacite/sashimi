@@ -3,6 +3,7 @@
     "report_name": "Dataset Report",
     "report_id": "DSR",
     "created_by": "DataONE",
+    "created": "2022-01-01",
     "report_datasets": [{
         "yop": "2010",
         "platform": "DataONE",
