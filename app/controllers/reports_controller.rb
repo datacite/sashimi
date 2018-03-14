@@ -19,9 +19,12 @@ class ReportsController < ApplicationController
   end
 
   def destroy
-    # Your code here
-
-    render json: {"message" => "yes, it worked"}
+    if @report.destroy
+      head :no_content
+    else
+      Rails.logger.warn @report.errors.inspect
+      render jsonapi: serialize(@report.errors), status: :unprocessable_entity
+    end
   end
 
   def show
@@ -52,10 +55,11 @@ class ReportsController < ApplicationController
   protected
 
   def set_report
-    id = Base32::URL.decode(URI.decode(params[:id]))
+    # id = Base32::URL.decode(URI.decode(params[:id]))
+    id = params[:id]
     fail ActiveRecord::RecordNotFound unless id.present?
 
-    @report = Report.where(id: id.to_i).first
+    @report = Report.where(uid: id).first
 
     fail ActiveRecord::RecordNotFound unless @report.present?
   end
@@ -64,15 +68,59 @@ class ReportsController < ApplicationController
     @user_hash = { client_id: current_user.client_id, provider_id: current_user.provider_id }
   end
 
+
   private
 
-  def safe_params
-    params.permit(:report_name, :report_id, :release, :created_by, report_attributes: [], report_filters: [], report_datasets: [:yop, :platform, :data_type, :publisher, { dataset_id: [:type, :value] }])
+  def permit_recursive_params(params)
+    puts params.inspect
+    (params.try(:to_unsafe_h) || params).map do |key, value|
+      if value.is_a?(Array)
+        puts "mak"
 
-    # fail JSON::ParserError, "You need to provide a payload following the SUSHI spec" unless params[:report_header].present?
-    # fail JSON::ParserError, "You need to provide a payload following the SUSHI spec" unless params[:report_datasets].present?
-    # ActionController::Parameters.permit_all_parameters = true
-    #header, datasets = params.require([:report_header, :report_datasets])
-    #header.merge!({report_datasets: datasets})
+        if value.first.respond_to?(:map)
+          puts "choc"
+          puts value.first.inspect
+          { key => [ permit_recursive_params(value.first) ] }
+        else
+          { key => [] }
+        end
+      elsif value.is_a?(Hash)
+        { key => permit_recursive_params(value) }
+      else
+        key
+      end
+    end
+  end
+
+  def safe_params
+
+    fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_datasets].present? and params[:report_header].present?
+
+    header, datasets = params.require([:report_header, :report_datasets])
+    header.merge!({report_datasets: datasets})
+    header.permit!
+
+    # header.permit(:report_name, :report_id, :release, :created_by, report_attributes: [], report_filters: [], report_datasets: [:yop, :platform, :data_type, :uri, :publisher, :dataset_title, {dataset_dates:[:type, :value]},{publisher_id: [:type, :value]}, { dataset_id: [:type, :value] }])
+
+    # header.permit(
+    #   :report_name, :report_id, :release, :created, :created_by, 
+    #   report_attributes: [], 
+    #   report_filters: [], 
+    #   exceptions: permit_recursive_params(header[:exceptions]), 
+    #   report_datasets: [
+    #     :dataset_title, 
+    #     :yop,
+    #     :uri,
+    #     :platform,
+    #     :data_type, 
+    #     :publisher,
+    #     publisher_id:[:type, :value], 
+    #     dataset_dates:[:type, :value], 
+    #     performance: [],
+    #     dataset_contributios: [],
+    #     dataset_id:[:type, :value]
+    #   ]
+    # )
+
   end
 end
