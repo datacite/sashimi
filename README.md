@@ -22,12 +22,40 @@ docker run -p 8075:80 datacite/sashimi
 You can now point your browser to `http://localhost:8075` and use the application.
 
 
-## Usage
+## Resource components
+Major resource components supported by the Crossref API are:
 
-To add a report, make a post call with the following body content:
+- reports
+- publishers
+- status
+
+
+These can be used alone like this
+
+| resource      | description                       |
+|:--------------|:----------------------------------|
+| `/reports`      | returns a list of all reports in the Hub
+| `/publishers`    | returns a list of all Publishers
+| `/status` | returns the service status |
+
+
+### Resource components and identifiers
+Resource components can be used in conjunction with identifiers to retrieve the metadata for that report.
+
+| resource                    | description                       |
+|:----------------------------|:----------------------------------|
+| `/reports/{report_uid}`           | returns metadata for the specified Report. The report UID is a combination of the year, month the report was created and publisher that created the report. For example, for a created_by `CDL` for 2018-03-01 the uid of the report is `2018-03-CDL` |
+| `/publishers/{publisher_id}`      | returns metadata for specified publisher  |
+
+
+
+
+## Depositing Reports
+
+To add a report, you need to send JSON content and your POST call should include `Content-Type: application/json` and `Accept: application/json` in the headers. For example:
 
 ```shell
-curl -X POST https://metrics.test.datacite.org/reports
+curl --header "Content-Type: application/json; Accept: application/json" -X POST https://metrics.test.datacite.org/reports
 ```
 
 ```json
