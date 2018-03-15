@@ -12,7 +12,7 @@ class ReportsController < ApplicationController
   prepend_before_action :authenticate_user_from_token!
   before_action :set_report, only: [:show, :update, :destroy]
   before_action :set_user_hash, only: [:create, :update, :destroy]
-  #authorize_resource :except => [:index, :show]
+  authorize_resource :except => [:index, :show]
 
   def index
     render json: Report.all
@@ -42,7 +42,7 @@ class ReportsController < ApplicationController
 
   def create
     @report = Report.new(safe_params.merge(@user_hash))
-    # authorize! :create, @report
+    authorize! :create, @report
 
     if @report.save
       render json: @report, status: :created
