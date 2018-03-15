@@ -52,10 +52,10 @@ Resource components can be used in conjunction with identifiers to retrieve the 
 
 ## Depositing Reports
 
-To add a report, you need to send JSON content and your POST call should include `Content-Type: application/json` and `Accept: application/json` in the headers. For example:
+To add a report, you need to send JSON content and your POST call should include `Content-Type: application/json` and `Accept: application/json` in the headers. Additionally you will need to include to JSON Web Token (JWT) for authenthication. For example:
 
 ```shell
-curl --header "Content-Type: application/json; Accept: application/json" -X POST https://metrics.test.datacite.org/reports
+curl --header "Content-Type: application/json; Accept: application/json" -H "X-Authorization: Bearer {YOUR_JWT}" -X POST https://metrics.test.datacite.org/reports
 ```
 
 ```json
