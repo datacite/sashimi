@@ -23,7 +23,7 @@ You can now point your browser to `http://localhost:8075` and use the applicatio
 
 
 ## Resource components
-Major resource components supported by the Crossref API are:
+Major resource components supported by the Sashimi API are:
 
 - reports
 - publishers
