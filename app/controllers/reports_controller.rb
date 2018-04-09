@@ -15,7 +15,9 @@ class ReportsController < ApplicationController
   authorize_resource :except => [:index, :show]
 
   def index
-    render json: Report.all
+    collection = Report.all
+    @meta = { total: collection.size }
+    render json: collection, meta: @meta
   end
 
   def destroy
