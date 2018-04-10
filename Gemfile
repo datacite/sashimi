@@ -32,6 +32,7 @@ gem "facets", require: false
 gem 'bergamasco', '~> 0.3.10'
 gem 'base32-url', '~> 0.3'
 gem 'rack-cors', '~> 1.0', '>= 1.0.2', :require => 'rack/cors'
+gem 'json-schema'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'
