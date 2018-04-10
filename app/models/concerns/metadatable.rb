@@ -22,7 +22,7 @@ module Metadatable
     SUSHI_SCHEMA_FILE = "lib/sushi_schema/sushi_schema.json"
 
     def load_schema
-      content = begin
+      begin
         File.read(SUSHI_SCHEMA_FILE)
       rescue
         puts 'must redo the settings file'
