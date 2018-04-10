@@ -19,7 +19,7 @@ module Metadatable
       JSON::Validator.validate(schema, report.to_json)
     end
   
-    SUSHI_SCHEMA_FILE = "/home/app/webapp/spec/fixtures/files/sushi_schema.json"
+    SUSHI_SCHEMA_FILE = "lib/sushi_schema/sushi_schema.json"
 
     def load_schema
       content = begin

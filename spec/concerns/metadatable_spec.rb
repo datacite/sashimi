@@ -18,12 +18,12 @@ describe Report, type: :model do
         expect(payload).to be_empty
       end
 
-      it "checks stuff" do
-        file = File.read('/home/app/webapp/spec/fixtures/files/report_3.json')
-        schema = (File.read("/home/app/webapp/spec/fixtures/files/sushi_schema.json"))        
-        valid =  JSON::Validator.fully_validate(schema, file, :errors_as_objects => true)
-        expect(valid).to be_empty
-      end
+      # it "checks stuff" do
+      #   file = File.read('/home/app/webapp/spec/fixtures/files/report_3.json')
+      #   schema = (File.read("/home/app/webapp/spec/fixtures/files/sushi_schema.json"))        
+      #   valid =  JSON::Validator.fully_validate(schema, file, :errors_as_objects => true)
+      #   expect(valid).to be_empty
+      # end
     end
     context 'when the schema is incorrect' do
       subject { create(:report, report_filters: "hola") }
@@ -38,12 +38,12 @@ describe Report, type: :model do
       #   expect(payload).not_to be_empty
       # end
 
-      it "checks stuff" do
-        file = File.read('/home/app/webapp/spec/fixtures/files/report_4.json')
-        schema = (File.read("/home/app/webapp/spec/fixtures/files/sushi_schema.json"))        
-        valid =  JSON::Validator.fully_validate(schema, file, :errors_as_objects => true)
-        expect(valid).not_to be_empty
-      end
+      # it "checks stuff" do
+      #   file = File.read('/home/app/webapp/spec/fixtures/files/report_4.json')
+      #   schema = (File.read("/home/app/webapp/spec/fixtures/files/sushi_schema.json"))        
+      #   valid =  JSON::Validator.fully_validate(schema, file, :errors_as_objects => true)
+      #   expect(valid).not_to be_empty
+      # end
     end
   end
 end
