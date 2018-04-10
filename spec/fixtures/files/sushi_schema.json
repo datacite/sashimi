@@ -1,11 +1,47 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "description": "schema for an fstab entry",
   "type": "object",
-  "required": [ "report-header", "report-datasets" ],
+  "required": [ "release", "report-id", "report-name" , "report-datasets" ],
   "properties": {
-    "report-header" : {
-      "$ref" : "#/definitions/sushi_report_header"
+    "report-name" : {
+      "type" : "string",
+      "example" : "dataset report",
+      "description" : "the long name of the report."
+    },
+    "report-id" : {
+      "type" : "string",
+      "example" : "dsr",
+      "description" : "the report id or code or shortname. typically this will be the same code provided in the report parameter of the request."
+    },
+    "release" : {
+      "type" : "string",
+      "example" : "rd1",
+      "description" : "the release or version of the report."
+    },
+    "created" : {
+      "type" : "string",
+      "format" : "datetime",
+      "example" : "2016-09-08t22:47:31z",
+      "description" : "time the report was prepared. format as defined by date-time - rfc3339"
+    },
+    "created-by" : {
+      "type" : "string",
+      "example" : "dataone",
+      "description" : "name of the organization producing the report."
+    },
+    "report-filters" : {
+      "type" : "array",
+      "description" : "zero or more report filters used for this report.  typically  reflect filters provided on the request.  filters limit the data to be reported on.",
+      "items" : {
+        "$ref" : "#/definitions/sushi_report_header_report_filters"
+      }
+    },
+    "report-attributes" : {
+      "type" : "array",
+      "description" : "zero or more additional attributes applied to the report. attributes inform the level of detail in the report.",
+      "items" : {
+        "$ref" : "#/definitions/sushi_report_header_report_attributes"
+      }
     },
     "report-datasets" : {
       "type" : "array",
@@ -13,6 +49,41 @@
         "$ref" : "#/definitions/counter_dataset_usage"
       }
     }
+  },
+  "description" : "generalized report header that defines the requested report, the requestor, the customer, filters applied, reportattributes applied and any exceptions.",
+  "example" : {
+    "report-name" : "dataset report",
+    "report-id" : "dsr",
+    "report-attributes" : [ {
+      "value" : "true",
+      "name" : "exclude_monthly_details"
+    }, {
+      "value" : "true",
+      "name" : "exclude_monthly_details"
+    } ],
+    "exceptions" : [ {
+      "message" : "partial data returned.",
+      "severity" : "warning",
+      "data" : "usage data has not been processed for all requested months.",
+      "code" : 3040,
+      "help-url" : "help_url"
+    }, {
+      "message" : "partial data returned.",
+      "severity" : "warning",
+      "data" : "usage data has not been processed for all requested months.",
+      "code" : 3040,
+      "help-url" : "help_url"
+    } ],
+    "created-by" : "dataone",
+    "report-filters" : [ {
+      "value" : "2015-01",
+      "name" : "begin_date"
+    }, {
+      "value" : "2015-01",
+      "name" : "begin_date"
+    } ],
+    "release" : "rd1",
+    "created" : "2016-09-08t22:47:31z"
   },
   "definitions" : {
     "sushi_report_header" : {
@@ -98,7 +169,7 @@
     },
     "sushi_report_list" : {
       "type" : "object",
-      "required" : [ "release", "report_description", "report_id", "report_name" ],
+      "required" : [ "release", "report-description", "report-id", "report-name" ],
       "properties" : {
         "report-name" : {
           "type" : "string",
@@ -182,7 +253,7 @@
     },
     "counter_dataset_report" : {
       "type" : "object",
-      "required" : [ "report_datasets" ],
+      "required" : [ "report-datasets" ],
       "properties" : {
         "report-header" : {
           "$ref" : "#/definitions/sushi_report_header"
@@ -703,7 +774,7 @@
       }
     },
     "counter_dataset_performance_period" : {
-      "required" : [ "begin_date", "end_date" ],
+      "required" : [ "begin-date", "end-date" ],
       "properties" : {
         "begin-date" : {
           "type" : "string",
@@ -722,7 +793,7 @@
       }
     },
     "counter_dataset_performance_instance" : {
-      "required" : [ "count", "metric_type" ],
+      "required" : [ "count", "metric-type" ],
       "properties" : {
         "metric-type" : {
           "type" : "string",
