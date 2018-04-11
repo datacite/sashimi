@@ -15,7 +15,9 @@ class ReportsController < ApplicationController
   authorize_resource :except => [:index, :show]
 
   def index
-    render json: Report.all
+    collection = Report.all
+    @meta = { total: collection.size }
+    render json: collection, meta: @meta
   end
 
   def destroy
@@ -75,11 +77,8 @@ class ReportsController < ApplicationController
     puts params.inspect
     (params.try(:to_unsafe_h) || params).map do |key, value|
       if value.is_a?(Array)
-        puts "mak"
 
         if value.first.respond_to?(:map)
-          puts "choc"
-          puts value.first.inspect
           { key => [ permit_recursive_params(value.first) ] }
         else
           { key => [] }

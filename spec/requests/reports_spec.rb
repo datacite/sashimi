@@ -39,32 +39,9 @@ describe 'Reports', type: :request do
   end
 
   describe 'POST /reports' do
-    let(:params) do
-      { "report_header": {
-        "report_name": "Dataset Report",
-        "report_id": "DSR",
-        "created": "2018-01-01",
-        "created_by": "CDL"
-      },
-        "report_datasets": [
-          {
-            "yop": "2010",
-            "platform": "DataONE",
-            "data_type": "Dataset",
-            "publisher": "DataONE",
-            "dataset_id": [
-              {
-                "type": "DOI",
-                "value": "0931-865"
-              }
-            ]
-          }
-        ]
-      }
-    end
-
+    let(:params) {file_fixture('report_3.json').read}
     context 'when the request is valid' do
-      before { post '/reports', params: params.to_json, headers: headers }
+      before { post '/reports', params: params, headers: headers }
 
       it 'creates a report' do
         expect(json.dig("report", "report_header", "report_id")).to eq("DSR")
@@ -78,6 +55,8 @@ describe 'Reports', type: :request do
           "report_name": "Dataset Report",
           "report_id": "DSR",
           "created": "2018-01-01",
+          "report-filters": [],
+          "report-attributes": [],
           "exceptions": [
             {
               "code": 3040,
@@ -93,12 +72,41 @@ describe 'Reports', type: :request do
             {
               "yop": "2010",
               "platform": "DataONE",
-              "data_type": "Dataset",
+              "data-type": "dataset",
               "publisher": "DataONE",
+              "dataset-title": "This is a dataset",
+              "publisher-id": [
+                  {
+                  "type": "orcid",
+                  "value": "0931-865-000-000"
+                }
+              ],
               "dataset_id": [
                 {
-                  "type": "DOI",
+                  "type": "doi",
                   "value": "0931-865"
+                }
+              ],
+              "performance": [
+                {
+                  "period": {
+                    "Begin-Date": "2018-03-01",
+                    "End-Date": "2018-03-31"
+                  },
+                  "instance": [
+                    {
+                      "country": "GB",
+                      "access-Method": "Regular",
+                      "Metric-Type": "total_dataset_investigations",
+                      "Count": 3
+                    },
+                    {
+                      "Country": "GB",
+                      "Access-Method": "Regular",
+                      "Metric-Type": "unique_dataset_investigations",
+                      "Count": 3
+                    }
+                  ]
                 }
               ]
             }
@@ -108,9 +116,37 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params.to_json, headers: headers }
 
       it 'creates a report' do
-        puts json
         expect(json.dig("report", "report_header", "report_id")).to eq("DSR")
         expect(response).to have_http_status(201)
+      end
+    end
+
+    context 'when the params is missing is required attirbutes' do
+      let(:params) {file_fixture('report_4.json').read}
+      before { post '/reports', params: params, headers: headers }
+
+      it 'fails to create a report' do
+        expect(response).to have_http_status(422)
+      end
+    end
+
+    context 'when the params is missing is dataset metrics' do
+      let(:params) {file_fixture('report_5.json').read}
+      before { post '/reports', params: params, headers: headers }
+
+      it 'fails to create a report' do
+        puts response
+        expect(response).to have_http_status(422)
+      end
+    end
+
+    context 'when the params keys are wrong' do
+      let(:params) {file_fixture('report_6.json').read}
+      before { post '/reports', params: params, headers: headers }
+
+      it 'fails to create a report' do
+        puts response
+        expect(response).to have_http_status(422)
       end
     end
   end
@@ -125,18 +161,49 @@ describe 'Reports', type: :request do
           "report_name": "Dataset Report",
           "report_id": "DSR",
           "created": "2018-01-01",
-          "created_by": "CDL"
+          "created_by": "CDL",
+          "report-filters": [],
+          "report-attributes": [],
         },
           "report_datasets": [
             {
               "yop": "2010",
               "platform": "DataONE",
-              "data_type": "Dataset",
+              "data-type": "dataset",
               "publisher": "DataONE",
+              "dataset-title": "This is a dataset",
+              "publisher-id": [
+                  {
+                  "type": "orcid",
+                  "value": "0931-865-000-000"
+                }
+              ],
               "dataset_id": [
                 {
                   "type": "DOI",
                   "value": "0931-865"
+                }
+              ],
+              "performance": [
+                {
+                  "period": {
+                    "Begin-Date": "2018-03-01",
+                    "End-Date": "2018-03-31"
+                  },
+                  "instance": [
+                    {
+                      "country": "GB",
+                      "access-Method": "Regular",
+                      "Metric-Type": "total_dataset_investigations",
+                      "Count": 3
+                    },
+                    {
+                      "Country": "GB",
+                      "Access-Method": "Regular",
+                      "Metric-Type": "unique_dataset_investigations",
+                      "Count": 3
+                    }
+                  ]
                 }
               ]
             }

@@ -61,81 +61,81 @@ curl --header "Content-Type: application/json; Accept: application/json" -H "X-A
 ```json
 {
   "report-header": {
-    "report-name": "Dataset Report",
-    "report-id": "DSR",
-    "release": "RD1",
-    "created": "2016-09-08T22:47:31Z",
-    "created-by": "DataONE",
+    "report-name": "dataset report",
+    "report-id": "dsr",
+    "release": "rd1",
+    "created": "2016-09-08t22:47:31z",
+    "created-by": "dataone",
     "report-filters": [
       {
-        "Name": "Begin-Date",
-        "Value": "2015-01"
+        "name": "begin-date",
+        "value": "2015-01"
       }
     ],
     "report-attributes": [
       {
-        "Name": "Exclude-Monthly-Details",
-        "Value": "True"
+        "name": "exclude-monthly-details",
+        "value": "true"
       }
     ],
     "exceptions": [
       {
-        "Code": 3040,
-        "Severity": "Warning",
-        "Message": "Partial Data Returned.",
-        "Help-URL": "string",
-        "Data": "Usage data has not been processed for all requested months."
+        "code": 3040,
+        "severity": "warning",
+        "message": "partial data returned.",
+        "help-url": "string",
+        "data": "usage data has not been processed for all requested months."
       }
     ]
   },
   "report-datasets": [
     {
-      "Dataset-Title": "Lake Erie Fish Community Data",
-      "Dataset-ID": [
+      "dataset-title": "lake erie fish community data",
+      "dataset-id": [
         {
-          "Type": "DOI",
-          "Value": "0931-865"
+          "type": "doi",
+          "value": "0931-865"
         }
       ],
-      "Dataset-Contributors": [
+      "dataset-contributors": [
         {
-          "Type": "Name",
-          "Value": "John Smith"
+          "type": "name",
+          "value": "john smith"
         }
       ],
-      "Dataset-Dates": [
+      "dataset-dates": [
         {
-          "Type": "Pub-Date",
-          "Value": "2002-01-15"
+          "type": "pub-date",
+          "value": "2002-01-15"
         }
       ],
-      "Dataset-Attributes": [
+      "dataset-attributes": [
         {
-          "Type": "Dataset-Version",
-          "Value": "VoR"
+          "type": "dataset-version",
+          "value": "vor"
         }
       ],
-      "Platform": "DataONE",
-      "Publisher": "DataONE",
-      "Publisher-ID": [
+      "platform": "dataone",
+      "publisher": "dataone",
+      "publisher-id": [
         {
-          "Type": "ORCID",
-          "Value": "1234-1234-1234-1234"
+          "type": "orcid",
+          "value": "1234-1234-1234-1234"
         }
       ],
-      "Data-Type": "Dataset",
-      "YOP": "2010",
-      "Access-Method": "Regular",
-      "Performance": [
+      "data-type": "dataset",
+      "yop": "2010",
+      "access-method": "regular",
+      "performance": [
         {
-          "Period": {
-            "Begin-Date": "2015-01-01",
-            "End-Date": "2015-01-31"
+          "period": {
+            "begin-date": "2015-01-01",
+            "end-date": "2015-01-31"
           },
-          "Instance": [
+          "instance": [
             {
-              "Metric-Type": "Total-Dataset-Requests",
-              "Count": 21
+              "metric-type": "total-dataset-requests",
+              "count": 21
             }
           ]
         }
@@ -143,6 +143,7 @@ curl --header "Content-Type: application/json; Accept: application/json" -H "X-A
     }
   ]
 }
+
 ```
 
 
