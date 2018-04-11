@@ -72,7 +72,7 @@
              "begin-date": "2018-03-01",
              "end-date": "2018-03-31"
            },
-           "instance": [
+           "instances": [
              {
                "country": "gb",
                "access-method": "regular",
