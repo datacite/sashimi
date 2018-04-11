@@ -1,0 +1,96 @@
+{
+  "report-header": {
+     "report-name": "dataset report",
+     "report-id": "DSR",
+     "release": "rd1",
+     "created": "2128-04-09",
+     "created-by": "dash",
+     "report-attributes": [],
+     "report-filters": [
+        {
+         "name": "begin-date",
+         "value": "2018-03-01"
+       },
+       {
+         "name": "end-date",
+         "value": "2018-03-31"
+       }
+     ],
+     "exceptions": [
+       {
+         "code": 3040,
+         "severity": "warning",
+         "message": "partial data returned",
+         "help-url": "string",
+         "data": "usage data has not been processed for the entire reporting period"
+       }
+     ]
+  },
+   "report-datasets": [
+     {
+       "dataset-title": "chemical shift-based methods in nmr structure determination",
+       "dataset-id": [
+         {
+           "type": "doi",
+           "value": "10.7291/d1q94r"
+         }
+       ],
+       "dataset-contributors": [
+         {
+           "type": "name",
+           "value": "santrupti nerli"
+         },
+         {
+           "type": "name",
+           "value": "andrew c. mcshan"
+         },
+         {
+           "type": "name",
+           "value": "nikolaos g. sgourakis"
+         }
+       ],
+       "dataset-dates": [
+         {
+           "type": "pub_date",
+           "value": "2018-05-01"
+         }
+       ],
+       "platform": "dash",
+       "publisher": "uc santa cruz",
+       "publisher-id": [
+         {
+           "type": "orcid",
+           "value": "2059-4343-4343-4343"
+         }
+       ],
+       "data-type": "dataset",
+       "yop": "2018",
+       "uri": "https://dash.library.ucsc.edu/stash/dataset/doi:10.7291/d1q94r",
+       "performance": [
+         {
+           "period": {
+             "begin-date": "2018-03-01",
+             "end-date": "2018-03-31"
+           },
+           "instance": [
+             {
+               "country": "gb",
+               "access-method": "regular",
+               "metric-type": "total_dataset_investigations",
+               "count": 3
+             },
+             {
+               "country": "gb",
+               "access-method": "regular",
+               "metric-type": "unique_dataset_investigations",
+               "count": 3
+             }
+           ]
+         }
+       ]
+     }]
+   
+ }
+ 
+     
+     
