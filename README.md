@@ -44,8 +44,8 @@ Resource components can be used in conjunction with identifiers to retrieve the 
 
 | resource                    | description                       |
 |:----------------------------|:----------------------------------|
-| `/reports/{report_uid}`           | returns metadata for the specified Report. The report UID is a combination of the year, month the report was created and publisher that created the report. For example, for a created_by `CDL` for 2018-03-01 the uid of the report is `2018-03-CDL` |
-| `/publishers/{publisher_id}`      | returns metadata for specified publisher  |
+| `/reports/{report-uid}`           | returns metadata for the specified Report. The report UID is a combination of the year, month the report was created and publisher that created the report. For example, for a created_by `CDL` for 2018-03-01 the uid of the report is `2018-03-CDL` |
+| `/publishers/{publisher-id}`      | returns metadata for specified publisher  |
 
 
 
@@ -145,7 +145,12 @@ curl --header "Content-Type: application/json; Accept: application/json" -H "X-A
 }
 
 ```
+## Key and Values
 
+The allowed and recommended characters for an URL safe naming of parameters are defined in the format spec. To also standardize parameters names, the following (more restrictive) rules are recommended:
+
+- Parameters names SHOULD start and end with the characters “a-z” (U+0061 to U+007A)
+- Parameters names SHOULD contain only the characters “a-z” (U+0061 to U+007A), “0-9” (U+0030 to U+0039), and the hyphen minus (U+002D HYPHEN-MINUS, “-“) as separator between multiple words.
 
 ## Development
 
