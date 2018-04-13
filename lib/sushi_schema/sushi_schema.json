@@ -77,10 +77,10 @@
     "created-by" : "dataone",
     "report-filters" : [ {
       "value" : "2015-01",
-      "name" : "begin_date"
+      "name" : "begin-date"
     }, {
       "value" : "2015-01",
-      "name" : "begin_date"
+      "name" : "begin-date"
     } ],
     "release" : "rd1",
     "created" : "2016-09-08t22:47:31z"
@@ -158,10 +158,10 @@
         "created-by" : "dataone",
         "report-filters" : [ {
           "value" : "2015-01",
-          "name" : "begin_date"
+          "name" : "begin-date"
         }, {
           "value" : "2015-01",
-          "name" : "begin_date"
+          "name" : "begin-date"
         } ],
         "release" : "rd1",
         "created" : "2016-09-08t22:47:31z"
@@ -286,10 +286,10 @@
           } ],
           "dataset-title" : "lake erie fish community data",
           "dataset-attributes" : [ {
-            "type" : "dataset_version",
+            "type" : "dataset-version",
             "value" : "vor"
           }, {
-            "type" : "dataset_version",
+            "type" : "dataset-version",
             "value" : "vor"
           } ],
           "dataset-contributors" : [ {
@@ -302,18 +302,18 @@
           "publisher" : "dataone",
           "yop" : "2010",
           "dataset-dates" : [ {
-            "type" : "pub_date",
+            "type" : "pub-date",
             "value" : "2002-01-15"
           }, {
-            "type" : "pub_date",
+            "type" : "pub-date",
             "value" : "2002-01-15"
           } ],
           "performance" : [ {
             "instance" : [ {
-              "metric-type" : "total_dataset_requests",
+              "metric-type" : "total-dataset-requests",
               "count" : 21
             }, {
-              "metric-type" : "total_dataset_requests",
+              "metric-type" : "total-dataset-requests",
               "count" : 21
             } ],
             "period" : {
@@ -322,10 +322,10 @@
             }
           }, {
             "instance" : [ {
-              "metric-type" : "total_dataset_requests",
+              "metric-type" : "total-dataset-requests",
               "count" : 21
             }, {
-              "metric-type" : "total_dataset_requests",
+              "metric-type" : "total-dataset-requests",
               "count" : 21
             } ],
             "period" : {
@@ -353,10 +353,10 @@
           } ],
           "dataset-title" : "lake erie fish community data",
           "dataset-attributes" : [ {
-            "type" : "dataset_version",
+            "type" : "dataset-version",
             "value" : "vor"
           }, {
-            "type" : "dataset_version",
+            "type" : "dataset-version",
             "value" : "vor"
           } ],
           "dataset-contributors" : [ {
@@ -369,18 +369,18 @@
           "publisher" : "dataone",
           "yop" : "2010",
           "dataset-dates" : [ {
-            "type" : "pub_date",
+            "type" : "pub-date",
             "value" : "2002-01-15"
           }, {
-            "type" : "pub_date",
+            "type" : "pub-date",
             "value" : "2002-01-15"
           } ],
           "performance" : [ {
             "instance" : [ {
-              "metric-type" : "total_dataset_requests",
+              "metric-type" : "total-dataset-requests",
               "count" : 21
             }, {
-              "metric-type" : "total_dataset_requests",
+              "metric-type" : "total-dataset-requests",
               "count" : 21
             } ],
             "period" : {
@@ -389,10 +389,10 @@
             }
           }, {
             "instance" : [ {
-              "metric-type" : "total_dataset_requests",
+              "metric-type" : "total-dataset-requests",
               "count" : 21
             }, {
-              "metric-type" : "total_dataset_requests",
+              "metric-type" : "total-dataset-requests",
               "count" : 21
             } ],
             "period" : {
@@ -428,10 +428,10 @@
           "created-by" : "dataone",
           "report-filters" : [ {
             "value" : "2015-01",
-            "name" : "begin_date"
+            "name" : "begin-date"
           }, {
             "value" : "2015-01",
-            "name" : "begin_date"
+            "name" : "begin-date"
           } ],
           "release" : "rd1",
           "created" : "2016-09-08t22:47:31z"
@@ -537,10 +537,10 @@
         } ],
         "dataset-title" : "lake erie fish community data",
         "dataset-attributes" : [ {
-          "type" : "dataset_version",
+          "type" : "dataset-version",
           "value" : "vor"
         }, {
-          "type" : "dataset_version",
+          "type" : "dataset-version",
           "value" : "vor"
         } ],
         "dataset-contributors" : [ {
@@ -553,18 +553,18 @@
         "publisher" : "dataone",
         "yop" : "2010",
         "dataset-dates" : [ {
-          "type" : "pub_date",
+          "type" : "pub-date",
           "value" : "2002-01-15"
         }, {
-          "type" : "pub_date",
+          "type" : "pub-date",
           "value" : "2002-01-15"
         } ],
         "performance" : [ {
           "instance" : [ {
-            "metric-type" : "total_dataset_requests",
+            "metric-type" : "total-dataset-requests",
             "count" : 21
           }, {
-            "metric-type" : "total_dataset_requests",
+            "metric-type" : "total-dataset-requests",
             "count" : 21
           } ],
           "period" : {
@@ -573,10 +573,10 @@
           }
         }, {
           "instance" : [ {
-            "metric-type" : "total_dataset_requests",
+            "metric-type" : "total-dataset-requests",
             "count" : 21
           }, {
-            "metric-type" : "total_dataset_requests",
+            "metric-type" : "total-dataset-requests",
             "count" : 21
           } ],
           "period" : {
@@ -653,8 +653,8 @@
       "properties" : {
         "type" : {
           "type" : "string",
-          "example" : "pub_date",
-          "enum" : [ "pub_date", "first_accessed_online", "proprietary" ]
+          "example" : "pub-date",
+          "enum" : [ "pub-date", "first-accessed-online", "proprietary" ]
         },
         "value" : {
           "type" : "string",
@@ -663,7 +663,7 @@
         }
       },
       "example" : {
-        "type" : "pub_date",
+        "type" : "pub-date",
         "value" : "2002-01-15"
       }
     },
@@ -673,9 +673,9 @@
       "properties" : {
         "type" : {
           "type" : "string",
-          "example" : "dataset_version",
+          "example" : "dataset-version",
           "description" : "item attribute types are defined by niso journal article version and other work...",
-          "enum" : [ "dataset_version", "dataset_type", "proprietary" ]
+          "enum" : [ "dataset-version", "dataset_type", "proprietary" ]
         },
         "value" : {
           "type" : "string",
@@ -684,7 +684,7 @@
         }
       },
       "example" : {
-        "type" : "dataset_version",
+        "type" : "dataset-version",
         "value" : "vor"
       }
     },
@@ -704,10 +704,10 @@
       },
       "example" : {
         "instance" : [ {
-          "metric-type" : "total_dataset_requests",
+          "metric-type" : "total-dataset-requests",
           "count" : 21
         }, {
-          "metric-type" : "total_dataset_requests",
+          "metric-type" : "total-dataset-requests",
           "count" : 21
         } ],
         "period" : {
@@ -721,7 +721,7 @@
       "properties" : {
         "name" : {
           "type" : "string",
-          "example" : "begin_date",
+          "example" : "begin-date",
           "description" : "name of the report filter."
         },
         "value" : {
@@ -732,7 +732,7 @@
       },
       "example" : {
         "value" : "2015-01",
-        "name" : "begin_date"
+        "name" : "begin-date"
       }
     },
     "sushi_report_header_report_attributes" : {
@@ -797,9 +797,9 @@
       "properties" : {
         "metric-type" : {
           "type" : "string",
-          "example" : "total_dataset_requests",
+          "example" : "total-dataset-requests",
           "description" : "type of activity being counted.",
-          "enum" : [ "total_dataset_investigations", "total_dataset_requests", "unique_dataset_investigations", "unique_dataset_requests" ]
+          "enum" : [ "total-dataset-investigations", "total-dataset-requests", "unique-dataset-investigations", "unique-dataset-requests" ]
         },
         "count" : {
           "type" : "integer",
@@ -808,7 +808,7 @@
         }
       },
       "example" : {
-        "metric-type" : "total_dataset_requests",
+        "metric-type" : "total-dataset-requests",
         "count" : 21
       }
     }
