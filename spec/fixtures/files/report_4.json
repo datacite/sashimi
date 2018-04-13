@@ -75,13 +75,13 @@
              {
                "country": "gb",
                "access-method": "regular",
-               "metric-type": "total-dataset-investigations",
+               "metric-type": "total_dataset_investigations",
                "count": 3
              },
              {
                "country": "gb",
                "access-method": "regular",
-               "metric-type": "unique-dataset-investigations",
+               "metric-type": "unique_dataset_investigations",
                "count": 3
              }
            ]
