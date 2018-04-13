@@ -50,7 +50,7 @@
        ],
        "dataset-dates": [
          {
-           "type": "pub_date",
+           "type": "pub-date",
            "value": "2018-05-01"
          }
        ],
@@ -75,13 +75,13 @@
              {
                "country": "gb",
                "access-method": "regular",
-               "metric-type": "total_dataset_investigations",
+               "metric-type": "total-dataset-investigations",
                "count": 3
              },
              {
                "country": "gb",
                "access-method": "regular",
-               "metric-type": "unique_dataset_investigations",
+               "metric-type": "unique-dataset-investigations",
                "count": 3
              }
            ]

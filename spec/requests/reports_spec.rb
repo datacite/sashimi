@@ -23,7 +23,7 @@ describe 'Reports', type: :request do
 
     context 'when the record exists' do
       it 'returns the report' do
-        expect(json.dig("report","report_header", "report_id")).to eq(report.report_id)
+        expect(json.dig("report","report-header", "report-id")).to eq(report.report_id)
         expect(response).to have_http_status(200)
       end
     end
@@ -44,7 +44,7 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params, headers: headers }
 
       it 'creates a report' do
-        expect(json.dig("report", "report_header", "report_id")).to eq("DSR")
+        expect(json.dig("report", "report-header", "report-id")).to eq("DSR")
         expect(response).to have_http_status(201)
       end
     end
@@ -97,13 +97,13 @@ describe 'Reports', type: :request do
                     {
                       "country": "GB",
                       "access-Method": "Regular",
-                      "Metric-Type": "total_dataset_investigations",
+                      "Metric-Type": "total-dataset-investigations",
                       "Count": 3
                     },
                     {
                       "Country": "GB",
                       "Access-Method": "Regular",
-                      "Metric-Type": "unique_dataset_investigations",
+                      "Metric-Type": "unique-dataset-investigations",
                       "Count": 3
                     }
                   ]
@@ -116,7 +116,7 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params.to_json, headers: headers }
 
       it 'creates a report' do
-        expect(json.dig("report", "report_header", "report_id")).to eq("DSR")
+        expect(json.dig("report", "report-header", "report-id")).to eq("DSR")
         expect(response).to have_http_status(201)
       end
     end
@@ -194,13 +194,13 @@ describe 'Reports', type: :request do
                     {
                       "country": "GB",
                       "access-Method": "Regular",
-                      "Metric-Type": "total_dataset_investigations",
+                      "Metric-Type": "total-dataset-investigations",
                       "Count": 3
                     },
                     {
                       "Country": "GB",
                       "Access-Method": "Regular",
-                      "Metric-Type": "unique_dataset_investigations",
+                      "Metric-Type": "unique-dataset-investigations",
                       "Count": 3
                     }
                   ]
@@ -213,7 +213,7 @@ describe 'Reports', type: :request do
       before { put "/reports/#{report.uid}", params: params.to_json, headers: headers }
   
       it 'updates the record' do
-        expect(json.dig('report', 'report_header', 'created_by')).to eq("CDL")
+        expect(json.dig('report', 'report-header', 'created-by')).to eq("CDL")
         expect(response).to have_http_status(200)
       end
     end
