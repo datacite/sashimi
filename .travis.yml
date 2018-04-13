@@ -36,8 +36,8 @@ before_script:
   - bundle exec rake db:setup RAILS_ENV=test
 
 script:
-  # - bundle exec rspec
-  # - bundle exec codeclimate-test-reporter
+  - bundle exec rspec
+  - bundle exec codeclimate-test-reporter
 
 after_success:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
