@@ -16,20 +16,14 @@ info:
 schemes:
   - https
 securityDefinitions:
-  apikey:
+  Bearer:
     type: apiKey
     description: >-
-      Unique code assigned by Content Provider to grant you access to this API. The apikey needs to be a query parameter for every operation to access this API.
-    name: apikey
-    in: query
-  requestor_id:
-    type: apiKey
-    description: Identifies the requester(client) that is asking for report data
-    name: requestor_id
-    in: query
+      Unique code assigned by Content Provider to grant you access to this API. This apikey needs to be in the header.
+    name: Authorization
+    in: header
 security:
-  - apikey: []
-    requestor_id: []
+  - Bearer: []
 paths:
   /status:
     get:
