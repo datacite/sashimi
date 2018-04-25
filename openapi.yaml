@@ -51,7 +51,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Service_Status'
+              $ref: '#/definitions/Status'
         default:
           description: unexpected error
           schema:
@@ -76,7 +76,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Service_Status'
+              $ref: '#/definitions/Status'
         default:
           description: unexpected error
           schema:
