@@ -97,29 +97,30 @@ class ReportsController < ApplicationController
 
     header, datasets = params.require([:report_header, :report_datasets])
     header.merge!({report_datasets: datasets})
-    header.permit!
-
-    # header.permit(:report_name, :report_id, :release, :created_by, report_attributes: [], report_filters: [], report_datasets: [:yop, :platform, :data_type, :uri, :publisher, :dataset_title, {dataset_dates:[:type, :value]},{publisher_id: [:type, :value]}, { dataset_id: [:type, :value] }])
-
-    # header.permit(
-    #   :report_name, :report_id, :release, :created, :created_by, 
-    #   report_attributes: [], 
-    #   report_filters: [], 
-    #   exceptions: permit_recursive_params(header[:exceptions]), 
-    #   report_datasets: [
-    #     :dataset_title, 
-    #     :yop,
-    #     :uri,
-    #     :platform,
-    #     :data_type, 
-    #     :publisher,
-    #     publisher_id:[:type, :value], 
-    #     dataset_dates:[:type, :value], 
-    #     performance: [],
-    #     dataset_contributios: [],
-    #     dataset_id:[:type, :value]
-    #   ]
-    # )
+    header.permit(
+      :report_name, :report_id, :release, :created, :created_by, 
+      report_attributes: [:name, :value], 
+      report_filters: [:name, :value], 
+      exceptions: [:message, :severity, :data, :code, :help_url], 
+      report_datasets: [
+        :dataset_title, 
+        :yop,
+        :uri,
+        :platform,
+        :data_type, 
+        :publisher,
+        :access_method,
+        publisher_id:[:type, :value], 
+        dataset_dates:[:type, :value], 
+        performance: [
+          period: [:end_date, :begin_date],
+          instance: [:count, :volume, :country, :metric_type, :access_method]
+        ],
+        dataset_contributors: [:type, :value],
+        dataset_attributes: [:type, :value],
+        dataset_id:[:type, :value]
+      ]
+    )
 
   end
 end
