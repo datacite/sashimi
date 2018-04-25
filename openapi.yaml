@@ -535,4 +535,3 @@ definitions:
         description: The path to use when requesting this report on this service.
         example: /report_types/dsr
 host: metrics.test.datacite.org
-basePath: "/"
