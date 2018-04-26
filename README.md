@@ -23,7 +23,8 @@ You can now point your browser to `http://localhost:8075` and use the applicatio
 
 
 ## Resource components
-Major resource components supported by the Sashimi API are:
+
+Full API Reference can be found in the [DataCite Support Website](https://support.datacite.org/v1.1/reference#metrics-api). This reference is also a Live API. Major resource components supported by the Sashimi API are:
 
 - reports
 - publishers
