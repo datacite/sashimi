@@ -29,7 +29,7 @@ class Report < ApplicationRecord
 
   # random number that fits into MySQL bigint field (8 bytes)
   def set_id
-    id = SecureRandom.random_number(9223372036854775807)
+    self.id = SecureRandom.random_number(9223372036854775807)
   end
 
   def set_uid
