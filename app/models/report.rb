@@ -33,8 +33,12 @@ class Report < ApplicationRecord
   end
 
   def set_uid
-    self.month = Date.strptime(created,"%Y-%m-%d").month unless created.nil? 
-    self.year = Date.strptime(created,"%Y-%m-%d").year unless created.nil? 
+    unless created.nil? 
+      month = Date.strptime(created,"%Y-%m-%d").month.to_s 
+      year = Date.strptime(created,"%Y-%m-%d").year.to_s 
+      write_attribute(:month,  month ) 
+      write_attribute(:year,  year) 
+    end
     self.uid = "#{year}-#{month}-#{created_by}"
   end
 end
