@@ -15,9 +15,42 @@ class ReportsController < ApplicationController
   authorize_resource :except => [:index, :show]
 
   def index
-    collection = Report.all
-    @meta = { total: collection.size }
-    render json: collection, meta: @meta
+
+    # page = (params.dig(:page, :number) || 1).to_i
+    # size = (params.dig(:page, :size) || 25).to_i
+    # from = (page - 1) * size
+
+    # sort = case params[:sort]
+    #        when "-name" then { "name.keyword" => { order: 'desc' }}
+    #        when "created" then { created: { order: 'asc' }}
+    #        when "-created" then { created: { order: 'desc' }}
+    #        else { "name.keyword" => { order: 'asc' }}
+    #        end
+
+    if params[:id].present?
+      collection = Report.where(uid: params[:id])
+    elsif params[:created_by].present?
+      collection = Report.where(created_by: params[:created_by])
+    elsif params[:year].present?
+      collection = Report.where(year: params[:year])
+    elsif params[:client_id].present?
+      collection = Report.where(client_id: params[:client_id])
+    else
+      collection = Report.all
+    end
+
+    total = collection.size
+    # total_pages = (total.to_f / size).ceil
+
+    # @reports = Kaminari.paginate_array(response.results, total_count: total).page(page).per(size)
+
+    @meta = {
+      total: total
+      # total_pages: total_pages,
+      # page: page,
+      # years: years
+    }
+    render json: collection, meta: @meta, include: @include
   end
 
   def destroy
