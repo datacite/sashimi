@@ -5,14 +5,36 @@ describe 'Reports', type: :request do
   let(:headers) { {'ACCEPT'=>'application/json', 'CONTENT_TYPE'=>'application/json', 'Authorization' => 'Bearer ' + bearer}}
 
   describe 'GET /reports' do
-    let!(:report)  { create_list(:report, 3) }
+    let!(:reports)  { create_list(:report, 3) }
 
-    before { get '/reports', headers: headers }
+    context 'index' do
+      before { get '/reports' }
 
-    it 'returns reports' do
-      expect(json).not_to be_empty
-      expect(json['reports'].size).to eq(3)
-      expect(response).to have_http_status(200)
+      it 'returns reports' do
+        expect(json).not_to be_empty
+        expect(json['reports'].size).to eq(3)
+        expect(response).to have_http_status(200)
+      end
+    end
+    context 'index filter by year' do
+      let!(:report)  { create(:report, created:"2222-01-01") }
+      before { get '/reports?year=2222'}
+
+      it 'returns reports' do
+        expect(json).not_to be_empty
+        expect(json['reports'].size).to eq(1)
+        expect(response).to have_http_status(200)
+      end
+    end
+    context 'index filter by publisher' do
+      let!(:report)  { create(:report, created_by:"Dash") }
+      before { get '/reports?created-by=Dash' }
+
+      it 'returns reports' do
+        expect(json).not_to be_empty
+        expect(json['reports'].size).to eq(1)
+        expect(response).to have_http_status(200)
+      end
     end
   end
 
@@ -44,6 +66,25 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params, headers: headers }
 
       it 'creates a report' do
+        expect(json.dig("report", "report-header", "report-id")).to eq("DSR")
+        expect(response).to have_http_status(201)
+      end
+    end
+
+    context 'index filter by client_id' do
+      let!(:bearer_ext) { User.generate_token(client_id: "datacite.demo", provider_id: "datacite", role_id: "staff_admin") }
+      let!(:headers_ext) { {'ACCEPT'=>'application/json', 'CONTENT_TYPE'=>'application/json', 'Authorization' => 'Bearer ' + bearer_ext}}
+
+      before { post '/reports', params: params, headers: headers_ext }
+
+      it 'returns reports' do
+        expect(json.dig("report", "report-header", "report-id")).to eq("DSR")
+        expect(response).to have_http_status(201)
+      end
+
+      after { get '/reports?client-id=datacite.demo' }
+
+      it 'returns reports' do
         expect(json.dig("report", "report-header", "report-id")).to eq("DSR")
         expect(response).to have_http_status(201)
       end
