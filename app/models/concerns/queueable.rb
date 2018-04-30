@@ -26,7 +26,7 @@ module Queueable
           }
         }
         sent_message = sqs.send_message(options)
-        if
+        if sent_message.successful
           Rails.logger.info "Report " + report_id + "  has been queued."
         end
         sent_message

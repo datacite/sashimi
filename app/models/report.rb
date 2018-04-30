@@ -17,7 +17,7 @@ class Report < ApplicationRecord
   include Metadatable
 
   # include validation methods for sushi
-  include Queueable 
+  include Queueable if ENV["AWS_REGION"]
 
   attr_accessor :month, :year
   validates_presence_of :report_id, :created_by, :report_datasets, :client_id, :provider_id, :created
