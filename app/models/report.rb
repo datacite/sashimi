@@ -32,7 +32,7 @@ class Report < ApplicationRecord
   # update URL in handle system, don't do that for draft state
   # providers europ and ethz do their own handle registration
   def pust_report
-    HandleJob.perform_later(self)
+    ReportJob.perform_later(self)
   end
 
 
