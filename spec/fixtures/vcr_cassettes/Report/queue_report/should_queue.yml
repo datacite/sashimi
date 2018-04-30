@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://sqs.eu-west-1.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=GetQueueUrl&QueueName=test_usage&Version=2012-11-05
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby3/3.20.2 ruby/2.4.1 x86_64-linux aws-sdk-sqs/1.3.0
+      X-Amz-Date:
+      - 20180430T163611Z
+      X-Amz-Content-Sha256:
+      - 5761efd13dd0ed81182207171d3660628968189941431d6044920ef8fe7b1160
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AKIAIXLDUBIDM74CC6KQ/20180430/eu-west-1/sqs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=488775e19ba794a5d48d3516f2f780b4b2900829b8fae64d39e34edd7ed6f216
+      Content-Length:
+      - '58'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Server:
+      - Server
+      Date:
+      - Mon, 30 Apr 2018 16:35:50 GMT
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '333'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 5ffa8345-b9c0-50c2-9557-d024f1e62671
+    body:
+      encoding: UTF-8
+      string: <?xml version="1.0"?><ErrorResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/"><Error><Type>Sender</Type><Code>AWS.SimpleQueueService.NonExistentQueue</Code><Message>The
+        specified queue does not exist for this wsdl version.</Message><Detail/></Error><RequestId>5ffa8345-b9c0-50c2-9557-d024f1e62671</RequestId></ErrorResponse>
+    http_version: 
+  recorded_at: Mon, 30 Apr 2018 16:36:12 GMT
+recorded_with: VCR 3.0.3
