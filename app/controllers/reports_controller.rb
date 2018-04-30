@@ -130,10 +130,12 @@ class ReportsController < ApplicationController
 
     header, datasets = params.require([:report_header, :report_datasets])
     header.merge!({report_datasets: datasets})
+    nested_names = [:name, :value]
+    nested_types = [:type, :value]
     header.permit(
       :report_name, :report_id, :release, :created, :created_by, 
-      report_attributes: [:name, :value], 
-      report_filters: [:name, :value], 
+      report_attributes: nested_names, 
+      report_filters: nested_names, 
       exceptions: [:message, :severity, :data, :code, :help_url], 
       report_datasets: [
         :dataset_title, 
@@ -143,15 +145,15 @@ class ReportsController < ApplicationController
         :data_type, 
         :publisher,
         :access_method,
-        publisher_id:[:type, :value], 
-        dataset_dates:[:type, :value], 
+        publisher_id: nested_types, 
+        dataset_dates:nested_types, 
         performance: [
           period: [:end_date, :begin_date],
           instance: [:count, :volume, :country, :metric_type, :access_method]
         ],
-        dataset_contributors: [:type, :value],
-        dataset_attributes: [:type, :value],
-        dataset_id:[:type, :value]
+        dataset_contributors: nested_types,
+        dataset_attributes: nested_types,
+        dataset_id: nested_types
       ]
     )
 
