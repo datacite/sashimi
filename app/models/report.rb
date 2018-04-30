@@ -16,6 +16,9 @@ class Report < ApplicationRecord
   # include validation methods for sushi
   include Metadatable
 
+  # include validation methods for sushi
+  include Queueable 
+
   attr_accessor :month, :year
   validates_presence_of :report_id, :created_by, :report_datasets, :client_id, :provider_id, :created
   validates :uid, uniqueness: true
@@ -24,6 +27,15 @@ class Report < ApplicationRecord
   serialize :exceptions, Array
   before_create :set_id
   before_validation :set_uid, on: :create
+  after_create :pust_report
+
+  # update URL in handle system, don't do that for draft state
+  # providers europ and ethz do their own handle registration
+  def pust_report
+    return nil if draft? || url.blank? || password.blank? 
+    HandleJob.perform_later(self)
+  end
+
 
   private
 
