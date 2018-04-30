@@ -32,7 +32,6 @@ class Report < ApplicationRecord
   # update URL in handle system, don't do that for draft state
   # providers europ and ethz do their own handle registration
   def pust_report
-    return nil if draft? || url.blank? || password.blank? 
     HandleJob.perform_later(self)
   end
 

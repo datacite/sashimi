@@ -5,21 +5,34 @@ module Queueable
 
   included do
     def queue_report(options={})
-      return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing" }] }) unless options[:username].present? && options[:password].present?
-
-      payload = "doi=#{doi}\nurl=#{options[:url]}"
-      mds_url = Rails.env.production? ? 'https://mds.datacite.org' : 'https://mds.test.datacite.org' 
-      url = "#{mds_url}/doi/#{doi}"
-
-      response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: options[:username], password: options[:password])
-
-      if response.status == 201
-        Rails.logger.info "[Handle] Updated to URL " + options[:url] + " for DOI " + doi + "."
-        response
-      else
-        Rails.logger.warn "[Handle] Error updating URL " + options[:url] + " for DOI " + doi + "."
-        Rails.logger.warn response.body["errors"].inspect
-        response
+      sqs = Aws::SQS::Client.new(region: ENV["AWS_REGION"])
+      # Send a message to a queue.
+      queue_name = "#{Rails.env}_usage" 
+      
+      begin
+        queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
+      
+        # Create a message with three custom attributes: Title, Author, and WeeksOn.
+        options = {
+          queue_url: queue_url, 
+          message_body: {
+            report_id: report_id
+          },
+          message_attributes: {
+            "report-id" => {
+              string_value: report_id,
+              data_type: "String"
+            }
+          }
+        }
+        sent_message = sqs.send_message(options)
+        if
+          Rails.logger.info "Report " + report_id + "  has been queued."
+        end
+        sent_message
+      rescue Aws::SQS::Errors::NonExistentQueue
+        Rails.logger.warn "A queue named '#{queue_name}' does not exist."
+        exit(false)
       end
     end
   end
