@@ -1,12 +1,14 @@
 require 'rails_helper'
 
 describe ReportJob, type: :job do
-  let(:report) { create(:report) }
+  include ActiveJob::TestHelper
+  let(:report) { create(:report, id: SecureRandom.random_number(9223372036854775807)) }
   subject(:job) { ReportJob.perform_later(report) }
 
   it 'queues the job' do
+    puts report.inspect
     expect { job }.to have_enqueued_job(ReportJob)
-      .on_queue("test_usage")
+      .on_queue("usage")
   end
 
   after do
