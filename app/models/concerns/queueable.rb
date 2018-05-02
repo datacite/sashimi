@@ -4,7 +4,7 @@ module Queueable
   require 'aws-sdk-sqs'
 
   included do
-    def queue_report(options={})
+    def queue_report(_options={})
       queue_name = "#{Rails.env}_usage" 
       if ENV["AWS_REGION"] 
         sqs = Aws::SQS::Client.new(region: ENV["AWS_REGION"])
