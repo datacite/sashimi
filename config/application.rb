@@ -90,7 +90,7 @@ module Sashimi
 
     # set Active Job queueing backend
     if ENV['AWS_REGION']
-    config.active_job.queue_adapter = :shoryuken
+      config.active_job.queue_adapter = :shoryuken
     else
       config.active_job.queue_adapter = :inline
     end
