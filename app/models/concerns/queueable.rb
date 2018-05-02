@@ -30,7 +30,7 @@ module Queueable
     end
 
     def report_url
-      "https://metrics.test.datacite.org/reports/"+report_id
+      "https://metrics.test.datacite.org/reports/#{report_id}"
     end
   end
 end
