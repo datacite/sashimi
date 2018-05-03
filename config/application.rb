@@ -94,6 +94,7 @@ module Sashimi
     else
       config.active_job.queue_adapter = :inline
     end
+    config.active_job.queue_name_prefix = Rails.env
 
     config.generators do |g|
       g.fixture_replacement :factory_bot
