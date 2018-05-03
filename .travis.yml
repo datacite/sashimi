@@ -66,7 +66,7 @@ after_success:
       export GIT_SHA=$(git rev-parse --short HEAD);
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
       git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/${TERRAFORM_REPO}.git";
-      ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:${TERRAFORM_REPO}/_sashimi.auto.tfvars;
+      ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:${TERRAFORM_REPO}/stage/services/metrics-api/_sashimi.auto.tfvars;
       cd ${TERRAFORM_REPO};
       git remote;
       git config user.email ${DOCKER_EMAIL};
