@@ -4,33 +4,44 @@ module Queueable
   require 'aws-sdk-sqs'
 
   included do
-    def queue_report(_options={})
+    def queue_report(options={})
       queue_name = "#{Rails.env}_usage" 
-      if ENV["AWS_REGION"] 
-        sqs = Aws::SQS::Client.new(region: ENV["AWS_REGION"])
-        queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
-      else
-        queue_url = queue_name
-      end
-    
-      # Create a message with three custom attributes: Title, Author, and WeeksOn.
-      {
-        queue_url: queue_url, 
-        message_body: {
-          report_id: report_url
-        },
-        message_attributes: {
-          "report-id" => {
-            string_value: report_url,
-            data_type: "String"
+      # sqs = Aws::SQS::Client.new(region: ENV["AWS_REGION"])
+      queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
+  
+      begin
+        # Create a message with three custom attributes: Title, Author, and WeeksOn.
+        options = {
+          queue_url: queue_url, 
+          message_body: {
+            report_id: report_url
+          },
+          message_attributes: {
+            "report-id" => {
+              string_value: report_url,
+              data_type: "String"
+            }
           }
         }
-      }.to_json
-      # sent_message = sqs.send_message(options)
+        sent_message = sqs.send_message(options)
+        if sent_message.successful
+          Rails.logger.info "Report " + report_id + "  has been queued."
+        end
+        sent_message
+      rescue Aws::SQS::Errors::NonExistentQueue
+        Rails.logger.warn "A queue named '#{queue_name}' does not exist."
+        exit(false)
+      end
     end
 
     def report_url
       "https://metrics.test.datacite.org/reports/#{report_id}"
     end
+
+    def sqs
+      Aws::SQS::Client.new(region: ENV["AWS_REGION"])
+    end
   end
 end
+
+

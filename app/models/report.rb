@@ -17,7 +17,7 @@ class Report < ApplicationRecord
   include Metadatable
 
   # include validation methods for sushi
-  include Queueable
+  include Queueable if ENV["AWS_REGION"] 
 
   attr_accessor :month, :year
   validates_presence_of :report_id, :created_by, :report_datasets, :client_id, :provider_id, :created
@@ -29,12 +29,10 @@ class Report < ApplicationRecord
   before_validation :set_uid, on: :create
   after_create :pust_report
 
-  # update URL in handle system, don't do that for draft state
-  # providers europ and ethz do their own handle registration
-  def pust_report
-    ReportJob.perform_later(self)
-  end
 
+  def pust_report
+    queue_report(self) if ENV["AWS_REGION"] 
+  end
 
   private
 
