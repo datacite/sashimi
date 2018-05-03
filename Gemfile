@@ -33,6 +33,9 @@ gem 'bergamasco', '~> 0.3.10'
 gem 'base32-url', '~> 0.3'
 gem 'rack-cors', '~> 1.0', '>= 1.0.2', :require => 'rack/cors'
 gem 'json-schema'
+gem 'shoryuken', '~> 3.2', '>= 3.2.2'
+gem "aws-sdk-s3", require: false
+gem 'aws-sdk-sqs', '~> 1.3'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'
