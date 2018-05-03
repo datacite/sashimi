@@ -71,7 +71,7 @@ after_success:
       git remote;
       git config user.email ${DOCKER_EMAIL};
       git config user.name ${DOCKER_USERNAME};
-      git add _sashimi.auto.tfvars;
+      git add stage/services/metrics-api/_sashimi.auto.tfvars;
       git commit -m "Adding sashimi git variables for latest commit";
       git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/${TERRAFORM_REPO}.git" master;
     fi
