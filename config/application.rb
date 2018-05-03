@@ -89,7 +89,11 @@ module Sashimi
     config.middleware.use Rack::Deflater
 
     # set Active Job queueing backend
-    config.active_job.queue_adapter = :inline
+    if ENV['AWS_REGION']
+      config.active_job.queue_adapter = :shoryuken
+    else
+      config.active_job.queue_adapter = :inline
+    end
 
     config.generators do |g|
       g.fixture_replacement :factory_bot
