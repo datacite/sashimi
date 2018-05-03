@@ -8,7 +8,7 @@ describe ReportJob, type: :job do
   it 'queues the job' do
     puts report.inspect
     expect { job }.to have_enqueued_job(ReportJob)
-      .on_queue("usage")
+      .on_queue("#{Rails.env}_usage")
   end
 
   after do
