@@ -31,7 +31,7 @@ class Report < ApplicationRecord
 
 
   def pust_report
-    queue_report(self) if ENV["AWS_REGION"] 
+    queue_report if ENV["AWS_REGION"] 
   end
 
   private
