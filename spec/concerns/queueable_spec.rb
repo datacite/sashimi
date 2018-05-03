@@ -22,3 +22,4 @@ describe Report, vcr: true do
     end
   end
 end
+
