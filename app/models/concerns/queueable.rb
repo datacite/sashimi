@@ -10,7 +10,7 @@ module Queueable
         sqs = Aws::SQS::Client.new(region: ENV["AWS_REGION"])
         queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
       else
-        queue_url = "usage"
+        queue_url = queue_name
       end
     
       # Create a message with three custom attributes: Title, Author, and WeeksOn.
