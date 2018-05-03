@@ -16,5 +16,9 @@ describe Report, vcr: true do
     it 'report_url' do
       # expect(subject.report_url).to eq("https://metrics.test.datacite.org/reports/#{subject.report_id}")
     end
+
+    it 'sqs' do
+      # expect(subject.sqs).to respond_to(:send_message)
+    end
   end
 end
