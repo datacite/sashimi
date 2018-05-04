@@ -12,11 +12,10 @@ module Queueable
   
       begin
         # Create a message with three custom attributes: Title, Author, and WeeksOn.
+        body = { report_id: report_url }.to_json
         options = {
           queue_url: queue_url, 
-          message_body: {
-            report_id: report_url
-          },
+          message_body: body,
           message_attributes: {
             "report-id" => {
               string_value: report_url,
@@ -36,7 +35,7 @@ module Queueable
     end
 
     def report_url
-      "https://metrics.test.datacite.org/reports/#{report_id}"
+      "https://metrics.test.datacite.org/reports/#{uid}"
     end
 
     def sqs
