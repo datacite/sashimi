@@ -17,7 +17,7 @@ class Report < ApplicationRecord
   include Metadatable
 
   # include validation methods for sushi
-  include Queueable if ENV["AWS_REGION"] 
+  include Queueable 
 
   attr_accessor :month, :year
   validates_presence_of :report_id, :created_by, :report_datasets, :client_id, :provider_id, :created
@@ -31,9 +31,9 @@ class Report < ApplicationRecord
 
 
   def pust_report
-    Rails.logger.info "********* SALSA"
-    Rails.logger.info "calling queue for" + report_id
-    queue_report if ENV["AWS_REGION"] 
+    puts "******** to queue"
+    logger.warn "calling queue for " + uid
+    queue_report if ENV["AWS_REGION"]
   end
 
   private

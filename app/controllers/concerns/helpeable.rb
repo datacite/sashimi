@@ -7,7 +7,6 @@ module Helpeable
   included do
 
     def self.permit_recursive_params(params)
-      Rails.logger.info "ccjhchch"
       # Rails.logger.info params.inspect
       (params.try(:to_unsafe_h) || params).map do |key, value|
         if value.is_a?(Array)
