@@ -6,7 +6,7 @@ module Queueable
   included do
     def queue_report(options={})
       queue_name = "#{Rails.env}_usage" 
-      Rails.logger.debug "Trigger queue for" + report_id
+      Rails.logger.info "Trigger queue for" + report_id
       # sqs = Aws::SQS::Client.new(region: ENV["AWS_REGION"])
       queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
   
@@ -24,6 +24,7 @@ module Queueable
           }
         }
         sent_message = sqs.send_message(options)
+        Rails.logger.info "response: " + sent_message.inspect 
         if sent_message.respond_to?(successful)
           Rails.logger.info "Report " + report_id + "  has been queued."
         end
