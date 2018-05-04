@@ -6,9 +6,10 @@ module Queueable
   included do
     def queue_report(options={})
       queue_name = "#{Rails.env}_usage" 
-      Rails.logger.info "Trigger queue for" + report_id
+      puts "******** inside queque"
+      logger.info "Trigger queue for" + uid
       # sqs = Aws::SQS::Client.new(region: ENV["AWS_REGION"])
-      queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
+      queue_url = sqs.get_queue_url(queue_name: "stage_usage").queue_url
   
       begin
         # Create a message with three custom attributes: Title, Author, and WeeksOn.
@@ -25,7 +26,7 @@ module Queueable
         }
         sent_message = sqs.send_message(options)
         Rails.logger.info "response: " + sent_message.inspect 
-        if sent_message.respond_to?(successful)
+        if sent_message.respond_to?("successful")
           Rails.logger.info "Report " + report_id + "  has been queued."
         end
         sent_message
@@ -33,6 +34,7 @@ module Queueable
         Rails.logger.warn "A queue named '#{queue_name}' does not exist."
         exit(false)
       end
+      true
     end
 
     def report_url
