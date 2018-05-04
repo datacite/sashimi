@@ -31,7 +31,8 @@ class Report < ApplicationRecord
 
 
   def pust_report
-    Rails.logger.debug "calling queue for" + report_id
+    Rails.logger.info "********* SALSA"
+    Rails.logger.info "calling queue for" + report_id
     queue_report if ENV["AWS_REGION"] 
   end
 
