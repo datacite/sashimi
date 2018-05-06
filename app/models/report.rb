@@ -27,10 +27,10 @@ class Report < ApplicationRecord
   serialize :exceptions, Array
   before_create :set_id
   before_validation :set_uid, on: :create
-  after_create :pust_report
+  after_create :push_report
 
 
-  def pust_report
+  def push_report
     puts "******** to queue"
     logger.warn "calling queue for " + uid
     queue_report if ENV["AWS_REGION"]
