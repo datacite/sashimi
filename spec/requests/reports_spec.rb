@@ -17,7 +17,7 @@ describe 'Reports', type: :request do
       end
     end
     context 'index filter by year' do
-      let!(:report)  { create(:report, created:"2222-01-01") }
+      let!(:report)  { create(:report, reporting_period:{"begin_date":"2222-01-01"}) }
       before { get '/reports?year=2222'}
 
       it 'returns reports' do
@@ -96,6 +96,10 @@ describe 'Reports', type: :request do
           "report_name": "Dataset Report",
           "report_id": "DSR",
           "created": "2018-01-01",
+          "reporting-period": {
+            "begin-date": "2018-01-01",
+            "end-date": "2022-01-01"
+         },
           "report-filters": [],
           "report-attributes": [],
           "exceptions": [
@@ -188,6 +192,16 @@ describe 'Reports', type: :request do
         expect(response).to have_http_status(422)
       end
     end
+
+    context 'when the request is valid and has many countries' do
+      let(:params_countries) {file_fixture('report_7.json').read}
+      before { post '/reports', params: params_countries, headers: headers }
+
+      it 'creates a report' do
+        expect(response).to have_http_status(201)
+        expect(json.dig("report", "report-header", "report-id")).to eq("FULL")
+      end
+    end
   end
 
 
@@ -200,6 +214,10 @@ describe 'Reports', type: :request do
           "report_name": "Dataset Report",
           "report_id": "DSR",
           "created": "2018-01-01",
+          "reporting-period": {
+            "begin-date": "2018-01-01",
+            "end-date": "2022-01-01"
+         },
           "created_by": "CDL",
           "report-filters": [],
           "report-attributes": [],
@@ -261,6 +279,10 @@ describe 'Reports', type: :request do
         { "report_heasder": {
           "report_name": "Dataset Report",
           "created": "2018-01-01",
+          "reporting-period": {
+            "begin-date": "2018-01-01",
+            "end-date": "2022-01-01"
+         },
           "report_id": "DSR",
         },
           "report_datasets": [

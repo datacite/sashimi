@@ -4,6 +4,10 @@
     "report_id": "DSR",
     "created_by": "CDL",
     "created": "2015-01-01",
+    "reporting-period": {
+        "begin-date": "2015-01-01",
+        "end-date": "2015-01-0"
+    },
     "report_datasets": [{
         "yop": "2010",
         "platform": "DataONE",

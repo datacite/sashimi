@@ -1,9 +1,13 @@
 {
   "report-header": {
     "report-name": "dataset report",
-    "report-id": "DSR",
+    "report-id": "FULL",
     "release": "rd1",
     "created": "2018-05-11",
+    "reporting_period": {
+      "begin_date": "2128-05-09",
+      "end_date": "2128-05-09"
+     },
     "created-by": "Dash",
     "report-attributes": [],
     "report-filters": [
@@ -13844,7 +13848,7 @@
               "metric-type": "total-dataset-investigations",
               "count": 41,
               "country-counts": {
-                "": 3,
+                "US": 3,
                 "DE": 2,
                 "DK": 1,
                 "US": 35
@@ -13855,7 +13859,7 @@
               "metric-type": "unique-dataset-investigations",
               "count": 32,
               "country-counts": {
-                "": 3,
+                "US": 3,
                 "DE": 2,
                 "DK": 1,
                 "US": 26
@@ -23066,7 +23070,7 @@
               "metric-type": "total-dataset-requests",
               "count": 1223,
               "country-counts": {
-                "": 1,
+                "US": 1,
                 "AU": 556,
                 "CA": 17,
                 "DK": 55,
@@ -23079,7 +23083,7 @@
               "metric-type": "unique-dataset-requests",
               "count": 40,
               "country-counts": {
-                "": 1,
+                "US": 1,
                 "AU": 9,
                 "CA": 6,
                 "DK": 3,

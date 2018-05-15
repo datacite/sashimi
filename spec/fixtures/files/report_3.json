@@ -5,6 +5,10 @@
      "release": "rd1",
      "created": "2128-04-09",
      "created-by": "dash",
+     "reporting-period": {
+      "begin-date": "2128-04-09",
+      "end-date": "2128-04-09"
+     },
      "report-attributes": [],
      "report-filters": [
         {
