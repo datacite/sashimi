@@ -6,6 +6,7 @@ FactoryBot.define do
     provider_id "datacite"
     sequence(:created_by) { |n| "datacite#{n}" }
     created "2020-03-02"
+    reporting_period  "begin_date": "2018-03-01", "end_date": "2018-03-31" 
     report_filters []
     report_attributes []
     report_datasets [{
@@ -30,13 +31,11 @@ FactoryBot.define do
           },
           "instance": [
             {
-              "country": "gb",
               "access-method": "regular",
               "metric-type": "total-dataset-investigations",
               "count": 3
             },
             {
-              "country": "gb",
               "access-method": "regular",
               "metric-type": "unique-dataset-investigations",
               "count": 3
