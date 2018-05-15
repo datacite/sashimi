@@ -136,13 +136,11 @@ describe 'Reports', type: :request do
                   },
                   "instance": [
                     {
-                      "country": "GB",
                       "access-Method": "Regular",
                       "Metric-Type": "total-dataset-investigations",
                       "Count": 3
                     },
                     {
-                      "Country": "GB",
                       "Access-Method": "Regular",
                       "Metric-Type": "unique-dataset-investigations",
                       "Count": 3
@@ -233,13 +231,11 @@ describe 'Reports', type: :request do
                   },
                   "instance": [
                     {
-                      "country": "GB",
                       "access-Method": "Regular",
                       "Metric-Type": "total-dataset-investigations",
                       "Count": 3
                     },
                     {
-                      "Country": "GB",
                       "Access-Method": "Regular",
                       "Metric-Type": "unique-dataset-investigations",
                       "Count": 3
