@@ -36,6 +36,8 @@ gem 'json-schema'
 gem 'shoryuken', '~> 3.2', '>= 3.2.2'
 gem "aws-sdk-s3", require: false
 gem 'aws-sdk-sqs', '~> 1.3'
+gem 'iso_country_codes'
+
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'

@@ -120,7 +120,7 @@ class ReportsController < ApplicationController
     header.merge!({report_datasets: datasets})
     nested_names = [:name, :value]
     nested_types = [:type, :value]
-    instance = ReportsController.permit_recursive_params params[:report_datasets].first["performance"].first["instance"].first
+    codes =  IsoCountryCodes.for_select.map {|code| code.last.downcase}
     header.permit(
       :report_name, :report_id, :release, :created, :created_by, 
       report_attributes: nested_names, 
@@ -138,7 +138,7 @@ class ReportsController < ApplicationController
         dataset_dates:nested_types, 
         performance: [
           period: [:end_date, :begin_date],
-          instance: [instance]
+          instance: [:access_method, :metric_type, :count, country_counts: codes]
         ],
         dataset_contributors: nested_types,
         dataset_attributes: nested_types,
