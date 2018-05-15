@@ -74,13 +74,11 @@
            },
            "instance": [
              {
-               "country": "gb",
                "access-method": "regular",
                "metric-type": "total-dataset-investigations",
                "count": 3
              },
              {
-               "country": "gb",
                "access-method": "regular",
                "metric-type": "unique-dataset-investigations",
                "count": 3
