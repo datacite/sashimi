@@ -20,7 +20,7 @@ class Report < ApplicationRecord
   include Queueable 
 
   attr_accessor :month, :year
-  validates_presence_of :report_id, :created_by, :report_datasets, :client_id, :provider_id, :created
+  validates_presence_of :report_id, :created_by, :report_datasets, :client_id, :provider_id, :created, :reporting_period
   validates :uid, uniqueness: true
   validates :validate_sushi, sushi: {presence: true}
 
@@ -44,9 +44,10 @@ class Report < ApplicationRecord
   end
 
   def set_uid
-    unless created.nil? 
-      month = Date.strptime(created,"%Y-%m-%d").month.to_s 
-      year = Date.strptime(created,"%Y-%m-%d").year.to_s 
+    unless reporting_period.nil? 
+      puts reporting_period.to_json
+      month = Date.strptime(reporting_period["begin_date"],"%Y-%m-%d").month.to_s 
+      year = Date.strptime(reporting_period["begin_date"],"%Y-%m-%d").year.to_s 
       write_attribute(:month,  month ) 
       write_attribute(:year,  year) 
     end

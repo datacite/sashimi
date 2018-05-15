@@ -125,6 +125,7 @@ class ReportsController < ApplicationController
       :report_name, :report_id, :release, :created, :created_by, 
       report_attributes: nested_names, 
       report_filters: nested_names, 
+      reporting_period: [:end_date, :begin_date], 
       exceptions: [:message, :severity, :data, :code, :help_url], 
       report_datasets: [
         :dataset_title, 
