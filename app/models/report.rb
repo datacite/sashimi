@@ -31,7 +31,6 @@ class Report < ApplicationRecord
 
 
   def push_report
-    puts "******** to queue"
     logger.warn "calling queue for " + uid
     queue_report if ENV["AWS_REGION"]
   end
@@ -44,13 +43,15 @@ class Report < ApplicationRecord
   end
 
   def set_uid
-    unless reporting_period.nil? 
-      puts reporting_period.to_json
-      month = Date.strptime(reporting_period["begin_date"],"%Y-%m-%d").month.to_s 
-      year = Date.strptime(reporting_period["begin_date"],"%Y-%m-%d").year.to_s 
-      write_attribute(:month,  month ) 
-      write_attribute(:year,  year) 
-    end
-    self.uid = "#{year}-#{month}-#{created_by}"
+    self.uid = SecureRandom.uuid if uid.blank?
+    month = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").month.to_s 
+    year = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").year.to_s 
+    write_attribute(:month,  month ) 
+    write_attribute(:year,  year) 
+    # unless reporting_period.nil? 
+    #   puts reporting_period.to_json
+
+    # end
+    # self.uid = "#{year}-#{month}-#{created_by}"
   end
 end
