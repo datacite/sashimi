@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180515121905) do
+ActiveRecord::Schema.define(version: 20180522095206) do
 
   create_table "error_models", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
     t.integer "code"
@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(version: 20180515121905) do
     t.string "month"
     t.string "uid"
     t.json "reporting_period"
+    t.index ["created_by", "month", "year"], name: "index_reports_on_multiple_columns", unique: true
   end
 
   create_table "status_alerts", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
