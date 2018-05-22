@@ -61,7 +61,7 @@ class ApplicationController < ActionController::API
                when "CanCan::AccessDenied", "JWT::DecodeError" then 401
                when "ActiveRecord::RecordNotFound", "AbstractController::ActionNotFound", "ActionController::RoutingError" then 404
                when "ActiveRecord::RecordNotUnique" then 409
-               when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters", "NoMethodError", "JSON::ParserError" then 422
+               when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters", "NoMethodError", "ActiveRecord::RecordInvalid", "JSON::ParserError" then 422
                else 400
                end
 
@@ -75,8 +75,8 @@ class ApplicationController < ActionController::API
           message = "The resource already exists."
         else
           Bugsnag.notify(exception)
-        message = exception.message
-      end
+          message = exception.message
+        end
 
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     end
