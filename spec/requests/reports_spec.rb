@@ -330,4 +330,134 @@ describe 'Reports', type: :request do
     end
   end
   
+
+
+  describe "UPSERT /reports/:id" do
+    let!(:uid) { SecureRandom.uuid  }
+    let(:uri) { "/reports/#{uid}" }
+    let(:params) {file_fixture('report_7.json').read}
+
+    context "as admin user" do
+
+      before { put "/reports/#{uid}", params: params, headers: headers }
+
+
+      it "it should create a report" do
+
+        expect(response).to have_http_status(201)
+        expect(json["errors"]).to be_nil
+        expect(json.dig("report", "id")).to eq(uid)
+        expect(json.dig("report", "report-header", "created-by")).to eq("Dash")
+      end
+    end
+
+    # context "as staff user" do
+    #   let(:token) { User.generate_token(role_id: "staff_user") }
+
+    #   before { put "/reports/#{uid}", params: params, headers: headers }
+
+    #   it "JSON" do
+       
+    #     expect(response).to have_http_status(401)
+
+    #     expect(json["errors"]).to eq(errors)
+    #     expect(json["data"]).to be_nil
+    #   end
+    # end
+
+    # context "as regular user" do
+    #   let(:token) { User.generate_token(role_id: "user") }
+
+    #   before { put "/reports/#{uid}", params: params, headers: headers }
+
+    #   it "JSON" do
+    #     expect(response).to have_http_status(401)
+
+    
+    #     expect(json["errors"]).to eq(errors)
+    #     expect(json["data"]).to be_blank
+    #   end
+    # end
+
+    # context "without source-token" do
+    #   let(:params) do
+    #     { "data" => { "type" => "reports",
+            
+    #                   "attributes" => {
+    #                     "uuid" => uuid,
+    #                     "subj-id" => report.subj_id,
+    #                     "source-id" => report.source_id } } }
+    #   end
+    #   before { put "/reports/#{uid}", params: params, headers: headers }
+
+    #   it "JSON" do
+    #     expect(response).to have_http_status(422)
+
+    
+    #     expect(json["errors"]).to eq([{"status"=>422, "title"=>"Source token can't be blank"}])
+    #     expect(json["data"]).to be_nil
+    #   end
+    # end
+
+    # context "without source-id" do
+    #   let(:params) do
+    #     { "data" => { "type" => "reports",
+    #                   "attributes" => {
+    #                     "uuid" => uuid,
+    #                     "subj-id" => report.subj_id,
+    #                     "source-token" => report.source_token } } }
+    #   end
+
+    #   before { put "/reports/#{uid}", params: params, headers: headers }
+    #   it "JSON" do
+    #     expect(response).to have_http_status(422)
+
+    
+    #     expect(json["errors"]).to eq([{"status"=>422, "title"=>"Source can't be blank"}])
+    #     expect(json["data"]).to be_blank
+    #   end
+    # end
+
+    context "entry already exists with other uuid" do
+      # let!(:report) { create(:report) }
+      let!(:uid) { SecureRandom.uuid  }
+      let!(:second_uid) { SecureRandom.uuid  }
+      let(:params_update) {file_fixture('report_8.json').read}
+
+ 
+      before { put "/reports/#{uid}", params: params, headers: headers }
+
+      before { put "/reports/#{second_uid}", params: params, headers: headers }
+
+      it "should fail update report" do
+
+        expect(response).to have_http_status(409)
+        expect(json["report"]).to be_nil
+        expect(json["errors"].first).to eq("status"=>"409", "title"=>"The resource already exists.")
+      end
+    end
+
+
+    context "entry already exists" do
+      # let!(:report) { create(:report) }
+      let!(:uid) { SecureRandom.uuid  }
+      let(:params_update) {file_fixture('report_8.json').read}
+
+ 
+      before { put "/reports/#{uid}", params: params, headers: headers }
+
+      before { put "/reports/#{uid}", params: params_update, headers: headers }
+
+      it "should update report" do
+
+        expect(response).to have_http_status(200)
+
+        expect(json["errors"]).to be_nil
+        expect(json.dig("report", "id")).to eq(uid)
+        expect(json.dig("report", "report-header", "release")).to eq("rd2")
+      end
+    end
+  end
+
+
 end
