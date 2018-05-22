@@ -45,13 +45,14 @@ describe 'Reports', type: :request do
 
     context 'when the record exists' do
       it 'returns the report' do
+        puts json
         expect(json.dig("report","report-header", "report-id")).to eq(report.report_id)
         expect(response).to have_http_status(200)
       end
     end
 
     context 'when the record does not exist' do
-      before { get "/reports/xxx", headers: headers }
+      before { get "/reports/0f8372ff-9bbb-44d0-80ff-a03f308f5889", headers: headers }
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
@@ -321,7 +322,7 @@ describe 'Reports', type: :request do
     end
   
     context 'when the resources doesnt exist' do
-      before { delete '/reports/xxx', headers: headers }
+      before { delete '/reports/0f8372ff-9bbb-44d0-80ff-a03f308f5889', headers: headers }
   
       it 'returns status code 404' do
         expect(response).to have_http_status(404)

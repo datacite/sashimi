@@ -6,6 +6,11 @@ module Helpeable
 
   included do
 
+    def validate_uuid string
+      uuid_regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+      return true if uuid_regex.match?(string.to_s.downcase)
+    end
+
     def self.permit_recursive_params(params)
       # Rails.logger.info params.inspect
       (params.try(:to_unsafe_h) || params).map do |key, value|
