@@ -72,6 +72,7 @@ class ReportsController < ApplicationController
   end
 
   def update
+    fail ActiveRecord::RecordInvalid unless validate_uuid(params[:id]) == true
     @report = Report.where(uid: params[:id]).first
     exists = @report.present?
 
@@ -103,7 +104,6 @@ class ReportsController < ApplicationController
 
   def set_report
    
-    fail ActiveRecord::RecordInvalid unless validate_uuid(params[:id]) == true
     @report = Report.where(uid: params[:id]).first
 
     fail ActiveRecord::RecordNotFound unless @report.present?

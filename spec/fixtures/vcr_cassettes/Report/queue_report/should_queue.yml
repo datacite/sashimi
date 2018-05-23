@@ -1,0 +1,187 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://sqs.eu-west-1.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=GetQueueUrl&QueueName=test_usage&Version=2012-11-05
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby3/3.20.2 ruby/2.4.1 x86_64-linux aws-sdk-sqs/1.3.0
+      X-Amz-Date:
+      - 20180523T072329Z
+      X-Amz-Content-Sha256:
+      - 5761efd13dd0ed81182207171d3660628968189941431d6044920ef8fe7b1160
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AKIAIXLDUBIDM74CC6KQ/20180523/eu-west-1/sqs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=1a5cb6e1fe3852b3f8d36d1d5be5d79db44be6e3d77d6f678ae53224a2654ece
+      Content-Length:
+      - '58'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 23 May 2018 07:23:26 GMT
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '330'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - d058ecb7-ca82-5e9b-bf1c-bfc8d3ac2be9
+    body:
+      encoding: UTF-8
+      string: <?xml version="1.0"?><GetQueueUrlResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/"><GetQueueUrlResult><QueueUrl>https://sqs.eu-west-1.amazonaws.com/404017989009/test_usage</QueueUrl></GetQueueUrlResult><ResponseMetadata><RequestId>d058ecb7-ca82-5e9b-bf1c-bfc8d3ac2be9</RequestId></ResponseMetadata></GetQueueUrlResponse>
+    http_version: 
+  recorded_at: Wed, 23 May 2018 07:23:29 GMT
+- request:
+    method: post
+    uri: https://sqs.eu-west-1.amazonaws.com/404017989009/test_usage
+    body:
+      encoding: UTF-8
+      string: Action=SendMessage&MessageAttribute.1.Name=report-id&MessageAttribute.1.Value.DataType=String&MessageAttribute.1.Value.StringValue=https%3A%2F%2Fmetrics.test.datacite.org%2Freports%2F97f19108-842a-44f6-a012-cf99b8938418&MessageBody=%7B%22report_id%22%3A%22https%3A%2F%2Fmetrics.test.datacite.org%2Freports%2F97f19108-842a-44f6-a012-cf99b8938418%22%7D&QueueUrl=https%3A%2F%2Fsqs.eu-west-1.amazonaws.com%2F404017989009%2Ftest_usage&Version=2012-11-05
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby3/3.20.2 ruby/2.4.1 x86_64-linux aws-sdk-sqs/1.3.0
+      X-Amz-Date:
+      - 20180523T072329Z
+      X-Amz-Content-Sha256:
+      - 4398f689691f0feeff51e3cff3c6800114d32f04293374e976c5170e4df49618
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AKIAIXLDUBIDM74CC6KQ/20180523/eu-west-1/sqs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=12a79e03b35d71cf3a7cfe1198994b1e87402bb175439f4d570258f762a084a7
+      Content-Length:
+      - '448'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 23 May 2018 07:23:26 GMT
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '459'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 0b5eb81c-448f-54b2-b9bb-eb635da1600a
+    body:
+      encoding: UTF-8
+      string: <?xml version="1.0"?><SendMessageResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/"><SendMessageResult><MessageId>7eb603f8-1410-4b00-94a0-aaa5589d2356</MessageId><MD5OfMessageBody>e182cb23a93acc44b706511d10b168fb</MD5OfMessageBody><MD5OfMessageAttributes>a3b733aa69ed4fbe5ac17e6ddc9635e9</MD5OfMessageAttributes></SendMessageResult><ResponseMetadata><RequestId>0b5eb81c-448f-54b2-b9bb-eb635da1600a</RequestId></ResponseMetadata></SendMessageResponse>
+    http_version: 
+  recorded_at: Wed, 23 May 2018 07:23:29 GMT
+- request:
+    method: post
+    uri: https://sqs.eu-west-1.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=GetQueueUrl&QueueName=test_usage&Version=2012-11-05
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby3/3.20.2 ruby/2.4.1 x86_64-linux aws-sdk-sqs/1.3.0
+      X-Amz-Date:
+      - 20180523T072329Z
+      X-Amz-Content-Sha256:
+      - 5761efd13dd0ed81182207171d3660628968189941431d6044920ef8fe7b1160
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AKIAIXLDUBIDM74CC6KQ/20180523/eu-west-1/sqs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=1a5cb6e1fe3852b3f8d36d1d5be5d79db44be6e3d77d6f678ae53224a2654ece
+      Content-Length:
+      - '58'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 23 May 2018 07:23:27 GMT
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '330'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 70bce9c3-382e-5c75-b5e3-babc2101a4ef
+    body:
+      encoding: UTF-8
+      string: <?xml version="1.0"?><GetQueueUrlResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/"><GetQueueUrlResult><QueueUrl>https://sqs.eu-west-1.amazonaws.com/404017989009/test_usage</QueueUrl></GetQueueUrlResult><ResponseMetadata><RequestId>70bce9c3-382e-5c75-b5e3-babc2101a4ef</RequestId></ResponseMetadata></GetQueueUrlResponse>
+    http_version: 
+  recorded_at: Wed, 23 May 2018 07:23:30 GMT
+- request:
+    method: post
+    uri: https://sqs.eu-west-1.amazonaws.com/404017989009/test_usage
+    body:
+      encoding: UTF-8
+      string: Action=SendMessage&MessageAttribute.1.Name=report-id&MessageAttribute.1.Value.DataType=String&MessageAttribute.1.Value.StringValue=https%3A%2F%2Fmetrics.test.datacite.org%2Freports%2F97f19108-842a-44f6-a012-cf99b8938418&MessageBody=%7B%22report_id%22%3A%22https%3A%2F%2Fmetrics.test.datacite.org%2Freports%2F97f19108-842a-44f6-a012-cf99b8938418%22%7D&QueueUrl=https%3A%2F%2Fsqs.eu-west-1.amazonaws.com%2F404017989009%2Ftest_usage&Version=2012-11-05
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby3/3.20.2 ruby/2.4.1 x86_64-linux aws-sdk-sqs/1.3.0
+      X-Amz-Date:
+      - 20180523T072330Z
+      X-Amz-Content-Sha256:
+      - 4398f689691f0feeff51e3cff3c6800114d32f04293374e976c5170e4df49618
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AKIAIXLDUBIDM74CC6KQ/20180523/eu-west-1/sqs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=10a0e3026e169e8e7ef097295e53b1f5f14af2a6eab682f43dfb04533ac392ca
+      Content-Length:
+      - '448'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 23 May 2018 07:23:27 GMT
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '459'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 6a99e204-f332-5aee-bd8c-b17bea1d1cd7
+    body:
+      encoding: UTF-8
+      string: <?xml version="1.0"?><SendMessageResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/"><SendMessageResult><MessageId>2b2444d3-da6b-43b2-ace6-0e3d965501c7</MessageId><MD5OfMessageBody>e182cb23a93acc44b706511d10b168fb</MD5OfMessageBody><MD5OfMessageAttributes>a3b733aa69ed4fbe5ac17e6ddc9635e9</MD5OfMessageAttributes></SendMessageResult><ResponseMetadata><RequestId>6a99e204-f332-5aee-bd8c-b17bea1d1cd7</RequestId></ResponseMetadata></SendMessageResponse>
+    http_version: 
+  recorded_at: Wed, 23 May 2018 07:23:30 GMT
+recorded_with: VCR 3.0.3

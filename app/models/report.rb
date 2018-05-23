@@ -23,6 +23,7 @@ class Report < ApplicationRecord
   validates_presence_of :report_id, :created_by, :report_datasets, :client_id, :provider_id, :created, :reporting_period
   validates :uid, uniqueness: true
   validates :validate_sushi, sushi: {presence: true}
+  attr_readonly :created_by, :month, :year, :client_id
 
   serialize :exceptions, Array
   before_create :set_id
@@ -48,10 +49,5 @@ class Report < ApplicationRecord
     year = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").year.to_s 
     write_attribute(:month,  month ) 
     write_attribute(:year,  year) 
-    # unless reporting_period.nil? 
-    #   puts reporting_period.to_json
-
-    # end
-    # self.uid = "#{year}-#{month}-#{created_by}"
   end
 end

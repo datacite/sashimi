@@ -179,7 +179,6 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params, headers: headers }
 
       it 'fails to create a report' do
-        puts response
         expect(response).to have_http_status(422)
       end
     end
@@ -189,7 +188,6 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params, headers: headers }
 
       it 'fails to create a report' do
-        puts response
         expect(response).to have_http_status(422)
       end
     end
@@ -310,6 +308,27 @@ describe 'Reports', type: :request do
         expect(json["errors"].first).to eq("status"=>"422", "title"=>"You need to provide a payload following the SUSHI specification")
       end
     end
+
+
+    context "updating report-header" do
+      let!(:uid) { SecureRandom.uuid  }
+      let(:params) {file_fixture('report_3.json').read}
+      let(:params_update) {file_fixture('report_9.json').read}
+
+      before { put "/reports/#{uid}", params: params, headers: headers }
+      before { put "/reports/#{uid}", params: params_update, headers: headers }
+      before { get "/reports/#{uid}", headers: headers }
+
+
+      it "it should not update" do
+        expect(response).to have_http_status(200)
+        expect(json["errors"]).to be_nil
+        expect(json.dig("report", "id")).to eq(uid)
+        expect(json.dig("report", "report-header", "created-by")).to eq("dash")
+        expect(json.dig("report", "report-header", "reporting-period", "begin-date")).not_to eq("2129-05-09")
+      end
+    end
+
   end
   # Test suite for DELETE /reports/:id
   describe 'DELETE /reports/:id' do
@@ -352,72 +371,6 @@ describe 'Reports', type: :request do
       end
     end
 
-    # context "as staff user" do
-    #   let(:token) { User.generate_token(role_id: "staff_user") }
-
-    #   before { put "/reports/#{uid}", params: params, headers: headers }
-
-    #   it "JSON" do
-       
-    #     expect(response).to have_http_status(401)
-
-    #     expect(json["errors"]).to eq(errors)
-    #     expect(json["data"]).to be_nil
-    #   end
-    # end
-
-    # context "as regular user" do
-    #   let(:token) { User.generate_token(role_id: "user") }
-
-    #   before { put "/reports/#{uid}", params: params, headers: headers }
-
-    #   it "JSON" do
-    #     expect(response).to have_http_status(401)
-
-    
-    #     expect(json["errors"]).to eq(errors)
-    #     expect(json["data"]).to be_blank
-    #   end
-    # end
-
-    # context "without source-token" do
-    #   let(:params) do
-    #     { "data" => { "type" => "reports",
-            
-    #                   "attributes" => {
-    #                     "uuid" => uuid,
-    #                     "subj-id" => report.subj_id,
-    #                     "source-id" => report.source_id } } }
-    #   end
-    #   before { put "/reports/#{uid}", params: params, headers: headers }
-
-    #   it "JSON" do
-    #     expect(response).to have_http_status(422)
-
-    
-    #     expect(json["errors"]).to eq([{"status"=>422, "title"=>"Source token can't be blank"}])
-    #     expect(json["data"]).to be_nil
-    #   end
-    # end
-
-    # context "without source-id" do
-    #   let(:params) do
-    #     { "data" => { "type" => "reports",
-    #                   "attributes" => {
-    #                     "uuid" => uuid,
-    #                     "subj-id" => report.subj_id,
-    #                     "source-token" => report.source_token } } }
-    #   end
-
-    #   before { put "/reports/#{uid}", params: params, headers: headers }
-    #   it "JSON" do
-    #     expect(response).to have_http_status(422)
-
-    
-    #     expect(json["errors"]).to eq([{"status"=>422, "title"=>"Source can't be blank"}])
-    #     expect(json["data"]).to be_blank
-    #   end
-    # end
 
     context "entry already exists with other uuid" do
       # let!(:report) { create(:report) }
@@ -440,7 +393,6 @@ describe 'Reports', type: :request do
 
 
     context "entry already exists" do
-      # let!(:report) { create(:report) }
       let!(:uid) { SecureRandom.uuid  }
       let(:params_update) {file_fixture('report_8.json').read}
 
