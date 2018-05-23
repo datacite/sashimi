@@ -23,6 +23,7 @@ class Report < ApplicationRecord
   validates_presence_of :report_id, :created_by, :report_datasets, :client_id, :provider_id, :created, :reporting_period
   validates :uid, uniqueness: true
   validates :validate_sushi, sushi: {presence: true}
+  attr_readonly :created_by, :month, :year, :client_id
 
   serialize :exceptions, Array
   before_create :set_id
@@ -31,7 +32,6 @@ class Report < ApplicationRecord
 
 
   def push_report
-    puts "******** to queue"
     logger.warn "calling queue for " + uid
     queue_report if ENV["AWS_REGION"]
   end
@@ -44,13 +44,10 @@ class Report < ApplicationRecord
   end
 
   def set_uid
-    unless reporting_period.nil? 
-      puts reporting_period.to_json
-      month = Date.strptime(reporting_period["begin_date"],"%Y-%m-%d").month.to_s 
-      year = Date.strptime(reporting_period["begin_date"],"%Y-%m-%d").year.to_s 
-      write_attribute(:month,  month ) 
-      write_attribute(:year,  year) 
-    end
-    self.uid = "#{year}-#{month}-#{created_by}"
+    self.uid = SecureRandom.uuid if uid.blank?
+    month = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").month.to_s 
+    year = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").year.to_s 
+    write_attribute(:month,  month ) 
+    write_attribute(:year,  year) 
   end
 end

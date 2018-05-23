@@ -15,6 +15,28 @@ describe ReportsController, type: :request do
       end
     end
   end
+
+  class FakesController < ApplicationController
+    include Helpeable
+  end
+
+  describe 'validate uuid' do
+  
+    it "should pass when id is uuid" do
+      response = subject.validate_uuid SecureRandom.uuid
+      expect(response).to be true
+    end
+
+    it "should pass when id is uuid" do
+      response = subject.validate_uuid SecureRandom.uuid.upcase
+      expect(response).to be true
+    end
+
+    it "shoudl fail when id is just a string" do
+      response = subject.validate_uuid "ddds-44ss-sdsd44"
+      expect(response).to be_nil
+    end
+  end
 end
 
 
