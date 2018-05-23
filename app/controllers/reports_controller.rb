@@ -15,7 +15,7 @@ class ReportsController < ApplicationController
 
 
   prepend_before_action :authenticate_user_from_token!
-  before_action :set_report, only: [:show, :update, :destroy]
+  before_action :set_report, only: [:show, :destroy]
   before_action :set_user_hash, only: [:create, :update, :destroy]
   authorize_resource :except => [:index, :show]
 
@@ -72,8 +72,16 @@ class ReportsController < ApplicationController
   end
 
   def update
+    fail ActiveRecord::RecordInvalid unless validate_uuid(params[:id]) == true
+    @report = Report.where(uid: params[:id]).first
+    exists = @report.present?
+
+    # create report if it doesn't exist already
+    @report = Report.new(safe_params.merge({uid: params[:id]})) unless @report.present?
+
+    authorize! :update, @report
     if @report.update_attributes(safe_params.merge(@user_hash))
-      render json: @report
+      render json: @report, status: exists ? :ok : :created
     else
       Rails.logger.warn @report.errors.inspect
       render json: serialize(@report.errors), status: :unprocessable_entity
@@ -95,11 +103,8 @@ class ReportsController < ApplicationController
   protected
 
   def set_report
-    # id = Base32::URL.decode(URI.decode(params[:id]))
-    id = params[:id]
-    fail ActiveRecord::RecordNotFound unless id.present?
-
-    @report = Report.where(uid: id).first
+   
+    @report = Report.where(uid: params[:id]).first
 
     fail ActiveRecord::RecordNotFound unless @report.present?
   end

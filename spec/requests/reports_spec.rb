@@ -45,13 +45,14 @@ describe 'Reports', type: :request do
 
     context 'when the record exists' do
       it 'returns the report' do
+        puts json
         expect(json.dig("report","report-header", "report-id")).to eq(report.report_id)
         expect(response).to have_http_status(200)
       end
     end
 
     context 'when the record does not exist' do
-      before { get "/reports/xxx", headers: headers }
+      before { get "/reports/0f8372ff-9bbb-44d0-80ff-a03f308f5889", headers: headers }
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
@@ -178,7 +179,6 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params, headers: headers }
 
       it 'fails to create a report' do
-        puts response
         expect(response).to have_http_status(422)
       end
     end
@@ -188,7 +188,6 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params, headers: headers }
 
       it 'fails to create a report' do
-        puts response
         expect(response).to have_http_status(422)
       end
     end
@@ -309,6 +308,27 @@ describe 'Reports', type: :request do
         expect(json["errors"].first).to eq("status"=>"422", "title"=>"You need to provide a payload following the SUSHI specification")
       end
     end
+
+
+    context "updating report-header" do
+      let!(:uid) { SecureRandom.uuid  }
+      let(:params) {file_fixture('report_3.json').read}
+      let(:params_update) {file_fixture('report_9.json').read}
+
+      before { put "/reports/#{uid}", params: params, headers: headers }
+      before { put "/reports/#{uid}", params: params_update, headers: headers }
+      before { get "/reports/#{uid}", headers: headers }
+
+
+      it "it should not update" do
+        expect(response).to have_http_status(200)
+        expect(json["errors"]).to be_nil
+        expect(json.dig("report", "id")).to eq(uid)
+        expect(json.dig("report", "report-header", "created-by")).to eq("dash")
+        expect(json.dig("report", "report-header", "reporting-period", "begin-date")).not_to eq("2129-05-09")
+      end
+    end
+
   end
   # Test suite for DELETE /reports/:id
   describe 'DELETE /reports/:id' do
@@ -321,7 +341,7 @@ describe 'Reports', type: :request do
     end
   
     context 'when the resources doesnt exist' do
-      before { delete '/reports/xxx', headers: headers }
+      before { delete '/reports/0f8372ff-9bbb-44d0-80ff-a03f308f5889', headers: headers }
   
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
@@ -330,4 +350,67 @@ describe 'Reports', type: :request do
     end
   end
   
+
+
+  describe "UPSERT /reports/:id" do
+    let!(:uid) { SecureRandom.uuid  }
+    let(:uri) { "/reports/#{uid}" }
+    let(:params) {file_fixture('report_7.json').read}
+
+    context "as admin user" do
+
+      before { put "/reports/#{uid}", params: params, headers: headers }
+
+
+      it "it should create a report" do
+
+        expect(response).to have_http_status(201)
+        expect(json["errors"]).to be_nil
+        expect(json.dig("report", "id")).to eq(uid)
+        expect(json.dig("report", "report-header", "created-by")).to eq("Dash")
+      end
+    end
+
+
+    context "entry already exists with other uuid" do
+      # let!(:report) { create(:report) }
+      let!(:uid) { SecureRandom.uuid  }
+      let!(:second_uid) { SecureRandom.uuid  }
+      let(:params_update) {file_fixture('report_8.json').read}
+
+ 
+      before { put "/reports/#{uid}", params: params, headers: headers }
+
+      before { put "/reports/#{second_uid}", params: params, headers: headers }
+
+      it "should fail update report" do
+
+        expect(response).to have_http_status(409)
+        expect(json["report"]).to be_nil
+        expect(json["errors"].first).to eq("status"=>"409", "title"=>"The resource already exists.")
+      end
+    end
+
+
+    context "entry already exists" do
+      let!(:uid) { SecureRandom.uuid  }
+      let(:params_update) {file_fixture('report_8.json').read}
+
+ 
+      before { put "/reports/#{uid}", params: params, headers: headers }
+
+      before { put "/reports/#{uid}", params: params_update, headers: headers }
+
+      it "should update report" do
+
+        expect(response).to have_http_status(200)
+
+        expect(json["errors"]).to be_nil
+        expect(json.dig("report", "id")).to eq(uid)
+        expect(json.dig("report", "report-header", "release")).to eq("rd2")
+      end
+    end
+  end
+
+
 end

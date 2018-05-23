@@ -60,17 +60,23 @@ class ApplicationController < ActionController::API
       status = case exception.class.to_s
                when "CanCan::AccessDenied", "JWT::DecodeError" then 401
                when "ActiveRecord::RecordNotFound", "AbstractController::ActionNotFound", "ActionController::RoutingError" then 404
-               when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters", "NoMethodError", "JSON::ParserError" then 422
+               when "ActiveRecord::RecordNotUnique" then 409
+               when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters", "NoMethodError", "ActiveRecord::RecordInvalid", "JSON::ParserError" then 422
                else 400
                end
 
-      if status == 404
-        message = "The resource you are looking for doesn't exist."
-      elsif status == 401
-        message = "You are not authorized to access this page."
-      else
-        message = exception.message
-      end
+        if status == 404
+          message = "The resource you are looking for doesn't exist."
+        elsif status == 401
+          message = "You are not authorized to access this resource."
+        elsif status == 406
+          message = "The content type is not recognized."
+        elsif status == 409
+          message = "The resource already exists."
+        else
+          Bugsnag.notify(exception)
+          message = exception.message
+        end
 
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     end
