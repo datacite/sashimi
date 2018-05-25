@@ -33,7 +33,7 @@ class Report < ApplicationRecord
 
   def push_report
     logger.warn "calling queue for " + uid
-    queue_report if ENV["AWS_REGION"]
+    queue_report if ENV["AWS_REGION"].present?
   end
 
   private
@@ -44,6 +44,7 @@ class Report < ApplicationRecord
   end
 
   def set_uid
+    return ActionController::ParameterMissing if self.reporting_period.nil?
     self.uid = SecureRandom.uuid if uid.blank?
     month = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").month.to_s 
     year = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").year.to_s 
