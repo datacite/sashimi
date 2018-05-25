@@ -28,7 +28,7 @@ class Report < ApplicationRecord
   serialize :exceptions, Array
   before_create :set_id
   before_validation :set_uid, on: :create
-  after_create :push_report
+  after_save :push_report
 
 
   def push_report
