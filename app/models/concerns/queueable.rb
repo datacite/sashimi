@@ -37,7 +37,7 @@ module Queueable
     end
 
     def report_url
-      "https://metrics.test.datacite.org/reports/#{uid}"
+      "#{ENV["USAGE_URL"]}/reports/#{uid}"
     end
 
     def sqs
