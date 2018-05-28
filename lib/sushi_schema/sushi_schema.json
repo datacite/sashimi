@@ -129,6 +129,13 @@
           "items" : {
             "$ref" : "#/definitions/sushi_report_header_report_attributes"
           }
+        },
+        "reporting-period" : {
+          "type" : "object",
+          "description" : "time the report is about. format as defined by date-time - rfc3339",
+          "items" : {
+            "$ref" : "#/definitions/counter_dataset_performance_period"
+          }
         }
       },
       "description" : "generalized report header that defines the requested report, the requestor, the customer, filters applied, reportattributes applied and any exceptions.",
