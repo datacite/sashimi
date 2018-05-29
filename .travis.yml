@@ -67,11 +67,13 @@ after_success:
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
       git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/${TERRAFORM_REPO}.git";
       ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:${TERRAFORM_REPO}/stage/services/metrics-api/_sashimi.auto.tfvars;
+      ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:${TERRAFORM_REPO}/prod-eu-west/services/metrics-api/_sashimi.auto.tfvars;
       cd ${TERRAFORM_REPO};
       git remote;
       git config user.email ${DOCKER_EMAIL};
       git config user.name ${DOCKER_USERNAME};
       git add stage/services/metrics-api/_sashimi.auto.tfvars;
+      git add prod-eu-west/services/metrics-api/_sashimi.auto.tfvars;
       git commit -m "Adding sashimi git variables for latest commit";
       git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/${TERRAFORM_REPO}.git" master;
     fi
