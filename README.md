@@ -27,8 +27,7 @@ You can now point your browser to `http://localhost:8075` and use the applicatio
 Full API Reference can be found in the [DataCite Support Website](https://support.datacite.org/v1.1/reference#metrics-api). This reference is also a Live API. Major resource components supported by the Sashimi API are:
 
 - reports
-- publishers
-- status
+- hearthbeat
 
 
 These can be used alone like this
@@ -36,8 +35,7 @@ These can be used alone like this
 | resource      | description                       |
 |:--------------|:----------------------------------|
 | `/reports`      | returns a list of all reports in the Hub
-| `/publishers`    | returns a list of all Publishers
-| `/status` | returns the service status |
+| `/hearthbeat` | returns the service status |
 
 
 ### Resource components and identifiers
@@ -45,8 +43,7 @@ Resource components can be used in conjunction with identifiers to retrieve the 
 
 | resource                    | description                       |
 |:----------------------------|:----------------------------------|
-| `/reports/{report-uid}`           | returns metadata for the specified Report. The report UID is a combination of the year, month the report was created and publisher that created the report. For example, for a created_by `CDL` for 2018-03-01 the uid of the report is `2018-03-CDL` |
-| `/publishers/{publisher-id}`      | returns metadata for specified publisher  |
+| `/reports/{report-uid}`           | returns metadata for the specified Report. The report UID is a UUID according to RFC 4122. |
 
 
 
@@ -67,6 +64,11 @@ curl --header "Content-Type: application/json; Accept: application/json" -H "X-A
     "release": "rd1",
     "created": "2016-09-08t22:47:31z",
     "created-by": "dataone",
+		"reporting-period": 
+    {
+        "begin-date": "2018-05-01",
+        "end-date": "2018-05-30"
+    },
     "report-filters": [
       {
         "name": "begin-date",
@@ -146,6 +148,9 @@ curl --header "Content-Type: application/json; Accept: application/json" -H "X-A
 }
 
 ```
+
+Additionally, you can use a PUT call whith a new report and providing your own 'report_id'. this will create a report provided the report follows the Sushi schema and the 'report_id' is a UUID.
+
 ## Key and Values
 
 The allowed and recommended characters for an URL safe naming of parameters are defined in the format spec. To also standardize parameters names, the following (more restrictive) rules are recommended:
