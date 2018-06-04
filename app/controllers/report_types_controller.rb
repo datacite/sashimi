@@ -12,6 +12,7 @@ class ReportTypesController < ApplicationController
 
   def index
     # Your code here
+  end
 
     render json: {"message" => "yes, it worked"}
   end
