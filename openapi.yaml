@@ -512,7 +512,7 @@ definitions:
       reporting_period:
         type: string
         description: Time the report represents.
-     report_attributes:
+      report_attributes:
         type: string
         description: Zero or more additional attributes applied to the report. Attributes inform the level of detail in the report.
       exceptions:
