@@ -461,10 +461,25 @@ definitions:
     description: Describes the formatting needs for the COUNTER Dataset Report. Response may include the Report_Header (optional), Report_Datasets (usage stats).
     required:
       - report_datasets
+      - report_header
+    properties:
+      report_header:
+        type: object
+        description: Describes the formatting needs for the Header of the COUNTER Dataset Report. 
+        items:
+          $ref: '#/definitions/Report_Header'
+      report_datasets:
+        type: string
+        description: Defines the output for the Report_Datasets being returned in a Dataset Report. Collection of datasets from the report.
+  Report_Header:
+    type: object
+    description: Describes the formatting needs for the Header of the COUNTER Dataset Report. 
+    required:
       - report_id
       - report_name
       - release
       - created_by
+      - reporting_period
     properties:
       id:
         type: string
@@ -494,12 +509,12 @@ definitions:
       report_filters:
         type: string
         description: Zero or more report filters used for this report. Typically reflect filters provided on the Request. Filters limit the data to be reported on.
-      report_attributes:
+      reporting_period:
+        type: string
+        description: Time the report represents.
+     report_attributes:
         type: string
         description: Zero or more additional attributes applied to the report. Attributes inform the level of detail in the report.
-      report_datasets:
-        type: string
-        description: Defines the output for the Report_Datasets being returned in a Dataset Report. Collection of datasets from the report.
       exceptions:
         type: array
         description: Series of exceptions encounted when preparing the report.
