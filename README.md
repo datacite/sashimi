@@ -1,8 +1,8 @@
-# Sashimi API for Data Level Metrics
+# Data Usage API 
 
 [![Build Status](https://travis-ci.org/datacite/sashimi.svg?branch=master)](https://travis-ci.org/datacite/sashimi) [![Docker Build Status](https://img.shields.io/docker/build/datacite/sashimi.svg)](https://hub.docker.com/r/datacite/sashimi/) [![Maintainability](https://api.codeclimate.com/v1/badges/a0d15834af2cdc24e22f/maintainability)](https://codeclimate.com/github/datacite/sashimi/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/a0d15834af2cdc24e22f/test_coverage)](https://codeclimate.com/github/datacite/sashimi/test_coverage)
 
-Sashimi API is an api-only application that wraps a storage hub of SUSHI reports for data level metrics. Sashimi expects SUSHI formated reports in ingestion and produces collections of SUSHI reports for consumption.
+Sashimi is a Data Usage API is an api-only application that wraps a storage hub of SUSHI reports for data usage. Sashimi expects SUSHI formated reports in ingestion and produces collections of SUSHI reports for consumption.
 
 It closely follows the [RESEARCH_DATA_SUSHI specification](https://app.swaggerhub.com/apis/COUNTER/researchdata-sushi_1_0_api/1.0.0#/).
 
@@ -24,7 +24,7 @@ You can now point your browser to `http://localhost:8075` and use the applicatio
 
 ## Resource components
 
-Full API Reference can be found in the [DataCite Support Website](https://support.datacite.org/v1.1/reference#metrics-api). This reference is also a Live API. Major resource components supported by the Sashimi API are:
+Full API Reference can be found in the [DataCite Support Website](https://support.datacite.org/v1.1/reference#overview-1). This reference is also a Live API. Major resource components supported by the Data Usage API are:
 
 - reports
 - hearthbeat
@@ -53,7 +53,7 @@ Resource components can be used in conjunction with identifiers to retrieve the 
 To add a report, you need to send JSON content and your POST call should include `Content-Type: application/json` and `Accept: application/json` in the headers. Additionally you will need to include to JSON Web Token (JWT) for authenthication. For example:
 
 ```shell
-curl --header "Content-Type: application/json; Accept: application/json" -H "X-Authorization: Bearer {YOUR_JWT}" -X POST https://metrics.test.datacite.org/reports
+curl --header "Content-Type: application/json; Accept: application/json" -H "X-Authorization: Bearer {YOUR_JWT}" -X POST https://api.datacite.org/reports
 ```
 
 ```json
