@@ -51,7 +51,7 @@ ENV['MYSQL_HOST'] ||= "mysql"
 ENV['MYSQL_PORT'] ||= "3306"
 ENV['TRUSTED_IP'] ||= "10.0.40.1"
 ENV['LEVRIERO_URL'] ||= "https://api.datacite.org"
-ENV['USAGE_URL'] ||= "https://metrics.datacite.org"
+ENV['USAGE_URL'] ||= "https://api.datacite.org"
 
 
 module Sashimi
