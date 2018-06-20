@@ -19,6 +19,8 @@ class ReportsController < ApplicationController
   before_action :set_user_hash, only: [:create, :update, :destroy]
   authorize_resource :except => [:index, :show]
 
+
+
   def index
 
     # page = (params.dig(:page, :number) || 1).to_i
@@ -55,7 +57,7 @@ class ReportsController < ApplicationController
       # page: page,
       # years: years
     }
-    render json: collection, meta: @meta, include: @include
+    render json: collection, meta: @meta, include: @include, each_serializer: HeaderSerializer
   end
 
   def destroy
@@ -119,10 +121,10 @@ class ReportsController < ApplicationController
 
   def safe_params
 
-    fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_datasets].present? and params[:report_header].present?
+    fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_datasets].present? and params[:report_header].present? 
 
     header, datasets = params.require([:report_header, :report_datasets])
-    header.merge!({report_datasets: datasets})
+    header.merge!({report_datasets: datasets}) 
     nested_names = [:name, :value]
     nested_types = [:type, :value]
     codes =  IsoCountryCodes.for_select.map {|code| code.last.downcase}
