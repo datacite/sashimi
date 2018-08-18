@@ -25,7 +25,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     image: mysql:5.7
     ports:
-      - "3313:3306"
+      - "3314:3306"
     networks:
       - public
 networks:
@@ -34,5 +34,5 @@ networks:
     ipam:
       driver: default
       config:
-      - subnet: 10.0.80.0/24
-        gateway: 10.0.80.1
+      - subnet: 10.0.90.0/24
+        gateway: 10.0.90.1
