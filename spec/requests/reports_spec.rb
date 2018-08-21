@@ -174,6 +174,19 @@ describe 'Reports', type: :request do
       end
     end
 
+    # context 'wwhen the body has no header' do
+    #   let(:params) {file_fixture('report_10.json').read}
+    #   before { post '/reports', params: params, headers: headers }
+
+    #   it 'create a report' do
+    #     puts response
+    #     puts json
+
+    #     expect(response).to have_http_status(201)
+    #     expect(json.dig("report", "report-header", "report-id")).to eq("SatanCruz")
+    #   end
+    # end
+
     context 'when the params is missing is dataset metrics' do
       let(:params) {file_fixture('report_5.json').read}
       before { post '/reports', params: params, headers: headers }
