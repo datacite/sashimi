@@ -425,21 +425,16 @@ describe 'Reports', type: :request do
     end
   end
 
-  # describe "IRUS-UK report" do
-  #   let!(:uid) { SecureRandom.uuid }
-  #   let(:uri) { "/reports/#{uid}" }
-  #   let(:params) { file_fixture('irus_uk.json').read }
+#   describe "IRUS-UK report" do
+#   let(:params) {file_fixture('irus_uk.json').read}
 
-  #   context "as admin user" do
-  #     before { put "/reports/#{uid}", params: params, headers: headers }
+#   context 'when the request is valid' do
+#     before { post '/reports', params: params, headers: headers }
 
-  #     it "it should create a report" do
-  #       #expect(response).to have_http_status(201)
-
-  #       expect(json["errors"]).to be_nil
-  #       expect(json.dig("report", "id")).to eq(uid)
-  #       expect(json.dig("report", "report-header", "created-by")).to eq("Dash")
-  #     end
-  #   end
-  # end
+#     it 'creates a report' do
+#       expect(json.dig("report", "report-header", "report-id")).to eq("DSR")
+#       expect(response).to have_http_status(201)
+#     end
+#   end
+# end
 end
