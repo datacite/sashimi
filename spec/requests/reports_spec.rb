@@ -392,9 +392,9 @@ describe 'Reports', type: :request do
       let(:params_update) {file_fixture('report_8.json').read}
 
  
-      before { put "/reports/#{uid}", params: params, headers: headers }
+      before { put "/reports/#{uid}", params: params_update, headers: headers }
 
-      before { put "/reports/#{second_uid}", params: params, headers: headers }
+      before { put "/reports/#{second_uid}", params: params_update, headers: headers }
 
       it "should fail update report" do
 
