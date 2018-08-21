@@ -389,7 +389,7 @@ describe 'Reports', type: :request do
       # let!(:report) { create(:report) }
       let!(:uid) { SecureRandom.uuid  }
       let!(:second_uid) { SecureRandom.uuid  }
-      let(:params_update) {file_fixture('report_3.json').read}
+      let(:params_update) {file_fixture('report_8.json').read}
 
  
       before { put "/reports/#{uid}", params: params, headers: headers }
@@ -407,7 +407,7 @@ describe 'Reports', type: :request do
 
     context "entry already exists" do
       let!(:uid) { SecureRandom.uuid  }
-      let(:params_update) {file_fixture('report_3.json').read}
+      let(:params_update) {file_fixture('report_8.json').read}
 
  
       before { put "/reports/#{uid}", params: params, headers: headers }
@@ -420,7 +420,7 @@ describe 'Reports', type: :request do
 
         expect(json["errors"]).to be_nil
         expect(json.dig("report", "id")).to eq(uid)
-        expect(json.dig("report", "report-header", "release")).to eq("rd1")
+        expect(json.dig("report", "report-header", "release")).to eq("rd2")
       end
     end
   end
