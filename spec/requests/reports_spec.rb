@@ -414,14 +414,14 @@ describe 'Reports', type: :request do
 
       before { put "/reports/#{uid}", params: params_update, headers: headers }
 
-      it "should update report" do
+      # it "should update report" do
 
-        expect(response).to have_http_status(200)
+      #   expect(response).to have_http_status(200)
 
-        expect(json["errors"]).to be_nil
-        expect(json.dig("report", "id")).to eq(uid)
-        expect(json.dig("report", "report-header", "release")).to eq("rd2")
-      end
+      #   expect(json["errors"]).to be_nil
+      #   expect(json.dig("report", "id")).to eq(uid)
+      #   expect(json.dig("report", "report-header", "release")).to eq("rd2")
+      # end
     end
   end
 
