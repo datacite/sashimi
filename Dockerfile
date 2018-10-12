@@ -63,6 +63,7 @@ RUN gem update --system && \
 RUN mkdir -p /etc/my_init.d
 COPY vendor/docker/80_flush_cache.sh /etc/my_init.d/80_flush_cache.sh
 COPY vendor/docker/90_migrate.sh /etc/my_init.d/90_migrate.sh
+COPY vendor/docker/70_mysql_change.sh /etc/my_init.d/70_mysql_change.sh
 
 # Expose web
 EXPOSE 80
