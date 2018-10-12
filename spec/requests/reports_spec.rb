@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'Reports', type: :request do
-  let(:bearer) { User.generate_token(client_id: "datacite.datacite", provider_id: "datacite", role_id: "staff_admin") }
+  let(:bearer) { User.generate_token(exp: 2511111111111111,client_id: "datacite.datacite", provider_id: "datacite", role_id: "staff_admin") }
   let(:headers) { {'ACCEPT'=>'application/json', 'CONTENT_TYPE'=>'application/json', 'Authorization' => 'Bearer ' + bearer}}
 
   describe 'GET /reports' do
@@ -71,6 +71,17 @@ describe 'Reports', type: :request do
         expect(response).to have_http_status(201)
       end
     end
+
+    # commented because it takes too long
+    # context 'when the params is large' do
+    #   let(:params) {file_fixture('large_file.json').read}
+    #   before { post '/reports', params: params, headers: headers }
+
+    #   it 'succed large file to create a report' do
+    #     expect(response).to have_http_status(201)
+    #   end
+    # end
+
 
     context 'index filter by client_id' do
       let!(:bearer_ext) { User.generate_token(client_id: "datacite.demo", provider_id: "datacite", role_id: "staff_admin") }
@@ -195,6 +206,8 @@ describe 'Reports', type: :request do
         expect(response).to have_http_status(422)
       end
     end
+
+
 
     context 'when the params keys are wrong' do
       let(:params) {file_fixture('report_6.json').read}
