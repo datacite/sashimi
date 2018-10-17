@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180522095206) do
+ActiveRecord::Schema.define(version: 20181017150207) do
 
   create_table "error_models", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
     t.integer "code"
@@ -50,7 +50,7 @@ ActiveRecord::Schema.define(version: 20180522095206) do
     t.json "report_filters"
     t.json "report_attributes"
     t.json "report_datasets"
-    t.string "exceptions"
+    t.json "exceptions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "year"

@@ -25,7 +25,7 @@ class Report < ApplicationRecord
   validates :validate_sushi, sushi: {presence: true}
   attr_readonly :created_by, :month, :year, :client_id
 
-  serialize :exceptions, Array
+  # serialize :exceptions, Array
   before_create :set_id
   before_validation :set_uid, on: :create
   after_save :push_report
