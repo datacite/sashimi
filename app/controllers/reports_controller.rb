@@ -55,7 +55,6 @@ class ReportsController < ApplicationController
       total: total,
       "total-pages": total_pages,
       page: page
-      # years: years
     }
     render json: @reports, meta: @meta, include: @include, each_serializer: HeaderSerializer
   end
