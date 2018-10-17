@@ -16,7 +16,8 @@ class ReportSerializer < ActiveModel::Serializer
       :created => object.created,
       :reporting_period => object.reporting_period, 
       :report_filters=> object.report_filters, 
-      :report_attributes => object.report_attributes
+      :report_attributes => object.report_attributes,
+      :exceptions => object.exceptions, 
     }
   end
 end
