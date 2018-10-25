@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'Reports', type: :request do
-  let(:bearer) { User.generate_token(client_id: "datacite.datacite", provider_id: "datacite", role_id: "staff_admin") }
+  let(:bearer) { User.generate_token(exp:Time.now.to_i+300,client_id: "datacite.datacite", provider_id: "datacite", role_id: "staff_admin") }
   let(:headers) { {'ACCEPT'=>'application/json', 'CONTENT_TYPE'=>'application/json', 'Authorization' => 'Bearer ' + bearer}}
 
   describe 'GET /reports' do
