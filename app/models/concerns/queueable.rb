@@ -9,6 +9,7 @@ module Queueable
       logger.info  "******** inside queque #{queue_name}"
       logger.info "Trigger queue for " + uid
       queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
+      options[:shoryuken_class] ||= "UsageUpdateImportWorker"
   
       begin
         # Create a message with three custom attributes: Title, Author, and WeeksOn.
@@ -17,9 +18,13 @@ module Queueable
           queue_url: queue_url, 
           message_body: body,
           message_attributes: {
-            "report-id" => {
+            "report_id" => {
               string_value: report_url,
               data_type: "String"
+            },
+            'shoryuken_class' => {
+              string_value: options[:shoryuken_class],
+              data_type: 'String'
             }
           }
         }
