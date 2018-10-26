@@ -46,7 +46,7 @@ describe 'Reports', type: :request do
     context 'when the record exists' do
       it 'returns the report' do
         puts json
-        expect(json.dig("report","report-header", "report-id")).to eq(report.report_id)
+        expect(json.dig("report","report-header", "report-name")).to eq(report.report_name)
         expect(response).to have_http_status(200)
       end
     end
@@ -67,7 +67,7 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params, headers: headers }
 
       it 'creates a report' do
-        expect(json.dig("report", "report-header", "report-id")).to eq("DSR")
+        expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
         expect(response).to have_http_status(201)
       end
     end
@@ -90,14 +90,14 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params, headers: headers_ext }
 
       it 'returns reports' do
-        expect(json.dig("report", "report-header", "report-id")).to eq("DSR")
+        expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
         expect(response).to have_http_status(201)
       end
 
       after { get '/reports?client-id=datacite.demo' }
 
       it 'returns reports' do
-        expect(json.dig("report", "report-header", "report-id")).to eq("DSR")
+        expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
         expect(response).to have_http_status(201)
       end
     end
@@ -171,7 +171,7 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params.to_json, headers: headers }
 
       it 'creates a report' do
-        expect(json.dig("report", "report-header", "report-id")).to eq("DSR")
+        expect(json.dig("report", "report-header", "report-name")).to eq("Dataset Report")
         expect(response).to have_http_status(201)
       end
     end
@@ -194,7 +194,7 @@ describe 'Reports', type: :request do
     #     puts json
 
     #     expect(response).to have_http_status(201)
-    #     expect(json.dig("report", "report-header", "report-id")).to eq("SatanCruz")
+    #     expect(json.dig("report", "report-header", "report-name")).to eq("SatanCruz")
     #   end
     # end
 
@@ -224,7 +224,7 @@ describe 'Reports', type: :request do
 
       it 'creates a report' do
         expect(response).to have_http_status(201)
-        expect(json.dig("report", "report-header", "report-id")).to eq("FULL")
+        expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
       end
     end
   end
@@ -445,7 +445,7 @@ describe 'Reports', type: :request do
 #     before { post '/reports', params: params, headers: headers }
 
 #     it 'creates a report' do
-#       expect(json.dig("report", "report-header", "report-id")).to eq("DSR")
+#       expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
 #       expect(response).to have_http_status(201)
 #     end
 #   end

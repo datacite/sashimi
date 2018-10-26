@@ -45,6 +45,7 @@ class Report < ApplicationRecord
   def set_uid
     return ActionController::ParameterMissing if self.reporting_period.nil?
     self.uid = SecureRandom.uuid if uid.blank?
+    self.report_id = self.uid 
     month = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").month.to_s 
     year = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").year.to_s 
     write_attribute(:month,  month ) 
