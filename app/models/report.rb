@@ -28,8 +28,7 @@ class Report < ApplicationRecord
   # serialize :exceptions, Array
   before_create :set_id
   before_validation :set_uid, on: :create
-  after_save :push_report
-
+  after_commit :push_report
 
   def push_report
     logger.warn "calling queue for " + uid
