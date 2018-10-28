@@ -1,0 +1,823 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": [ "release", "report-id", "report-name" , "report-datasets" ],
+  "properties": {
+    "report-name" : {
+      "type" : "string",
+      "example" : "dataset report",
+      "description" : "the long name of the report."
+    },
+    "report-id" : {
+      "type" : "string",
+      "example" : "doir",
+      "description" : "the report id or code or shortname. typically this will be the same code provided in the report parameter of the request."
+    },
+    "release" : {
+      "type" : "string",
+      "example" : "rd1",
+      "description" : "the release or version of the report."
+    },
+    "created" : {
+      "type" : "string",
+      "format" : "datetime",
+      "example" : "2016-09-08t22:47:31z",
+      "description" : "time the report was prepared. format as defined by date-time - rfc3339"
+    },
+    "created-by" : {
+      "type" : "string",
+      "example" : "dataone",
+      "description" : "name of the organization producing the report."
+    },
+    "report-filters" : {
+      "type" : "array",
+      "description" : "zero or more report filters used for this report.  typically  reflect filters provided on the request.  filters limit the data to be reported on.",
+      "items" : {
+        "$ref" : "#/definitions/sushi_report_header_report_filters"
+      }
+    },
+    "report-attributes" : {
+      "type" : "array",
+      "description" : "zero or more additional attributes applied to the report. attributes inform the level of detail in the report.",
+      "items" : {
+        "$ref" : "#/definitions/sushi_report_header_report_attributes"
+      }
+    },
+    "report-datasets" : {
+      "type" : "array",
+      "items" : {
+        "$ref" : "#/definitions/counter_dataset_usage"
+      }
+    }
+  },
+  "description" : "generalized report header that defines the requested report, the requestor, the customer, filters applied, reportattributes applied and any exceptions.",
+  "example" : {
+    "report-name" : "dataset report",
+    "report-id" : "doir",
+    "report-attributes" : [ {
+      "value" : "true",
+      "name" : "exclude_monthly_details"
+    }, {
+      "value" : "true",
+      "name" : "exclude_monthly_details"
+    } ],
+    "exceptions" : [ {
+      "message" : "partial data returned.",
+      "severity" : "warning",
+      "data" : "usage data has not been processed for all requested months.",
+      "code" : 3040,
+      "help-url" : "help_url"
+    }, {
+      "message" : "partial data returned.",
+      "severity" : "warning",
+      "data" : "usage data has not been processed for all requested months.",
+      "code" : 3040,
+      "help-url" : "help_url"
+    } ],
+    "created-by" : "dataone",
+    "report-filters" : [ {
+      "value" : "2015-01",
+      "name" : "begin-date"
+    }, {
+      "value" : "2015-01",
+      "name" : "begin-date"
+    } ],
+    "release" : "rd1",
+    "created" : "2016-09-08t22:47:31z"
+  },
+  "definitions" : {
+    "sushi_report_header" : {
+      "type" : "object",
+      "required" : [ "release", "report-id", "report-name" ],
+      "properties" : {
+        "report-name" : {
+          "type" : "string",
+          "example" : "dataset report",
+          "description" : "the long name of the report."
+        },
+        "report-id" : {
+          "type" : "string",
+          "example" : "dsr",
+          "description" : "the report id or code or shortname. typically this will be the same code provided in the report parameter of the request."
+        },
+        "release" : {
+          "type" : "string",
+          "example" : "rd1",
+          "description" : "the release or version of the report."
+        },
+        "created" : {
+          "type" : "string",
+          "format" : "datetime",
+          "example" : "2016-09-08t22:47:31z",
+          "description" : "time the report was prepared. format as defined by date-time - rfc3339"
+        },
+        "created-by" : {
+          "type" : "string",
+          "example" : "dataone",
+          "description" : "name of the organization producing the report."
+        },
+        "report-filters" : {
+          "type" : "array",
+          "description" : "zero or more report filters used for this report.  typically  reflect filters provided on the request.  filters limit the data to be reported on.",
+          "items" : {
+            "$ref" : "#/definitions/sushi_report_header_report_filters"
+          }
+        },
+        "report-attributes" : {
+          "type" : "array",
+          "description" : "zero or more additional attributes applied to the report. attributes inform the level of detail in the report.",
+          "items" : {
+            "$ref" : "#/definitions/sushi_report_header_report_attributes"
+          }
+        },
+        "reporting-period" : {
+          "type" : "object",
+          "description" : "time the report is about. format as defined by date-time - rfc3339",
+          "items" : {
+            "$ref" : "#/definitions/counter_dataset_performance_period"
+          }
+        }
+      },
+      "description" : "generalized report header that defines the requested report, the requestor, the customer, filters applied, reportattributes applied and any exceptions.",
+      "example" : {
+        "report-name" : "dataset report",
+        "report-id" : "dsr",
+        "report-attributes" : [ {
+          "value" : "true",
+          "name" : "exclude_monthly_details"
+        }, {
+          "value" : "true",
+          "name" : "exclude_monthly_details"
+        } ],
+        "exceptions" : [ {
+          "message" : "partial data returned.",
+          "severity" : "warning",
+          "data" : "usage data has not been processed for all requested months.",
+          "code" : 3040,
+          "help-url" : "help_url"
+        }, {
+          "message" : "partial data returned.",
+          "severity" : "warning",
+          "data" : "usage data has not been processed for all requested months.",
+          "code" : 3040,
+          "help-url" : "help_url"
+        } ],
+        "created-by" : "dataone",
+        "report-filters" : [ {
+          "value" : "2015-01",
+          "name" : "begin-date"
+        }, {
+          "value" : "2015-01",
+          "name" : "begin-date"
+        } ],
+        "release" : "rd1",
+        "created" : "2016-09-08t22:47:31z"
+      }
+    },
+    "sushi_report_list" : {
+      "type" : "object",
+      "required" : [ "release", "report-description", "report-id", "report-name" ],
+      "properties" : {
+        "report-name" : {
+          "type" : "string",
+          "example" : "dataset report",
+          "description" : "the long name of the report"
+        },
+        "report-id" : {
+          "type" : "string",
+          "example" : "dsr",
+          "description" : "the code, id or short name of the report that is be used in the request to identify the report."
+        },
+        "release" : {
+          "type" : "string",
+          "example" : "rd1",
+          "description" : "the release or version number of the report."
+        },
+        "report-description" : {
+          "type" : "string",
+          "example" : "usage by month and dataset",
+          "description" : "a short sentence describing the report."
+        },
+        "path" : {
+          "type" : "string",
+          "example" : "/reports/dsr",
+          "description" : "the path to use when requesting this report on this service."
+        }
+      },
+      "example" : {
+        "report-name" : "dataset report",
+        "report-description" : "usage by month and dataset",
+        "path" : "/reports/dsr",
+        "report-id" : "dsr",
+        "release" : "rd1"
+      }
+    },
+    "sushi_service_status" : {
+      "type" : "object",
+      "required" : [ "serviceactive" ],
+      "properties" : {
+        "description" : {
+          "type" : "string",
+          "example" : "counter research data usage reports for the uk data service - reshare.",
+          "description" : "description of the service."
+        },
+        "serviceactive" : {
+          "type" : "boolean",
+          "example" : true,
+          "description" : "indicator if the service is currently able to deliver reports."
+        },
+        "registryurl" : {
+          "type" : "string",
+          "example" : "https://www.projectcounter.org/counter-user/ebsco-database/",
+          "description" : "if available, the url separate registry with additional information about the service."
+        },
+        "note" : {
+          "type" : "string",
+          "example" : "a given customer can request a maximum of 5 requests per day for a given report",
+          "description" : "a general note about the service."
+        },
+        "alerts" : {
+          "type" : "array",
+          "description" : "any alerts related to service interuptions and status.",
+          "items" : {
+            "$ref" : "#/definitions/sushi_service_status_alerts"
+          }
+        }
+      },
+      "example" : {
+        "description" : "counter research data usage reports for the uk data service - reshare.",
+        "note" : "a given customer can request a maximum of 5 requests per day for a given report",
+        "serviceactive" : true,
+        "alerts" : [ {
+          "date-time" : "2016-08-02: 12:54",
+          "alert" : "service will be unavailable sunday midnight..."
+        }, {
+          "date-time" : "2016-08-02: 12:54",
+          "alert" : "service will be unavailable sunday midnight..."
+        } ],
+        "registryurl" : "https://www.projectcounter.org/counter-user/ebsco-database/"
+      }
+    },
+    "counter_dataset_report" : {
+      "type" : "object",
+      "required" : [ "report-datasets" ],
+      "properties" : {
+        "report-header" : {
+          "$ref" : "#/definitions/sushi_report_header"
+        },
+        "report-datasets" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/counter_dataset_usage"
+          }
+        }
+      },
+      "description" : "describes the formatting needs for the counter dataset report. response may include the report_header (optional), report_datasets (usage stats).",
+      "example" : {
+        "report-datasets" : [ {
+          "platform" : "dataone",
+          "publisher-id" : [ {
+            "type" : "orcid",
+            "value" : "1234-1234-1234-1234"
+          }, {
+            "type" : "orcid",
+            "value" : "1234-1234-1234-1234"
+          } ],
+          "data-type" : "dataset",
+          "dataset-id" : [ {
+            "type" : "doi",
+            "value" : "0931-865"
+          }, {
+            "type" : "doi",
+            "value" : "0931-865"
+          } ],
+          "dataset-title" : "lake erie fish community data",
+          "dataset-attributes" : [ {
+            "type" : "dataset-version",
+            "value" : "vor"
+          }, {
+            "type" : "dataset-version",
+            "value" : "vor"
+          } ],
+          "dataset-contributors" : [ {
+            "type" : "name",
+            "value" : "john smith"
+          }, {
+            "type" : "name",
+            "value" : "john smith"
+          } ],
+          "publisher" : "dataone",
+          "yop" : "2010",
+          "dataset-dates" : [ {
+            "type" : "pub-date",
+            "value" : "2002-01-15"
+          }, {
+            "type" : "pub-date",
+            "value" : "2002-01-15"
+          } ],
+          "performance" : [ {
+            "instance" : [ {
+              "metric-type" : "total-dataset-requests",
+              "count" : 21
+            }, {
+              "metric-type" : "total-dataset-requests",
+              "count" : 21
+            } ],
+            "period" : {
+              "begin-date" : "2015-01-01",
+              "end-date" : "2015-01-31"
+            }
+          }, {
+            "instance" : [ {
+              "metric-type" : "total-dataset-requests",
+              "count" : 21
+            }, {
+              "metric-type" : "total-dataset-requests",
+              "count" : 21
+            } ],
+            "period" : {
+              "begin-date" : "2015-01-01",
+              "end-date" : "2015-01-31"
+            }
+          } ],
+          "access-method" : "regular"
+        }, {
+          "platform" : "dataone",
+          "publisher-id" : [ {
+            "type" : "orcid",
+            "value" : "1234-1234-1234-1234"
+          }, {
+            "type" : "orcid",
+            "value" : "1234-1234-1234-1234"
+          } ],
+          "data-type" : "dataset",
+          "dataset-id" : [ {
+            "type" : "doi",
+            "value" : "0931-865"
+          }, {
+            "type" : "doi",
+            "value" : "0931-865"
+          } ],
+          "dataset-title" : "lake erie fish community data",
+          "dataset-attributes" : [ {
+            "type" : "dataset-version",
+            "value" : "vor"
+          }, {
+            "type" : "dataset-version",
+            "value" : "vor"
+          } ],
+          "dataset-contributors" : [ {
+            "type" : "name",
+            "value" : "john smith"
+          }, {
+            "type" : "name",
+            "value" : "john smith"
+          } ],
+          "publisher" : "dataone",
+          "yop" : "2010",
+          "dataset-dates" : [ {
+            "type" : "pub-date",
+            "value" : "2002-01-15"
+          }, {
+            "type" : "pub-date",
+            "value" : "2002-01-15"
+          } ],
+          "performance" : [ {
+            "instance" : [ {
+              "metric-type" : "total-dataset-requests",
+              "count" : 21
+            }, {
+              "metric-type" : "total-dataset-requests",
+              "count" : 21
+            } ],
+            "period" : {
+              "begin-date" : "2015-01-01",
+              "end-date" : "2015-01-31"
+            }
+          }, {
+            "instance" : [ {
+              "metric-type" : "total-dataset-requests",
+              "count" : 21
+            }, {
+              "metric-type" : "total-dataset-requests",
+              "count" : 21
+            } ],
+            "period" : {
+              "begin-date" : "2015-01-01",
+              "end-date" : "2015-01-31"
+            }
+          } ],
+          "access-method" : "regular"
+        } ],
+        "report-header" : {
+          "report-name" : "dataset report",
+          "report-id" : "dsr",
+          "report-attributes" : [ {
+            "value" : "true",
+            "name" : "exclude_monthly_details"
+          }, {
+            "value" : "true",
+            "name" : "exclude_monthly_details"
+          } ],
+          "exceptions" : [ {
+            "message" : "partial data returned.",
+            "severity" : "warning",
+            "data" : "usage data has not been processed for all requested months.",
+            "code" : 3040,
+            "help-url" : "help_url"
+          }, {
+            "message" : "partial data returned.",
+            "severity" : "warning",
+            "data" : "usage data has not been processed for all requested months.",
+            "code" : 3040,
+            "help-url" : "help_url"
+          } ],
+          "created-by" : "dataone",
+          "report-filters" : [ {
+            "value" : "2015-01",
+            "name" : "begin-date"
+          }, {
+            "value" : "2015-01",
+            "name" : "begin-date"
+          } ],
+          "release" : "rd1",
+          "created" : "2016-09-08t22:47:31z"
+        }
+      }
+    },
+    "counter_dataset_usage" : {
+      "type" : "object",
+      "required" : [ "data-type", "dataset-title", "performance", "platform", "publisher", "publisher-id" ],
+      "properties" : {
+        "dataset-title" : {
+          "type" : "string",
+          "example" : "lake erie fish community data",
+          "description" : "name of the dataset being reported."
+        },
+        "dataset-id" : {
+          "type" : "array",
+          "description" : "the identifier for the report dataset",
+          "items" : {
+            "$ref" : "#/definitions/counter_dataset_identifiers"
+          }
+        },
+        "dataset-contributors" : {
+          "type" : "array",
+          "description" : "the identifier for contributor (i.e. creator) of the dataset.",
+          "items" : {
+            "$ref" : "#/definitions/counter_dataset_contributors"
+          }
+        },
+        "dataset-dates" : {
+          "type" : "array",
+          "description" : "publication or other date(s)related to the dataset.",
+          "items" : {
+            "$ref" : "#/definitions/counter_dataset_dates"
+          }
+        },
+        "dataset-attributes" : {
+          "type" : "array",
+          "description" : "other attributes related related to the dataset.",
+          "items" : {
+            "$ref" : "#/definitions/counter_dataset_attributes"
+          }
+        },
+        "platform" : {
+          "type" : "string",
+          "example" : "dataone",
+          "description" : "name of the platform"
+        },
+        "publisher" : {
+          "type" : "string",
+          "example" : "dataone",
+          "description" : "name of publisher of the dataset"
+        },
+        "publisher-id" : {
+          "type" : "array",
+          "description" : "the identifier for the publisher.",
+          "items" : {
+            "$ref" : "#/definitions/counter_publisher_identifiers"
+          }
+        },
+        "data-type" : {
+          "type" : "string",
+          "example" : "dataset",
+          "description" : "nature of the dataset being reported.",
+          "enum" : [ "dataset" ]
+        },
+        "yop" : {
+          "type" : "string",
+          "example" : "2010",
+          "description" : "year of publication in the format of 'yyyy'. use '0001' for unknown and '9999' for articles in press."
+        },
+        "access-method" : {
+          "type" : "string",
+          "example" : "regular",
+          "description" : "identifies if the usage activity was 'regular' usage - a user doing research on a content site, or if the usage activity was 'machine' - for the purpose of retrieving content for text and data mining (tdm)",
+          "enum" : [ "regular", "machine" ]
+        },
+        "performance" : {
+          "type" : "array",
+          "description" : "the usage data related to the report dataset",
+          "items" : {
+            "$ref" : "#/definitions/counter_dataset_performance"
+          }
+        }
+      },
+      "description" : "defines the output for the report_datasets being returned in a dataset report.",
+      "example" : {
+        "platform" : "dataone",
+        "publisher-id" : [ {
+          "type" : "orcid",
+          "value" : "1234-1234-1234-1234"
+        }, {
+          "type" : "orcid",
+          "value" : "1234-1234-1234-1234"
+        } ],
+        "data-type" : "dataset",
+        "dataset-id" : [ {
+          "type" : "doi",
+          "value" : "0931-865"
+        }, {
+          "type" : "doi",
+          "value" : "0931-865"
+        } ],
+        "dataset-title" : "lake erie fish community data",
+        "dataset-attributes" : [ {
+          "type" : "dataset-version",
+          "value" : "vor"
+        }, {
+          "type" : "dataset-version",
+          "value" : "vor"
+        } ],
+        "dataset-contributors" : [ {
+          "type" : "name",
+          "value" : "john smith"
+        }, {
+          "type" : "name",
+          "value" : "john smith"
+        } ],
+        "publisher" : "dataone",
+        "yop" : "2010",
+        "dataset-dates" : [ {
+          "type" : "pub-date",
+          "value" : "2002-01-15"
+        }, {
+          "type" : "pub-date",
+          "value" : "2002-01-15"
+        } ],
+        "performance" : [ {
+          "instance" : [ {
+            "metric-type" : "total-dataset-requests",
+            "count" : 21
+          }, {
+            "metric-type" : "total-dataset-requests",
+            "count" : 21
+          } ],
+          "period" : {
+            "begin-date" : "2015-01-01",
+            "end-date" : "2015-01-31"
+          }
+        }, {
+          "instance" : [ {
+            "metric-type" : "total-dataset-requests",
+            "count" : 21
+          }, {
+            "metric-type" : "total-dataset-requests",
+            "count" : 21
+          } ],
+          "period" : {
+            "begin-date" : "2015-01-01",
+            "end-date" : "2015-01-31"
+          }
+        } ],
+        "access-method" : "regular"
+      }
+    },
+    "counter_dataset_identifiers" : {
+      "type" : "object",
+      "required" : [ "type", "value" ],
+      "properties" : {
+        "type" : {
+          "type" : "string",
+          "example" : "doi",
+          "enum" : [ "doi", "DOI", "proprietary", "uri" ]
+        },
+        "value" : {
+          "type" : "string",
+          "example" : "0931-865",
+          "description" : "value of the dataset identifier"
+        }
+      },
+      "example" : {
+        "type" : "doi",
+        "value" : "0931-865"
+      }
+    },
+    "counter_publisher_identifiers" : {
+      "type" : "object",
+      "required" : [ "type", "value" ],
+      "properties" : {
+        "type" : {
+          "type" : "string",
+          "example" : "orcid",
+          "enum" : [ "isni", "orcid", "grid", "urn","client-id"]
+        },
+        "value" : {
+          "type" : "string",
+          "example" : "1234-1234-1234-1234",
+          "description" : "value of the publisher identifier"
+        }
+      },
+      "example" : {
+        "type" : "orcid",
+        "value" : "1234-1234-1234-1234"
+      }
+    },
+    "counter_dataset_contributors" : {
+      "type" : "object",
+      "required" : [ "type", "value" ],
+      "properties" : {
+        "type" : {
+          "type" : "string",
+          "example" : "name",
+          "enum" : [ "name", "orcid", "isni" ]
+        },
+        "value" : {
+          "type" : "string",
+          "example" : "john smith",
+          "description" : "value of the contributor identifier"
+        }
+      },
+      "example" : {
+        "type" : "name",
+        "value" : "john smith"
+      }
+    },
+    "counter_dataset_dates" : {
+      "type" : "object",
+      "required" : [ "type", "value" ],
+      "properties" : {
+        "type" : {
+          "type" : "string",
+          "example" : "pub-date",
+          "enum" : [ "pub-date", "first-accessed-online", "proprietary" ]
+        },
+        "value" : {
+          "type" : "string",
+          "example" : "2002-01-15",
+          "description" : "value of the dataset date"
+        }
+      },
+      "example" : {
+        "type" : "pub-date",
+        "value" : "2002-01-15"
+      }
+    },
+    "counter_dataset_attributes" : {
+      "type" : "object",
+      "required" : [ "type", "value" ],
+      "properties" : {
+        "type" : {
+          "type" : "string",
+          "example" : "dataset-version",
+          "description" : "item attribute types are defined by niso journal article version and other work...",
+          "enum" : [ "dataset-version", "dataset_type", "proprietary" ]
+        },
+        "value" : {
+          "type" : "string",
+          "example" : "vor",
+          "description" : "value of the item attribute"
+        }
+      },
+      "example" : {
+        "type" : "dataset-version",
+        "value" : "vor"
+      }
+    },
+    "counter_dataset_performance" : {
+      "type" : "object",
+      "required" : [ "instance", "period" ],
+      "properties" : {
+        "period" : {
+          "$ref" : "#/definitions/counter_dataset_performance_period"
+        },
+        "instance" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/counter_dataset_performance_instance"
+          }
+        }
+      },
+      "example" : {
+        "instance" : [ {
+          "metric-type" : "total-dataset-requests",
+          "count" : 21
+        }, {
+          "metric-type" : "total-dataset-requests",
+          "count" : 21
+        } ],
+        "period" : {
+          "begin-date" : "2015-01-01",
+          "end-date" : "2015-01-31"
+        }
+      }
+    },
+    "sushi_report_header_report_filters" : {
+      "required" : [ "name", "value" ],
+      "properties" : {
+        "name" : {
+          "type" : "string",
+          "example" : "begin-date",
+          "description" : "name of the report filter."
+        },
+        "value" : {
+          "type" : "string",
+          "example" : "2015-01",
+          "description" : "value of the report filter."
+        }
+      },
+      "example" : {
+        "value" : "2015-01",
+        "name" : "begin-date"
+      }
+    },
+    "sushi_report_header_report_attributes" : {
+      "required" : [ "name", "value" ],
+      "properties" : {
+        "name" : {
+          "type" : "string",
+          "example" : "exclude_monthly_details",
+          "description" : "name of the report attribute."
+        },
+        "value" : {
+          "type" : "string",
+          "example" : "true",
+          "description" : "name of the report attribute."
+        }
+      },
+      "example" : {
+        "value" : "true",
+        "name" : "exclude_monthly_details"
+      }
+    },
+    "sushi_service_status_alerts" : {
+      "properties" : {
+        "date-time" : {
+          "type" : "string",
+          "format" : "datetime",
+          "example" : "2016-08-02: 12:54",
+          "description" : "date-time of the alert."
+        },
+        "alert" : {
+          "type" : "string",
+          "example" : "service will be unavailable sunday midnight...",
+          "description" : "text of the alert."
+        }
+      },
+      "example" : {
+        "date-time" : "2016-08-02: 12:54",
+        "alert" : "service will be unavailable sunday midnight..."
+      }
+    },
+    "counter_dataset_performance_period" : {
+      "required" : [ "begin-date", "end-date" ],
+      "properties" : {
+        "begin-date" : {
+          "type" : "string",
+          "example" : "2015-01-01",
+          "description" : "beginning date for usage in this 'datasetperformance' instance."
+        },
+        "end-date" : {
+          "type" : "string",
+          "example" : "2015-01-31",
+          "description" : "ending date for usage in this 'datasetperformance' instance."
+        }
+      },
+      "example" : {
+        "begin-date" : "2015-01-01",
+        "end-date" : "2015-01-31"
+      }
+    },
+    "counter_dataset_performance_instance" : {
+      "required" : [ "count", "metric-type" ],
+      "properties" : {
+        "metric-type" : {
+          "type" : "string",
+          "example" : "unique-resolutions",
+          "description" : "type of activity being counted.",
+          "enum" : [ "total-resolutions", "unique-resolutions" ]
+        },
+        "count" : {
+          "type" : "integer",
+          "example" : 21,
+          "description" : "usage count > 0.  if count is zero, the intance element should be excluded."
+        }
+      },
+      "example" : {
+        "metric-type" : "total-resolutions",
+        "count" : 21
+      }
+    }
+  }
+}
