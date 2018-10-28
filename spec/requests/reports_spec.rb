@@ -227,6 +227,17 @@ describe 'Reports', type: :request do
         expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
       end
     end
+
+    context 'Resolution when the request is valid' do
+      let(:resolutions) {file_fixture('report_resolution.json').read}
+      before { post '/reports', params: resolutions, headers: headers }
+
+      it 'creates a Resolution report' do
+        expect(json.dig("report", "report-header", "report-name")).to eq("resolution report")
+        expect(json.dig("report", "report-header", "release")).to eq("pid1")
+        expect(response).to have_http_status(201)
+      end
+    end
   end
 
 

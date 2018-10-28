@@ -19,11 +19,14 @@ module Metadatable
       JSON::Validator.validate(schema, report.to_json)
     end
   
-    SUSHI_SCHEMA_FILE = "lib/sushi_schema/sushi_schema.json"
+    USAGE_SCHEMA_FILE = "lib/sushi_schema/sushi_usage_schema.json"
+    RESOLUTION_SCHEMA_FILE = "lib/sushi_schema/sushi_resolution_schema.json"
 
     def load_schema
+      report = self.attributes.deep_transform_keys { |key| key.tr('_', '-') }
+      file = report.dig("report-name") == "resolution report" && report.dig("created-by") == "datacite" ? RESOLUTION_SCHEMA_FILE : USAGE_SCHEMA_FILE   
       begin
-        File.read(SUSHI_SCHEMA_FILE)
+        File.read(file)
       rescue
         puts 'must redo the settings file'
         {} # return an empty Hash object
