@@ -17,6 +17,7 @@ class ReportsController < ApplicationController
   prepend_before_action :authenticate_user_from_token!
   before_action :set_report, only: [:show, :destroy]
   before_action :set_user_hash, only: [:create, :update, :destroy]
+  before_action :validate_monthly_report, only: [:create, :update]
   authorize_resource :except => [:index, :show]
 
 
@@ -90,7 +91,15 @@ class ReportsController < ApplicationController
   end
 
   def create
-    @report = Report.new(safe_params.merge(@user_hash))
+
+    @report = Report.where(created_by: safe_params[:created_by])
+    .where(month: get_month(safe_params.dig("reporting_period","begin_date")))
+    .where(year: get_year(safe_params.dig("reporting_period","begin_date")))
+    .where(client_id: safe_params.merge(@user_hash)[:client_id])
+    .first
+    exists = @report.present?
+
+    @report = Report.new(safe_params.merge(@user_hash)) unless @report.present?
     authorize! :create, @report
 
     if @report.save
@@ -114,6 +123,9 @@ class ReportsController < ApplicationController
     @user_hash = { client_id: current_user.client_id, provider_id: current_user.provider_id }
   end
 
+  def validate_monthly_report
+    fail JSON::ParserError, "Reports are monthly. reporting dates are within the same month" if get_month(safe_params.dig("reporting_period","begin_date")) !=  get_month(safe_params.dig("reporting_period","end_date"))
+  end
 
   private
 

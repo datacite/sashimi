@@ -3,11 +3,11 @@
      "report-name": "dataset report",
      "report-id": "DSR",
      "release": "rd1",
-     "created": "2128-04-09",
+     "created": "2128-04-13",
      "created-by": "dash",
      "reporting-period": {
-      "begin-date": "2128-04-01",
-      "end-date": "2128-04-02"
+      "begin-date": "2128-04-09",
+      "end-date": "2128-04-13"
      },
      "report-attributes": [],
      "report-filters": [
@@ -32,7 +32,7 @@
   },
    "report-datasets": [
      {
-       "dataset-title": "chemical shift-based methods in nmr structure determination",
+       "dataset-title": "12345chemical shift-based methods in nmr structure determination",
        "dataset-id": [
          {
            "type": "doi",
