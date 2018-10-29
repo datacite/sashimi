@@ -28,6 +28,14 @@ module Helpeable
       end
     end
 
+    def get_month date
+      Date.strptime(date,"%Y-%m-%d").month.to_s 
+    end
+
+    def get_year date
+      Date.strptime(date,"%Y-%m-%d").year.to_s 
+    end
+
     def self.get_em(h)
       h.each_with_object([]) do |(k,v),keys|      
         keys << k

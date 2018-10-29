@@ -82,6 +82,19 @@ describe 'Reports', type: :request do
     #   end
     # end
 
+    context 'when the request is valid but another report from the same month exist' do
+      let(:params) {file_fixture('report_3.json').read}
+      let(:params_repeat) {file_fixture('report_repeat.json').read}
+ 
+      before { post '/reports', params: params, headers: headers}
+      before { post '/reports', params: params_repeat, headers: headers}
+
+      it 'fails to create a report' do
+        expect(json.dig("report", "report-header", "created")).to eq("2128-04-09")
+        expect(json.dig("report", "report-datasets", 0, "dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
+        expect(response).to have_http_status(201)
+      end
+    end
 
     context 'index filter by client_id' do
       let!(:bearer_ext) { User.generate_token(client_id: "datacite.demo", provider_id: "datacite", role_id: "staff_admin") }
