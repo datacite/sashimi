@@ -25,7 +25,7 @@ class ReportsController < ApplicationController
   def index
 
     page = (params.dig(:page, :number) || 1).to_i
-    size = (params.dig(:page, :size) || 5).to_i
+    size = (params.dig(:page, :size) || 25).to_i
     from = (page - 1) * size
 
     sort = case params[:sort]
