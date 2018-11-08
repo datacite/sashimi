@@ -12,7 +12,7 @@ require "rspec/rails"
 require "shoulda-matchers"
 require "webmock/rspec"
 require "rack/test"
-require "colorize"
+# require "colorize"
 require "database_cleaner"
 
 
