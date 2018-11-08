@@ -1,3 +1,5 @@
+
+
 require_relative 'boot'
 
 require "rails"
@@ -103,3 +105,4 @@ module Sashimi
     end
   end
 end
+
