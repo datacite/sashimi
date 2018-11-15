@@ -9,13 +9,13 @@ module Metadatable
 
     def validate_sushi 
       schema = load_schema
-      report = self.attributes.deep_transform_keys { |key| key.tr('_', '-') }
+      report = self.attributes.except("compressed").deep_transform_keys { |key| key.tr('_', '-') }
       JSON::Validator.fully_validate(schema, report.to_json, :errors_as_objects => true)
     end
 
     def is_valid_sushi? 
       schema = load_schema
-      report = self.attributes.deep_transform_keys { |key| key.tr('_', '-') }
+      report = self.attributes.except("compressed").deep_transform_keys { |key| key.tr('_', '-') }
       JSON::Validator.validate(schema, report.to_json)
     end
   
@@ -23,8 +23,8 @@ module Metadatable
     RESOLUTION_SCHEMA_FILE = "lib/sushi_schema/sushi_resolution_schema.json"
 
     def load_schema
-      report = self.attributes.deep_transform_keys { |key| key.tr('_', '-') }
-      file = report.dig("report-name") == "resolution report" && report.dig("created-by") == "datacite" ? RESOLUTION_SCHEMA_FILE : USAGE_SCHEMA_FILE   
+      report = self.attributes.except("compressed").deep_transform_keys { |key| key.tr('_', '-') }
+      file = report.dig("report-name") == "resolution report" && report.dig("created-by") == "datacite" ? RESOLUTION_SCHEMA_FILE : USAGE_SCHEMA_FILE
       begin
         File.read(file)
       rescue
