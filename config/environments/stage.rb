@@ -55,7 +55,7 @@ Rails.application.configure do
   config.active_support.deprecation = :notify
 
   # Store uploaded files on the local file system in a temporary directory.
-  config.active_storage.service = :amazon
+  # config.active_storage.service = :amazon
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
