@@ -28,6 +28,7 @@ class Report < ApplicationRecord
   attr_readonly :created_by, :month, :year, :client_id
 
   # serialize :exceptions, Array
+  before_create :to_compress
   before_create :set_id
   before_validation :set_uid, on: :create
   after_commit :push_report
@@ -64,6 +65,11 @@ class Report < ApplicationRecord
     self.id = SecureRandom.random_number(9223372036854775807)
   end
 
+  def to_compress
+    write_attribute(:compressed, compress)
+    # puts params
+    write_attribute(:report_datasets, {empty:"too large"}.to_json)
+  end
 
   def set_uid
     return ActionController::ParameterMissing if self.reporting_period.nil?
@@ -73,6 +79,6 @@ class Report < ApplicationRecord
     year = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").year.to_s 
     write_attribute(:month,  month ) 
     write_attribute(:year,  year) 
-    write_attribute(:compressed, compress)
+    # write_attribute(:compressed, compress)
   end
 end
