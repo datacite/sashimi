@@ -251,6 +251,34 @@ describe 'Reports', type: :request do
         expect(response).to have_http_status(201)
       end
     end
+
+    context 'when the request is valid and compressed' do
+      let(:bigly) {file_fixture('datacite_resolution_report_2018-04.json').read}
+      # let(:bigly) {params}
+
+      let(:headers)  { {
+        'Content-Type' => 'json',
+        'Content-Encoding' => 'gzip',
+        'ACCEPT'=>'json',
+        'Authorization' => 'Bearer ' + bearer
+      } }
+      let(:gzip) do
+        ActiveSupport::Gzip.compress(bigly)
+      end
+  
+      before { post '/reports', params: gzip, headers: headers }
+
+      it 'creates a report' do
+        # puts gzip
+        # puts response.inspect
+        puts json
+        puts response
+        # puts 
+        expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
+        expect(response).to have_http_status(201)
+      end
+    end
+
   end
 
 
