@@ -13,16 +13,18 @@ require 'base32/url'
 
 class Report < ApplicationRecord
 
+  # has_one_attached :report
+
   # include validation methods for sushi
   include Metadatable
 
   # include validation methods for sushi
   include Queueable 
 
-  attr_accessor :month, :year
+  # attr_accessor :month, :year, :compressed
   validates_presence_of :report_id, :created_by, :report_datasets, :client_id, :provider_id, :created, :reporting_period
   validates :uid, uniqueness: true
-  validates :validate_sushi, sushi: {presence: true}
+  # validates :validate_sushi, sushi: {presence: true}
   attr_readonly :created_by, :month, :year, :client_id
 
   # serialize :exceptions, Array
@@ -35,12 +37,33 @@ class Report < ApplicationRecord
     queue_report if ENV["AWS_REGION"].present?
   end
 
+  def compress
+    json_report = {
+      "report-header": 
+      {
+        "report-name": self.report_name,
+          "report-id": self.report_id,
+          "release": "rds",
+          "created": self.created,
+          "created-by": self.created_by,
+          "reporting-period": self.reporting_period,
+          "report-filters": self.report_filters,
+          "report-attributes": self.report_attributes,
+          "exceptions": self.exceptions
+        },
+        "report-datasets": self.report_datasets
+    }
+
+    ActiveSupport::Gzip.compress(json_report.to_json)
+  end
+  
   private
 
   # random number that fits into MySQL bigint field (8 bytes)
   def set_id
     self.id = SecureRandom.random_number(9223372036854775807)
   end
+
 
   def set_uid
     return ActionController::ParameterMissing if self.reporting_period.nil?
@@ -50,5 +73,6 @@ class Report < ApplicationRecord
     year = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").year.to_s 
     write_attribute(:month,  month ) 
     write_attribute(:year,  year) 
+    write_attribute(:compressed, compress)
   end
 end

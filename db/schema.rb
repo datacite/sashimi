@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_09_131818) do
+ActiveRecord::Schema.define(version: 2018_11_15_103147) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "name", null: false
@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(version: 2018_11_09_131818) do
     t.string "month"
     t.string "uid"
     t.json "reporting_period"
+    t.binary "compressed", limit: 16777215
     t.index ["created_by", "month", "year"], name: "index_reports_on_multiple_columns", unique: true
   end
 
