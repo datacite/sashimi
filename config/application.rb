@@ -62,6 +62,8 @@ module Sashimi
     config.load_defaults 5.1
     config.autoload_paths << Rails.root.join('lib')
     config.autoload_paths << Rails.root.join("app", "models", "concerns")
+    config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
