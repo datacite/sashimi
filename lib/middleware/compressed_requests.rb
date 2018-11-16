@@ -26,7 +26,7 @@ class CompressedRequests
       request.update_param('report_header', hsh.fetch("report-header",{}).deep_transform_keys { |key| key.tr('-', '_') } )
       puts "This is header"
 
-      request.update_param('report_datasets', hsh.fetch("report-datasets",{}))
+      request.update_param('report_datasets', hsh.fetch("report-datasets",{}).map { |dataset| dataset.deep_transform_keys { |key| key.tr('-', '_') } }  )
       puts "This is body"
 
       request.update_param('encoding', env['HTTP_CONTENT_ENCODING'])
