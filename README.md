@@ -10,6 +10,15 @@ The application closely follows the [RESEARCH_DATA_SUSHI specification](https://
 ![](https://c1.staticflickr.com/1/21/31470457_3680ff198e_b.jpg)
 
 
+## Service Documentation
+
+DataCites provides an API for usage reports as a service. For a description about the API Rerefence and how to guides, please visit:
+
+* [API Reference](https://support.datacite.org/v1.1/reference#usage-reports)
+* [How To Guide for Usage Reports API](https://support.datacite.org/docs/usage-reports-api-guide)
+
+
+The rest of the README deals with techincal description and usage of the software in this repository.
 
 ## Installation
 
@@ -21,13 +30,21 @@ docker run -p 8075:80 datacite/sashimi
 
 You can now point your browser to `http://localhost:8075` and use the application.
 
-## Documentation
 
-* [API Reference](https://support.datacite.org/v1.1/reference#usage-reports)
+## Development
+
+We use Rspec for unit and acceptance testing:
+
+```
+bundle exec rspec
+```
+
+## Technical Description
 
 ### Resource components
 
-Full API Reference can be found in the [DataCite Support Website](https://support.datacite.org/v1.1/reference#overview-1). This reference is also a Live API. Major resource components supported by the Data Usage API are:
+
+Major resource components supported by the Data Usage API are:
 
 - reports
 - hearthbeat
@@ -161,13 +178,25 @@ The allowed and recommended characters for an URL safe naming of parameters are 
 - Parameters names SHOULD start and end with the characters “a-z” (U+0061 to U+007A)
 - Parameters names SHOULD contain only the characters “a-z” (U+0061 to U+007A), “0-9” (U+0030 to U+0039), and the hyphen minus (U+002D HYPHEN-MINUS, “-“) as separator between multiple words.
 
-## Development
+## Report Storage
 
-We use Rspec for unit and acceptance testing:
+Reports are stored in a S3 bucket using ActiveStore. We are storing them rather than in MYSQL because report can get rather big as mentioned in [COUNTER documentation](https://groups.niso.org/workrooms/sushi/start/clients). 
 
-```
-bundle exec rspec
-```
+### Metadata Validation
+
+The validation of the metadata in the reports its a two-step process. The controller takes care of checking presence of fields. While the Schema validation is performed before saving in ActiveRecord. We use json-schema validation for this.
+
+
+## Queries
+
+Very basic querying is supported and just for fields in the header of the reports. For more complex quering we suggest to use the DataCite Event Data Service. In its live instace The Hub API pushes every new created report to a AWS SQS queue for  processign by the Event Data Agent.
+
+
+## Pagination
+
+Pagination follows the JSOANPI specification. 
+
+
 
 Follow along via [Github Issues](https://github.com/datacite/sashimi/issues).
 

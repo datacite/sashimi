@@ -90,6 +90,7 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params_repeat, headers: headers}
 
       it 'fails to create a report' do
+        puts json
         expect(json.dig("report", "report-header", "created")).to eq("2128-04-09")
         expect(json.dig("report", "report-datasets", 0, "dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
         expect(response).to have_http_status(201)
@@ -251,6 +252,83 @@ describe 'Reports', type: :request do
         expect(response).to have_http_status(201)
       end
     end
+
+    context 'when the request is valid and compressed with small file' do
+      let(:bigly) {params}
+
+      let(:headers)  { {
+        'Content-Type' => 'json',
+        'Content-Encoding' => 'gzip',
+        'ACCEPT'=>'json',
+        'Authorization' => 'Bearer ' + bearer
+      } }
+      let(:gzip) do
+        ActiveSupport::Gzip.compress(bigly)
+      end
+  
+      before { post '/reports', params: gzip, headers: headers }
+
+      it 'creates a report' do
+        expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
+        expect(json.dig("report", "report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
+        expect(response).to have_http_status(201)
+      end
+    end
+    # context 'when the request is valid and compressed but not very large file' do
+    #   let(:bigly) {file_fixture('large_file_lc_2.json').read}
+
+    #   let(:headers)  { {
+    #     'Content-Type' => 'json',
+    #     'Content-Encoding' => 'gzip',
+    #     'ACCEPT'=>'json',
+    #     'Authorization' => 'Bearer ' + bearer
+    #   } }
+    #   let(:gzip) do
+    #     ActiveSupport::Gzip.compress(bigly)
+    #   end
+  
+    #   before { post '/reports', params: gzip, headers: headers }
+
+    #   it 'creates a report' do
+    #     # puts gzip
+    #     # puts response.inspect
+    #     puts json
+    #     # puts response
+    #     # puts 
+    #     expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
+    #     expect(json.dig("report", "report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
+    #     expect(response).to have_http_status(201)
+    #   end
+    # end
+    # context 'when the request is valid and compressed' do
+    #   # let(:bigly) {file_fixture('datacite_resolution_report_2018-04.json').read}
+    #   let(:bigly) {file_fixture('DSR-D1-2012-07-08.json').read}
+    #   # let(:bigly) {params}
+
+    #   let(:headers)  { {
+    #     'Content-Type' => 'json',
+    #     'Content-Encoding' => 'gzip',
+    #     'ACCEPT'=>'json',
+    #     'Authorization' => 'Bearer ' + bearer
+    #   } }
+    #   let(:gzip) do
+    #     ActiveSupport::Gzip.compress(bigly)
+    #   end
+  
+    #   before { post '/reports', params: gzip, headers: headers }
+
+    #   it 'creates a report' do
+    #     # puts gzip
+    #     # puts response.inspect
+    #     puts json
+    #     # puts response
+    #     # puts 
+    #     expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
+    #     expect(json.dig("report", "report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
+    #     expect(response).to have_http_status(201)
+    #   end
+    # end
+
   end
 
 

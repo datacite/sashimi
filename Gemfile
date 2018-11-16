@@ -7,7 +7,8 @@ end
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.1'
+gem 'rails', '~> 5.2.0'
+gem 'bootsnap', '~> 1.2', '>= 1.2.1'
 gem 'mysql2'
 gem 'dotenv'
 gem 'multi_json'
@@ -39,6 +40,7 @@ gem 'shoryuken', '~> 3.2', '>= 3.2.2'
 gem "aws-sdk-s3", require: false
 gem 'aws-sdk-sqs', '~> 1.3'
 gem 'iso_country_codes'
+gem 'yajl-ruby', require: 'yajl'
 
 
 group :development, :test do
@@ -60,6 +62,7 @@ group :test do
   gem 'vcr', '~> 3.0.3'
   gem 'codeclimate-test-reporter', '~> 1.0.0'
   gem 'simplecov'
+  gem 'yajl-ruby', require: 'yajl'
 
   gem 'factory_bot_rails', '~> 4.8', '>= 4.8.2'
   gem 'shoulda-matchers', '~> 3.1'
