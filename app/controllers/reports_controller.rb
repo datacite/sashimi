@@ -91,7 +91,8 @@ class ReportsController < ApplicationController
   end
 
   def create
-
+    puts "Ddsdsds"
+    puts safe_params
     @report = Report.where(created_by: safe_params[:created_by])
     .where(month: get_month(safe_params.dig("reporting_period","begin_date")))
     .where(year: get_year(safe_params.dig("reporting_period","begin_date")))
@@ -136,34 +137,36 @@ class ReportsController < ApplicationController
 
     header, datasets = params.require([:report_header, :report_datasets])
     header.merge!({report_datasets: datasets}) 
-    nested_names = [:name, :value]
-    nested_types = [:type, :value]
-    codes =  IsoCountryCodes.for_select.map {|code| code.last.downcase}
-    header.permit(
-      :report_name, :report_id, :release, :created, :created_by, 
-      report_attributes: nested_names, 
-      report_filters: nested_names, 
-      reporting_period: [:end_date, :begin_date], 
-      exceptions: [:message, :severity, :data, :code, :help_url], 
-      report_datasets: [
-        :dataset_title, 
-        :yop,
-        :uri,
-        :platform,
-        :data_type, 
-        :publisher,
-        :access_method,
-        publisher_id: nested_types, 
-        dataset_dates:nested_types, 
-        performance: [
-          period: [:end_date, :begin_date],
-          instance: [:access_method, :metric_type, :count, country_counts: codes]
-        ],
-        dataset_contributors: nested_types,
-        dataset_attributes: nested_types,
-        dataset_id: nested_types
-      ]
-    )
+    # nested_names = [:name, :value]
+    # nested_types = [:type, :value]
+    # codes =  IsoCountryCodes.for_select.map {|code| code.last.downcase}
+    
+    header
+    # header.permit(
+    #   :report_name, :report_id, :release, :created, :created_by, 
+    #   report_attributes: nested_names, 
+    #   report_filters: nested_names, 
+    #   reporting_period: [:end_date, :begin_date], 
+    #   exceptions: [:message, :severity, :data, :code, :help_url], 
+    #   report_datasets: [
+    #     :dataset_title, 
+    #     :yop,
+    #     :uri,
+    #     :platform,
+    #     :data_type, 
+    #     :publisher,
+    #     :access_method,
+    #     publisher_id: nested_types, 
+    #     dataset_dates:nested_types, 
+    #     performance: [
+    #       period: [:end_date, :begin_date],
+    #       instance: [:access_method, :metric_type, :count, country_counts: codes]
+    #     ],
+    #     dataset_contributors: nested_types,
+    #     dataset_attributes: nested_types,
+    #     dataset_id: nested_types
+    #   ]
+    # )
 
   end
 end

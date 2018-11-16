@@ -7,7 +7,7 @@ class ApplicationController < ActionController::API
 
   attr_accessor :current_user
 
-  before_action :default_format_json, :transform_params
+  before_action :default_format_json, :transform_params, :permit_all_params
   after_action :set_jsonp_format, :set_consumer_header
   after_action :set_jsonp_format
 
@@ -47,6 +47,10 @@ class ApplicationController < ActionController::API
 
   def default_format_json
     request.format = :json if request.format.html?
+  end
+
+  def permit_all_params
+    ActionController::Parameters.permit_all_parameters = true
   end
 
   # convert parameters with hyphen to parameters with underscore.
