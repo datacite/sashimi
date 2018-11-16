@@ -9,6 +9,7 @@ FactoryBot.define do
     reporting_period  "begin_date": "2018-03-01", "end_date": "2018-03-31" 
     report_filters []
     report_attributes []
+    exceptions []
     report_datasets [{
       "yop": "2010",
       "platform": "DataONE",
