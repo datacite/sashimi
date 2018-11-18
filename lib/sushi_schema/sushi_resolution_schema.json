@@ -447,7 +447,7 @@
     },
     "counter_dataset_usage" : {
       "type" : "object",
-      "required" : [ "data-type", "dataset-title", "performance", "platform", "publisher", "publisher-id" ],
+      "required" : [ "data-type", "performance" ],
       "properties" : {
         "dataset-title" : {
           "type" : "string",
