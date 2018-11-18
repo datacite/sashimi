@@ -1,10 +1,18 @@
 class ReportSerializer < ActiveModel::Serializer
   type 'report'
 
-  attributes  :id, :report_header, :report_datasets
+  attributes  :id, :report_header, :report_datasets, :gzip, :checksum
 
   def id
     object.uid
+  end
+
+  def gzip
+    object.encode_compressed
+  end
+
+  def checksum
+      object.checksum
   end
 
   def report_header
@@ -19,5 +27,9 @@ class ReportSerializer < ActiveModel::Serializer
       :report_attributes => object.report_attributes,
       :exceptions => object.exceptions, 
     }
+
+
+
+   
   end
 end
