@@ -13,14 +13,14 @@ FactoryBot.define do
     report_datasets [{
       "yop": "2010",
       "platform": "DataONE",
-      "data_type": "dataset",
-      "dataset_title": "Plasma Electron adjustment",
+      "data-type": "dataset",
+      "dataset-title": "Plasma Electron adjustment",
       "publisher": "DataONE",
-      "publisher_id": [{
+      "publisher-id": [{
         "type": "orcid",
         "value": "0931-865"
        }],
-      "dataset_id": [{
+      "dataset-id": [{
           "type": "doi",
           "value": "0931-865"
       }],
