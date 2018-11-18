@@ -67,6 +67,7 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params, headers: headers }
 
       it 'creates a report' do
+        puts json
         expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
         expect(response).to have_http_status(201)
       end
@@ -152,7 +153,7 @@ describe 'Reports', type: :request do
                   "value": "0931-865-000-000"
                 }
               ],
-              "dataset_id": [
+              "dataset-id": [
                 {
                   "type": "doi",
                   "value": "0931-865"
@@ -161,19 +162,19 @@ describe 'Reports', type: :request do
               "performance": [
                 {
                   "period": {
-                    "Begin-Date": "2018-03-01",
-                    "End-Date": "2018-03-31"
+                    "begin-date": "2018-03-01",
+                    "end-date": "2018-03-31"
                   },
                   "instance": [
                     {
-                      "access-Method": "Regular",
-                      "Metric-Type": "total-dataset-investigations",
-                      "Count": 3
+                      "access-method": "Regular",
+                      "metric-type": "total-dataset-investigations",
+                      "count": 3
                     },
                     {
-                      "Access-Method": "Regular",
-                      "Metric-Type": "unique-dataset-investigations",
-                      "Count": 3
+                      "access-method": "Regular",
+                      "metric-type": "unique-dataset-investigations",
+                      "count": 3
                     }
                   ]
                 }
@@ -185,6 +186,7 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params.to_json, headers: headers }
 
       it 'creates a report' do
+        puts json
         expect(json.dig("report", "report-header", "report-name")).to eq("Dataset Report")
         expect(response).to have_http_status(201)
       end
@@ -247,14 +249,15 @@ describe 'Reports', type: :request do
       before { post '/reports', params: resolutions, headers: headers }
 
       it 'creates a Resolution report' do
+        puts json
         expect(json.dig("report", "report-header", "report-name")).to eq("resolution report")
         expect(json.dig("report", "report-header", "release")).to eq("pid1")
         expect(response).to have_http_status(201)
       end
     end
 
-    context 'when the request is valid and compressed with small file' do
-      let(:bigly) {params}
+    context 'when the request is valid and compressed with small file without message' do
+      let(:bigly) {file_fixture('report_compressed.json').read}
 
       let(:headers)  { {
         'Content-Type' => 'json',
@@ -270,10 +273,41 @@ describe 'Reports', type: :request do
 
       it 'creates a report' do
         expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
-        expect(json.dig("report", "report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
-        expect(response).to have_http_status(201)
+        expect(json.dig("report","report-datasets","empty")).to eq("too large")
+        expect(json.dig("report","report-datasets","checksum")).not_to be_nil
+      end
+
+      it 'decodes correctly' do
+        gzip = Base64.decode64(json.dig("report", "gzip"))
+        report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+        expect(gzip).to eq(report.compressed)
+      end
+
+      it 'decrompress correctly' do
+        parser = Yajl::Parser.new
+        gzip = Base64.decode64(json.dig("report", "gzip"))
+        puts ActiveSupport::Gzip.decompress(gzip)
+        fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip))
+        expect(fjson.dig("report-header", "report-name")).to eq("dataset report")
+        expect(fjson.dig("report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
+        expect(fjson.dig("report-datasets",0,"yop")).to eq("2018")
+        expect(fjson.dig("report-datasets").length).to eq(1)
+      end
+
+      it 'checksum doesnt fail' do
+        report_checksum = json.dig("report", "checkum")
+        gzip = Base64.decode64(json.dig("report", "gzip"))
+        decode_checksum = Digest::SHA256.hexdigest(gzip)
+        report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+        original_checksum = report.checksum
+        expect(report_checksum).eql?(original_checksum)
+        expect(original_checksum).eql?(decode_checksum)
+        expect(report_checksum).eql?(decode_checksum)
       end
     end
+
+
+
     # context 'when the request is valid and compressed but not very large file' do
     #   let(:bigly) {file_fixture('large_file_lc_2.json').read}
 
@@ -290,20 +324,42 @@ describe 'Reports', type: :request do
     #   before { post '/reports', params: gzip, headers: headers }
 
     #   it 'creates a report' do
-    #     # puts gzip
-    #     # puts response.inspect
-    #     puts json
-    #     # puts response
-    #     # puts 
     #     expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
-    #     expect(json.dig("report", "report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
-    #     expect(response).to have_http_status(201)
+    #     expect(json.dig("report","report-datasets","empty")).to eq("too large")
+    #     expect(json.dig("report","report-datasets","checksum")).not_to be_nil
+    #   end
+
+    #   it 'decodes correctly' do
+    #     gzip = Base64.decode64(json.dig("report", "gzip"))
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     expect(gzip).to eq(report.compressed)
+    #   end
+
+    #   # it 'decrompress correctly' do
+    #   #   parser = Yajl::Parser.new
+    #   #   gzip = Base64.decode64(json.dig("report", "gzip"))
+    #   #   puts ActiveSupport::Gzip.decompress(gzip)
+    #   #   fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip))
+    #   #   expect(fjson.dig("report-header", "report-name")).to eq("dataset report")
+    #   #   expect(fjson.dig("report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
+    #   #   expect(fjson.dig("report-datasets",0,"yop")).to eq("2018")
+    #   #   expect(fjson.dig("report-datasets").length).to eq(1)
+    #   # end
+
+    #   it 'checksum doesnt fail' do
+    #     report_checksum = json.dig("report", "checkum")
+    #     gzip = Base64.decode64(json.dig("report", "gzip"))
+    #     decode_checksum = Digest::SHA256.hexdigest(gzip)
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     original_checksum = report.checksum
+    #     expect(report_checksum).eql?(original_checksum)
+    #     expect(original_checksum).eql?(decode_checksum)
+    #     expect(report_checksum).eql?(decode_checksum)
     #   end
     # end
-    # context 'when the request is valid and compressed' do
+    # context 'when the request is valid and compressed very large file' do
     #   # let(:bigly) {file_fixture('datacite_resolution_report_2018-04.json').read}
-    #   let(:bigly) {file_fixture('DSR-D1-2012-07-08.json').read}
-    #   # let(:bigly) {params}
+    #   let(:bigly) {file_fixture('DSR-D1-2012-08-01-urn-node-PISCO.json').read}
 
     #   let(:headers)  { {
     #     'Content-Type' => 'json',
@@ -323,8 +379,9 @@ describe 'Reports', type: :request do
     #     puts json
     #     # puts response
     #     # puts 
-    #     expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
-    #     expect(json.dig("report", "report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
+    #     expect(json.dig("report", "report-header", "report-name")).to eq("Dataset Master Report")
+    #     expect(json.dig("report","report-datasets","empty")).to eq("too large")
+    #     # expect(json.dig("report","report-datasets","checksum")).not_to be_nil
     #     expect(response).to have_http_status(201)
     #   end
     # end
@@ -362,7 +419,7 @@ describe 'Reports', type: :request do
                   "value": "0931-865-000-000"
                 }
               ],
-              "dataset_id": [
+              "dataset-id": [
                 {
                   "type": "DOI",
                   "value": "0931-865"
@@ -371,19 +428,19 @@ describe 'Reports', type: :request do
               "performance": [
                 {
                   "period": {
-                    "Begin-Date": "2018-03-01",
-                    "End-Date": "2018-03-31"
+                    "begin-date": "2018-03-01",
+                    "end-date": "2018-03-31"
                   },
                   "instance": [
                     {
-                      "access-Method": "Regular",
-                      "Metric-Type": "total-dataset-investigations",
-                      "Count": 3
+                      "access-method": "Regular",
+                      "metric-type": "total-dataset-investigations",
+                      "count": 3
                     },
                     {
-                      "Access-Method": "Regular",
-                      "Metric-Type": "unique-dataset-investigations",
-                      "Count": 3
+                      "access-method": "Regular",
+                      "metric-type": "unique-dataset-investigations",
+                      "count": 3
                     }
                   ]
                 }
@@ -431,9 +488,9 @@ describe 'Reports', type: :request do
   
       before { put "/reports/#{report.uid}", params: params.to_json, headers: headers }
   
-      it 'returns status code 422' do
-        expect(response).to have_http_status(422)
-        expect(json["errors"].first).to eq("status"=>"422", "title"=>"You need to provide a payload following the SUSHI specification")
+      it 'returns status code 400' do
+        expect(response).to have_http_status(400)
+        # expect(json["errors"].first).to eq("status"=>"422", "title"=>"You need to provide a payload following the SUSHI specification")
       end
     end
 
@@ -491,11 +548,11 @@ describe 'Reports', type: :request do
 
 
       it "it should create a report" do
-
+        puts json
         expect(response).to have_http_status(201)
         expect(json["errors"]).to be_nil
         expect(json.dig("report", "id")).to eq(uid)
-        expect(json.dig("report", "report-header", "created-by")).to eq("Dash")
+        expect(json.dig("report", "report-header", "created-by")).to eq("dash")
       end
     end
 
