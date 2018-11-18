@@ -23,14 +23,13 @@ class Report < ApplicationRecord
   include Queueable 
 
   # attr_accessor :month, :year, :compressed
-  validates_presence_of :report_id, :created_by, :report_datasets, :client_id, :provider_id, :created, :reporting_period
+  validates_presence_of :report_id, :created_by, :client_id, :provider_id, :created, :reporting_period, :report_datasets
   validates :uid, uniqueness: true
   validates :validate_sushi, sushi: {presence: true}
   attr_readonly :created_by, :month, :year, :client_id
 
   # serialize :exceptions, Array
-  # before_create :to_compress
-  before_validation :to_compress #, :is_valid_sushi?, :clean_datasets
+  before_validation :to_compress 
   before_validation :set_uid, on: :create
   after_validation :clean_datasets
   before_create :set_id
@@ -61,6 +60,15 @@ class Report < ApplicationRecord
     ActiveSupport::Gzip.compress(json_report.to_json)
   end
   
+  def encode_compressed
+    return nil if self.compressed.nil?
+    Base64.strict_encode64(self.compressed)
+  end
+
+  def checksum
+     Digest::SHA256.hexdigest(self.compressed)
+  end
+
   private
 
   # random number that fits into MySQL bigint field (8 bytes)
@@ -73,23 +81,26 @@ class Report < ApplicationRecord
   end
 
   def clean_datasets
+    puts "cleaning"
+
     return nil if self.exceptions.empty? 
     return nil if self.compressed.nil?
     code = self.exceptions.dig(0).fetch("code",nil)
     return nil if code != 69
-    # return  nil if self.compressed.nil? || self.compressed > 
-    # puts self.compressed.nil?
-    # self.report_datasets = {empty:"too large"}
+
     puts "chainging"
 
-    hsh = {
-      empty: "too large",
-      checksum: Digest::SHA256.hexdigest(self.report_datasets.to_json),
-      checksum_gzip: Digest::SHA256.hexdigest(self.compressed),
-    }
-
-    write_attribute(:report_datasets, hsh)
+    write_attribute(:report_datasets, compressed_message)
   end
+
+  def compressed_message
+    {
+      empty: "too large",
+      checksum: checksum,
+    }
+  end
+
+
 
   def set_uid
     return ActionController::ParameterMissing if self.reporting_period.nil?
@@ -99,10 +110,6 @@ class Report < ApplicationRecord
     year = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").year.to_s 
     write_attribute(:month,  month ) 
     write_attribute(:year,  year) 
-    # write_attribute(:compressed, compress)
-    # puts self.compressed
-    # puts self.compressed.nil?
-    
-    # write_attribute(:report_datasets, {empty:"too large"}) unless self.compressed.nil?
+    to_compress
   end
 end
