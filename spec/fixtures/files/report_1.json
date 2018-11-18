@@ -4,6 +4,7 @@
     "report_id": "DSR",
     "created_by": "DataONE",
     "created": "2022-01-01",
+    "exceptions": [],
     "reporting-period": {
         "begin-date": "2022-01-01",
         "end-date": "2022-01-0"
