@@ -133,40 +133,80 @@ class ReportsController < ApplicationController
 
   def safe_params
 
+    puts "this is controleer"
+
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_datasets].present? and params[:report_header].present? 
 
     header, datasets = params.require([:report_header, :report_datasets])
-    header.merge!({report_datasets: datasets}) 
-    # nested_names = [:name, :value]
-    # nested_types = [:type, :value]
-    # codes =  IsoCountryCodes.for_select.map {|code| code.last.downcase}
-    
-    header
-    # header.permit(
-    #   :report_name, :report_id, :release, :created, :created_by, 
-    #   report_attributes: nested_names, 
-    #   report_filters: nested_names, 
-    #   reporting_period: [:end_date, :begin_date], 
-    #   exceptions: [:message, :severity, :data, :code, :help_url], 
-    #   report_datasets: [
-    #     :dataset_title, 
-    #     :yop,
-    #     :uri,
-    #     :platform,
-    #     :data_type, 
-    #     :publisher,
-    #     :access_method,
-    #     publisher_id: nested_types, 
-    #     dataset_dates:nested_types, 
-    #     performance: [
-    #       period: [:end_date, :begin_date],
-    #       instance: [:access_method, :metric_type, :count, country_counts: codes]
-    #     ],
-    #     dataset_contributors: nested_types,
-    #     dataset_attributes: nested_types,
-    #     dataset_id: nested_types
-    #   ]
-    # )
+    header[:report_datasets] = datasets
+    # datasets[:report_datasets] = datasets
+    # datasets["report-header"] = header
+ 
+
+    if params[:encoding] == "gzip" 
+
+    # fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:compressed].present? and params[:report_header].present? 
+    # header, report = params.require([:report_header, :compressed])
+    # header[:compressed] = report.string
+    # header
+     header
+    else
+    # header.merge!({report_datasets: datasets}) 
+      nested_names = [:name, :value]
+      nested_types = [:type, :value]
+      codes =  IsoCountryCodes.for_select.map {|code| code.last.downcase}
+
+      header.permit(
+        :report_name, :report_id, :release, :created, :created_by, 
+        report_attributes: nested_names, 
+        report_filters: nested_names, 
+        reporting_period: ["end_date", "begin_date"], 
+        exceptions: [:message, :severity, :data, :code, "help_url"], 
+        report_datasets: [
+          "dataset-title", 
+          :yop,
+          :uri,
+          :platform,
+          "data-type", 
+          :publisher,
+          "access-method",
+          "publisher-id": nested_types, 
+          "dataset-dates": nested_types, 
+          performance: [
+            period: ["end-date", "begin-date"],
+            instance: ["access-method", "metric-type", :count, "country-counts": codes]
+          ],
+          "dataset-contributors": nested_types,
+          "dataset-attributes": nested_types,
+          "dataset-id": nested_types
+        ]
+      )
+      # header.permit(
+      #   :report_name, :report_id, :release, :created, :created_by, 
+      #   report_attributes: nested_names, 
+      #   report_filters: nested_names, 
+      #   reporting_period: [:end_date, :begin_date], 
+      #   exceptions: [:message, :severity, :data, :code, :help_url], 
+      #   report_datasets: [
+      #     :dataset_title, 
+      #     :yop,
+      #     :uri,
+      #     :platform,
+      #     :data_type, 
+      #     :publisher,
+      #     :access_method,
+      #     publisher_id: nested_types, 
+      #     dataset_dates:nested_types, 
+      #     performance: [
+      #       period: [:end_date, :begin_date],
+      #       instance: [:access_method, :metric_type, :count, country_counts: codes]
+      #     ],
+      #     dataset_contributors: nested_types,
+      #     dataset_attributes: nested_types,
+      #     dataset_id: nested_types
+      #   ]
+      # )
+    end
 
   end
 end
