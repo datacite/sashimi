@@ -132,9 +132,6 @@ class ReportsController < ApplicationController
   def safe_params
 
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_header].present?
-
-    
-    # puts params[:report_header].fetch(:release)
     x = usage_report_params        if params[:report_datasets].present?  && params[:report_header].fetch(:release) == "rd1" && params[:encoding] != "gzip" 
     x = resolution_report_params   if params[:report_header].fetch(:release) == "drl" && params[:encoding] == "gzip" && x.nil?
     x = compressed_report_params   if params[:compressed].present?  && params[:encoding] == "gzip" && params[:report_header].fetch(:release) == "rd1" && x.nil?
