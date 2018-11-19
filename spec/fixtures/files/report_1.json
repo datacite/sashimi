@@ -2,6 +2,7 @@
     "id": "edce947f-5681-4402-aad0-508fa7ececff",
     "report_name": "Dataset Report",
     "report_id": "DSR",
+    "release": "rd1",
     "created_by": "DataONE",
     "created": "2022-01-01",
     "exceptions": [],
