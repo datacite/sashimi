@@ -510,12 +510,6 @@
           "example" : "2010",
           "description" : "year of publication in the format of 'yyyy'. use '0001' for unknown and '9999' for articles in press."
         },
-        "access-method" : {
-          "type" : "string",
-          "example" : "regular",
-          "description" : "identifies if the usage activity was 'regular' usage - a user doing research on a content site, or if the usage activity was 'machine' - for the purpose of retrieving content for text and data mining (tdm)",
-          "enum" : [ "regular", "machine" ]
-        },
         "performance" : {
           "type" : "array",
           "description" : "the usage data related to the report dataset",
@@ -800,7 +794,7 @@
       }
     },
     "counter_dataset_performance_instance" : {
-      "required" : [ "count", "metric-type" ],
+      "required" : [ "count", "metric-type", "access-method" ],
       "properties" : {
         "metric-type" : {
           "type" : "string",
@@ -812,6 +806,12 @@
           "type" : "integer",
           "example" : 21,
           "description" : "usage count > 0.  if count is zero, the intance element should be excluded."
+        },
+        "access-method" : {
+          "type" : "string",
+          "example" : "regular",
+          "description" : "identifies if the usage activity was 'regular' usage - a user doing research on a content site, or if the usage activity was 'machine' - for the purpose of retrieving content for text and data mining (tdm)",
+          "enum" : [ "regular", "machine" ]
         }
       },
       "example" : {
