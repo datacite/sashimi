@@ -41,16 +41,16 @@ describe 'ReportTypes', type: :request do
   #   end
   # end
 
-  describe 'POST /report-types' do
-    let!(:params)  { {"report-id": "Master_report"}} 
-    context 'when the request is valid' do
-      before { post '/report-types', params: params.to_json, headers: headers }
+  # describe 'POST /report-types' do
+  #   let!(:params)  { {"report-id": "Master_report"}} 
+  #   context 'when the request is valid' do
+  #     before { post '/report-types', params: params.to_json, headers: headers }
 
-      it 'creates a report' do
-        puts json
-        expect(response).to have_http_status(201)
-        expect(json.dig("report_id")).to eq("Master_report")
-      end
-    end
-  end
+  #     it 'creates a report' do
+  #       puts json
+  #       expect(response).to have_http_status(201)
+  #       expect(json.dig("report_id")).to eq("Master_report")
+  #     end
+  #   end
+  # end
 end

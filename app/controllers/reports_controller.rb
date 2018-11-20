@@ -91,7 +91,6 @@ class ReportsController < ApplicationController
   end
 
   def create
-
     @report = Report.where(created_by: safe_params[:created_by])
     .where(month: get_month(safe_params.dig("reporting_period","begin_date")))
     .where(year: get_year(safe_params.dig("reporting_period","begin_date")))
@@ -132,38 +131,71 @@ class ReportsController < ApplicationController
 
   def safe_params
 
+    fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_header].present?
+    x = usage_report_params        if params[:report_datasets].present?  && params[:report_header].fetch(:release) == "rd1" && params[:encoding] != "gzip" 
+    x = resolution_report_params   if params[:report_header].fetch(:release) == "drl" && params[:encoding] == "gzip" && x.nil?
+    x = compressed_report_params   if params[:compressed].present?  && params[:encoding] == "gzip" && params[:report_header].fetch(:release) == "rd1" && x.nil?
+    x = decompressed_report_params if params[:encoding] == "gzip" && params[:compressed].nil? && params[:report_header].fetch(:release) == "rd1" && x.nil?
+    x
+  end
+
+  def usage_report_params
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_datasets].present? and params[:report_header].present? 
 
     header, datasets = params.require([:report_header, :report_datasets])
-    header.merge!({report_datasets: datasets}) 
+    header[:report_datasets] = datasets
+
     nested_names = [:name, :value]
     nested_types = [:type, :value]
     codes =  IsoCountryCodes.for_select.map {|code| code.last.downcase}
+
     header.permit(
       :report_name, :report_id, :release, :created, :created_by, 
       report_attributes: nested_names, 
       report_filters: nested_names, 
-      reporting_period: [:end_date, :begin_date], 
-      exceptions: [:message, :severity, :data, :code, :help_url], 
+      reporting_period: ["end_date", "begin_date"], 
+      exceptions: [:message, :severity, :data, :code, "help_url"], 
       report_datasets: [
-        :dataset_title, 
+        "dataset-title", 
         :yop,
         :uri,
         :platform,
-        :data_type, 
+        "data-type", 
         :publisher,
-        :access_method,
-        publisher_id: nested_types, 
-        dataset_dates:nested_types, 
+        "publisher-id": nested_types, 
+        "dataset-dates": nested_types, 
         performance: [
-          period: [:end_date, :begin_date],
-          instance: [:access_method, :metric_type, :count, country_counts: codes]
+          period: ["end-date", "begin-date"],
+          instance: ["access-method", "metric-type", :count, "country-counts": codes]
         ],
-        dataset_contributors: nested_types,
-        dataset_attributes: nested_types,
-        dataset_id: nested_types
+        "dataset-contributors": nested_types,
+        "dataset-attributes": nested_types,
+        "dataset-id": nested_types
       ]
     )
+  end
 
+  def resolution_report_params
+    puts "Resolutions!!!!"
+    fail  fail JSON::ParserError, "Resolution Reports need to be compressed" unless params[:compressed].present? and params[:encoding] == "gzip" 
+    header, report = params.require([:report_header, :compressed])
+    # header[:report_datasets] = []
+    header[:compressed] = report.string
+    header
+  end
+
+  def compressed_report_params
+    fail JSON::ParserError, "You need to provide a payload following the SUSHI specification and int compressed" unless params[:compressed].present? and params[:report_header].present? 
+    header, report = params.require([:report_header, :compressed])
+    # header[:report_datasets] = []
+    header[:compressed] = report.string
+    header
+  end
+
+  def decompressed_report_params
+    fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_datasets].present? and params[:report_header].present? 
+    header, datasets = params.require([:report_header, :report_datasets])
+    header[:report_datasets] = datasets
+    header
   end
 end
