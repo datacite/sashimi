@@ -2,8 +2,10 @@
     "id": "6aa24a74-2fa4-4376-993c-2128fd9ebd30",
     "report_name": "Dataset Report",
     "report_id": "DSR",
+    "release": "rd1",
     "created_by": "CDL",
     "created": "2015-01-01",
+    "exceptions": [],
     "reporting-period": {
         "begin-date": "2015-01-01",
         "end-date": "2015-01-0"

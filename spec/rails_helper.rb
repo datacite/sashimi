@@ -14,6 +14,8 @@ require "webmock/rspec"
 require "rack/test"
 # require "colorize"
 require "database_cleaner"
+require 'yajl'
+
 
 
 

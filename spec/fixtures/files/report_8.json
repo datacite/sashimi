@@ -1,23 +1,23 @@
 {
   "report-header": {
     "report-name": "dataset report",
-    "report-id": "FULL",
-    "release": "rd2",
+    "report-id": "full",
+    "release": "rd1",
     "created": "2018-05-11",
     "reporting_period": {
       "begin-date": "2129-05-09",
       "end-date": "2129-05-09"
      },
-    "created-by": "Dash",
+    "created-by": "dash",
     "report-attributes": [],
     "report-filters": [
       {
         "name": "begin-date",
-        "value": "2018-04-01T00:00:00"
+        "value": "2018-04-01t00:00:00"
       },
       {
         "name": "end-date",
-        "value": "2018-04-30T00:00:00"
+        "value": "2018-04-30t00:00:00"
       }
     ],
     "exceptions": [
@@ -25,28 +25,28 @@
         "code": 3040,
         "severity": "warning",
         "message": "partial data returned",
-        "help-url": "String",
+        "help-url": "string",
         "data": "usage data has not been processed for the entire reporting period"
       }
     ]
   },
   "report-datasets": [
     {
-      "dataset-title": "Posttraumatic Stress Disorder (PTSD)",
+      "dataset-title": "posttraumatic stress disorder (ptsd)",
       "dataset-id": [
         {
           "type": "doi",
-          "value": "10.7272/Q6QN64NK"
+          "value": "10.7272/q6qn64nk"
         }
       ],
       "dataset-contributors": [
         {
           "type": "name",
-          "value": "Michael W. Weiner"
+          "value": "michael w. weiner"
         },
         {
           "type": "name",
-          "value": "Norbert Schuff"
+          "value": "norbert schuff"
         }
       ],
       "dataset-dates": [
@@ -55,8 +55,8 @@
           "value": "2013-08-22"
         }
       ],
-      "platform": "Dash",
-      "publisher": "UC San Francisco",
+      "platform": "dash",
+      "publisher": "uc san francisco",
       "publisher-id": [
         {
           "type": "grid",
@@ -65,7 +65,7 @@
       ],
       "data-type": "dataset",
       "yop": "2012",
-      "uri": "https://datashare.ucsf.edu/stash/dataset/doi:10.7272/Q6QN64NK",
+      "uri": "https://datashare.ucsf.edu/stash/dataset/doi:10.7272/q6qn64nk",
       "performance": [
         {
           "period": {
@@ -78,11 +78,11 @@
               "metric-type": "total-dataset-requests",
               "count": 1349,
               "country-counts": {
-                "AU": 154,
-                "CA": 5,
-                "DK": 30,
-                "IE": 5,
-                "US": 155,
+                "au": 154,
+                "ca": 5,
+                "dk": 30,
+                "ie": 5,
+                "us": 155,
 								"de":3,
 								"kr":1,
 								"cn":1,
@@ -99,11 +99,11 @@
               "metric-type": "unique-dataset-requests",
               "count": 127,
               "country-counts": {
-                "AU": 9,
-                "CA": 4,
-                "DK": 2,
-                "IE": 3,
-                "US": 9
+                "au": 9,
+                "ca": 4,
+                "dk": 2,
+                "ie": 3,
+                "us": 9
               }
             }
             
@@ -112,17 +112,17 @@
       ]
     },
     {
-      "dataset-title": "Influence of human disturbance on marine invertebrate biodiversity in Acadia National Park’s rocky intertidal community",
+      "dataset-title": "influence of human disturbance on marine invertebrate biodiversity in acadia national park’s rocky intertidal community",
       "dataset-id": [
         {
           "type": "doi",
-          "value": "10.15146/R3J66V"
+          "value": "10.15146/r3j66v"
         }
       ],
       "dataset-contributors": [
         {
           "type": "name",
-          "value": "Cassandra Lopez"
+          "value": "cassandra lopez"
         }
       ],
       "dataset-dates": [
@@ -131,8 +131,8 @@
           "value": "2017-12-31"
         }
       ],
-      "platform": "Dash",
-      "publisher": "DataONE",
+      "platform": "dash",
+      "publisher": "dataone",
       "publisher-id": [
         {
           "type": "grid",
@@ -141,7 +141,7 @@
       ],
       "data-type": "dataset",
       "yop": "2017",
-      "uri": "https://oneshare.cdlib.org/stash/dataset/doi:10.15146/R3J66V",
+      "uri": "https://oneshare.cdlib.org/stash/dataset/doi:10.15146/r3j66v",
       "performance": [
         {
           "period": {
@@ -154,8 +154,8 @@
               "metric-type": "total-dataset-requests",
               "count": 18,
               "country-counts": {
-                "AU": 6,
-                "US": 12
+                "au": 6,
+                "us": 12
               }
             },
             {
@@ -163,8 +163,8 @@
               "metric-type": "unique-dataset-requests",
               "count": 3,
               "country-counts": {
-                "AU": 1,
-                "US": 2
+                "au": 1,
+                "us": 2
               }
             },
             {
@@ -172,8 +172,8 @@
               "metric-type": "total-dataset-investigations",
               "count": 3,
               "country-counts": {
-                "DE": 2,
-                "DK": 1
+                "de": 2,
+                "dk": 1
               }
             },
             {
@@ -181,8 +181,8 @@
               "metric-type": "unique-dataset-investigations",
               "count": 3,
               "country-counts": {
-                "DE": 2,
-                "DK": 1
+                "de": 2,
+                "dk": 1
               }
             },
             {
@@ -190,7 +190,7 @@
               "metric-type": "total-dataset-requests",
               "count": 7,
               "country-counts": {
-                "KR": 7
+                "kr": 7
               }
             },
             {
@@ -198,7 +198,7 @@
               "metric-type": "unique-dataset-requests",
               "count": 7,
               "country-counts": {
-                "KR": 7
+                "kr": 7
               }
             }
           ]
@@ -206,17 +206,17 @@
       ]
     },
     {
-      "dataset-title": "TWOSTATE, a resonance Raman excitation profile and absorption spectrum simulator",
+      "dataset-title": "twostate, a resonance raman excitation profile and absorption spectrum simulator",
       "dataset-id": [
         {
           "type": "doi",
-          "value": "10.6071/M32Q0X"
+          "value": "10.6071/m32q0x"
         }
       ],
       "dataset-contributors": [
         {
           "type": "name",
-          "value": "Anne Kelley"
+          "value": "anne kelley"
         }
       ],
       "dataset-dates": [
@@ -225,8 +225,8 @@
           "value": "2017-09-06"
         }
       ],
-      "platform": "Dash",
-      "publisher": "UC Merced",
+      "platform": "dash",
+      "publisher": "uc merced",
       "publisher-id": [
         {
           "type": "grid",
@@ -235,7 +235,7 @@
       ],
       "data-type": "dataset",
       "yop": "2017",
-      "uri": "https://dash.ucmerced.edu/stash/dataset/doi:10.6071/M32Q0X",
+      "uri": "https://dash.ucmerced.edu/stash/dataset/doi:10.6071/m32q0x",
       "performance": [
         {
           "period": {
@@ -248,9 +248,9 @@
               "metric-type": "total-dataset-requests",
               "count": 25,
               "country-counts": {
-                "AU": 10,
-                "DK": 1,
-                "US": 14
+                "au": 10,
+                "dk": 1,
+                "us": 14
               }
             },
             {
@@ -258,9 +258,9 @@
               "metric-type": "unique-dataset-requests",
               "count": 7,
               "country-counts": {
-                "AU": 3,
-                "DK": 1,
-                "US": 3
+                "au": 3,
+                "dk": 1,
+                "us": 3
               }
             },
             {
@@ -268,9 +268,9 @@
               "metric-type": "total-dataset-investigations",
               "count": 27,
               "country-counts": {
-                "DE": 2,
-                "DK": 1,
-                "US": 24
+                "de": 2,
+                "dk": 1,
+                "us": 24
               }
             },
             {
@@ -278,9 +278,9 @@
               "metric-type": "unique-dataset-investigations",
               "count": 19,
               "country-counts": {
-                "DE": 2,
-                "DK": 1,
-                "US": 16
+                "de": 2,
+                "dk": 1,
+                "us": 16
               }
             }
           ]
@@ -288,29 +288,29 @@
       ]
     },
     {
-      "dataset-title": "Providence Creek soil moisture and temperature, snow depth and air temperature",
+      "dataset-title": "providence creek soil moisture and temperature, snow depth and air temperature",
       "dataset-id": [
         {
           "type": "doi",
-          "value": "10.6071/Z7WC73"
+          "value": "10.6071/z7wc73"
         }
       ],
       "dataset-contributors": [
         {
           "type": "name",
-          "value": "Roger Bales"
+          "value": "roger bales"
         },
         {
           "type": "name",
-          "value": "Matt Meadows"
+          "value": "matt meadows"
         },
         {
           "type": "name",
-          "value": "Xiande Meng"
+          "value": "xiande meng"
         },
         {
           "type": "name",
-          "value": "Southern Sierra Critical Zone Observatory (SSCZO)"
+          "value": "southern sierra critical zone observatory (ssczo)"
         }
       ],
       "dataset-dates": [
@@ -319,8 +319,8 @@
           "value": "2016-03-14"
         }
       ],
-      "platform": "Dash",
-      "publisher": "UC Merced",
+      "platform": "dash",
+      "publisher": "uc merced",
       "publisher-id": [
         {
           "type": "grid",
@@ -329,7 +329,7 @@
       ],
       "data-type": "dataset",
       "yop": "2013",
-      "uri": "https://dash.ucmerced.edu/stash/dataset/doi:10.6071/Z7WC73",
+      "uri": "https://dash.ucmerced.edu/stash/dataset/doi:10.6071/z7wc73",
       "performance": [
         {
           "period": {
@@ -342,11 +342,11 @@
               "metric-type": "total-dataset-requests",
               "count": 1260,
               "country-counts": {
-                "AU": 555,
-                "CA": 11,
-                "DK": 17,
-                "IE": 13,
-                "US": 664
+                "au": 555,
+                "ca": 11,
+                "dk": 17,
+                "ie": 13,
+                "us": 664
               }
             },
             {
@@ -354,11 +354,11 @@
               "metric-type": "unique-dataset-requests",
               "count": 121,
               "country-counts": {
-                "AU": 7,
-                "CA": 3,
-                "DK": 5,
-                "IE": 6,
-                "US": 100
+                "au": 7,
+                "ca": 3,
+                "dk": 5,
+                "ie": 6,
+                "us": 100
               }
             },
             {
@@ -366,7 +366,7 @@
               "metric-type": "total-dataset-investigations",
               "count": 4,
               "country-counts": {
-                "DE": 4
+                "de": 4
               }
             },
             {
@@ -374,7 +374,7 @@
               "metric-type": "unique-dataset-investigations",
               "count": 4,
               "country-counts": {
-                "DE": 4
+                "de": 4
               }
             }
           ]
@@ -382,7 +382,7 @@
       ]
     },
     {
-      "dataset-title": "Pay It Forward: APC - SNIP Regression Raw Data",
+      "dataset-title": "pay it forward: apc - snip regression raw data",
       "dataset-id": [
         {
           "type": "doi",
@@ -392,7 +392,7 @@
       "dataset-contributors": [
         {
           "type": "name",
-          "value": "2015-16 University of California Pay It Forward Project"
+          "value": "2015-16 university of california pay it forward project"
         }
       ],
       "dataset-dates": [
@@ -401,8 +401,8 @@
           "value": "2016-06-28"
         }
       ],
-      "platform": "Dash",
-      "publisher": "UC Office of the President",
+      "platform": "dash",
+      "publisher": "uc office of the president",
       "publisher-id": [
         {
           "type": "grid",
@@ -424,10 +424,10 @@
               "metric-type": "total-dataset-requests",
               "count": 7,
               "country-counts": {
-                "AU": 2,
-                "DK": 2,
-                "IE": 1,
-                "US": 2
+                "au": 2,
+                "dk": 2,
+                "ie": 1,
+                "us": 2
               }
             },
             {
@@ -435,10 +435,10 @@
               "metric-type": "unique-dataset-requests",
               "count": 4,
               "country-counts": {
-                "AU": 1,
-                "DK": 1,
-                "IE": 1,
-                "US": 1
+                "au": 1,
+                "dk": 1,
+                "ie": 1,
+                "us": 1
               }
             },
             {
@@ -446,9 +446,9 @@
               "metric-type": "total-dataset-investigations",
               "count": 4,
               "country-counts": {
-                "DE": 2,
-                "DK": 1,
-                "US": 1
+                "de": 2,
+                "dk": 1,
+                "us": 1
               }
             },
             {
@@ -456,9 +456,9 @@
               "metric-type": "unique-dataset-investigations",
               "count": 4,
               "country-counts": {
-                "DE": 2,
-                "DK": 1,
-                "US": 1
+                "de": 2,
+                "dk": 1,
+                "us": 1
               }
             }
           ]
@@ -466,7 +466,7 @@
       ]
     },
     {
-      "dataset-title": "Pay It Forward: Author Survey Results",
+      "dataset-title": "pay it forward: author survey results",
       "dataset-id": [
         {
           "type": "doi",
@@ -476,7 +476,7 @@
       "dataset-contributors": [
         {
           "type": "name",
-          "value": "2015-16 University of California Pay It Forward Project"
+          "value": "2015-16 university of california pay it forward project"
         }
       ],
       "dataset-dates": [
@@ -485,8 +485,8 @@
           "value": "2016-06-29"
         }
       ],
-      "platform": "Dash",
-      "publisher": "UC Office of the President",
+      "platform": "dash",
+      "publisher": "uc office of the president",
       "publisher-id": [
         {
           "type": "grid",
@@ -508,9 +508,9 @@
               "metric-type": "total-dataset-requests",
               "count": 6,
               "country-counts": {
-                "AU": 2,
-                "DK": 2,
-                "US": 2
+                "au": 2,
+                "dk": 2,
+                "us": 2
               }
             },
             {
@@ -518,9 +518,9 @@
               "metric-type": "unique-dataset-requests",
               "count": 3,
               "country-counts": {
-                "AU": 1,
-                "DK": 1,
-                "US": 1
+                "au": 1,
+                "dk": 1,
+                "us": 1
               }
             },
             {
@@ -528,9 +528,9 @@
               "metric-type": "total-dataset-investigations",
               "count": 4,
               "country-counts": {
-                "DE": 2,
-                "DK": 1,
-                "US": 1
+                "de": 2,
+                "dk": 1,
+                "us": 1
               }
             },
             {
@@ -538,9 +538,9 @@
               "metric-type": "unique-dataset-investigations",
               "count": 4,
               "country-counts": {
-                "DE": 2,
-                "DK": 1,
-                "US": 1
+                "de": 2,
+                "dk": 1,
+                "us": 1
               }
             }
           ]
@@ -548,7 +548,7 @@
       ]
     },
     {
-      "dataset-title": "Pay It Forward: Journal Cost Modeling Data",
+      "dataset-title": "pay it forward: journal cost modeling data",
       "dataset-id": [
         {
           "type": "doi",
@@ -558,7 +558,7 @@
       "dataset-contributors": [
         {
           "type": "name",
-          "value": "2015-16 University of California Pay It Forward Project"
+          "value": "2015-16 university of california pay it forward project"
         }
       ],
       "dataset-dates": [
@@ -567,8 +567,8 @@
           "value": "2016-06-28"
         }
       ],
-      "platform": "Dash",
-      "publisher": "UC Office of the President",
+      "platform": "dash",
+      "publisher": "uc office of the president",
       "publisher-id": [
         {
           "type": "grid",
@@ -590,10 +590,10 @@
               "metric-type": "total-dataset-requests",
               "count": 4,
               "country-counts": {
-                "AU": 1,
-                "DK": 1,
-                "IE": 1,
-                "US": 1
+                "au": 1,
+                "dk": 1,
+                "ie": 1,
+                "us": 1
               }
             },
             {
@@ -601,10 +601,10 @@
               "metric-type": "unique-dataset-requests",
               "count": 4,
               "country-counts": {
-                "AU": 1,
-                "DK": 1,
-                "IE": 1,
-                "US": 1
+                "au": 1,
+                "dk": 1,
+                "ie": 1,
+                "us": 1
               }
             },
             {
@@ -612,9 +612,9 @@
               "metric-type": "total-dataset-investigations",
               "count": 4,
               "country-counts": {
-                "DE": 2,
-                "DK": 1,
-                "US": 1
+                "de": 2,
+                "dk": 1,
+                "us": 1
               }
             },
             {
@@ -622,9 +622,9 @@
               "metric-type": "unique-dataset-investigations",
               "count": 4,
               "country-counts": {
-                "DE": 2,
-                "DK": 1,
-                "US": 1
+                "de": 2,
+                "dk": 1,
+                "us": 1
               }
             }
           ]
