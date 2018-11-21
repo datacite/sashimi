@@ -38,8 +38,8 @@ class CompressedRequests
       request.update_param('encoding', env['HTTP_CONTENT_ENCODING'])
 
       env.delete('HTTP_CONTENT_ENCODING')
-      # env['CONTENT_LENGTH'] = extracted.length
-      # env['rack.input'] = StringIO.new(extracted)
+      env['CONTENT_LENGTH'] = extracted.length
+      env['rack.input'] = StringIO.new(extracted)
     end
 
 
