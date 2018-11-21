@@ -11,7 +11,7 @@
     "created-by": "dataone",
     "report-filters": [],
     "report-attributes": [],
-    "exceptions": []
+    "exceptions": [{"code": 69,"severity": "warning","message": "report is compressed using gzip","help-url": "https://github.com/datacite/sashimi","data": "usage data needs to be uncompressed"}]
   },
   "report-datasets": [
     {
