@@ -259,6 +259,7 @@ describe 'Reports', type: :request do
       before { post '/reports', params: gzip, headers: headers }
 
       it 'creates a Resolution report' do
+        #puts json
         expect(json.dig("report", "report-header", "report-name")).to eq("resolution report")
         expect(json.dig("report", "report-header", "release")).to eq("drl")
         expect(response).to have_http_status(201)
