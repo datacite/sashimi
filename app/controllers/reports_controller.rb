@@ -91,8 +91,6 @@ class ReportsController < ApplicationController
   end
 
   def create
-    puts "Ddsdsds"
-    puts safe_params
     @report = Report.where(created_by: safe_params[:created_by])
     .where(month: get_month(safe_params.dig("reporting_period","begin_date")))
     .where(year: get_year(safe_params.dig("reporting_period","begin_date")))
@@ -133,80 +131,72 @@ class ReportsController < ApplicationController
 
   def safe_params
 
-    puts "this is controleer"
+    fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_header].present?
+    x = usage_report_params        if params[:report_datasets].present?  && params[:report_header].fetch(:release) == "rd1" && params[:encoding] != "gzip" 
+    x = resolution_report_params   if params[:report_header].fetch(:release) == "drl" && params[:encoding] == "gzip" && x.nil?
+    x = compressed_report_params   if params[:compressed].present?  && params[:encoding] == "gzip" && params[:report_header].fetch(:release) == "rd1" && x.nil?
+    x = decompressed_report_params if params[:encoding] == "gzip" && params[:compressed].nil? && params[:report_header].fetch(:release) == "rd1" && x.nil?
+    x
+  end
 
+  def usage_report_params
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_datasets].present? and params[:report_header].present? 
 
     header, datasets = params.require([:report_header, :report_datasets])
     header[:report_datasets] = datasets
-    # datasets[:report_datasets] = datasets
-    # datasets["report-header"] = header
- 
 
-    if params[:encoding] == "gzip" 
+    nested_names = [:name, :value]
+    nested_types = [:type, :value]
+    codes =  IsoCountryCodes.for_select.map {|code| code.last.downcase}
 
-    # fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:compressed].present? and params[:report_header].present? 
-    # header, report = params.require([:report_header, :compressed])
-    # header[:compressed] = report.string
-    # header
-     header
-    else
-    # header.merge!({report_datasets: datasets}) 
-      nested_names = [:name, :value]
-      nested_types = [:type, :value]
-      codes =  IsoCountryCodes.for_select.map {|code| code.last.downcase}
+    header.permit(
+      :report_name, :report_id, :release, :created, :created_by, 
+      report_attributes: nested_names, 
+      report_filters: nested_names, 
+      reporting_period: ["end_date", "begin_date"], 
+      exceptions: [:message, :severity, :data, :code, "help_url"], 
+      report_datasets: [
+        "dataset-title", 
+        :yop,
+        :uri,
+        :platform,
+        "data-type", 
+        :publisher,
+        "publisher-id": nested_types, 
+        "dataset-dates": nested_types, 
+        performance: [
+          period: ["end-date", "begin-date"],
+          instance: ["access-method", "metric-type", :count, "country-counts": codes]
+        ],
+        "dataset-contributors": nested_types,
+        "dataset-attributes": nested_types,
+        "dataset-id": nested_types
+      ]
+    )
+  end
 
-      header.permit(
-        :report_name, :report_id, :release, :created, :created_by, 
-        report_attributes: nested_names, 
-        report_filters: nested_names, 
-        reporting_period: ["end_date", "begin_date"], 
-        exceptions: [:message, :severity, :data, :code, "help_url"], 
-        report_datasets: [
-          "dataset-title", 
-          :yop,
-          :uri,
-          :platform,
-          "data-type", 
-          :publisher,
-          "access-method",
-          "publisher-id": nested_types, 
-          "dataset-dates": nested_types, 
-          performance: [
-            period: ["end-date", "begin-date"],
-            instance: ["access-method", "metric-type", :count, "country-counts": codes]
-          ],
-          "dataset-contributors": nested_types,
-          "dataset-attributes": nested_types,
-          "dataset-id": nested_types
-        ]
-      )
-      # header.permit(
-      #   :report_name, :report_id, :release, :created, :created_by, 
-      #   report_attributes: nested_names, 
-      #   report_filters: nested_names, 
-      #   reporting_period: [:end_date, :begin_date], 
-      #   exceptions: [:message, :severity, :data, :code, :help_url], 
-      #   report_datasets: [
-      #     :dataset_title, 
-      #     :yop,
-      #     :uri,
-      #     :platform,
-      #     :data_type, 
-      #     :publisher,
-      #     :access_method,
-      #     publisher_id: nested_types, 
-      #     dataset_dates:nested_types, 
-      #     performance: [
-      #       period: [:end_date, :begin_date],
-      #       instance: [:access_method, :metric_type, :count, country_counts: codes]
-      #     ],
-      #     dataset_contributors: nested_types,
-      #     dataset_attributes: nested_types,
-      #     dataset_id: nested_types
-      #   ]
-      # )
-    end
+  def resolution_report_params
+    puts "Resolutions!!!!"
+    fail  fail JSON::ParserError, "Resolution Reports need to be compressed" unless params[:compressed].present? and params[:encoding] == "gzip" 
+    header, report = params.require([:report_header, :compressed])
+    # header[:report_datasets] = []
+    # puts report.body.class
+    header[:compressed] = Rails.env.test? ?  report.string : report.gets
+    header
+  end
 
+  def compressed_report_params
+    fail JSON::ParserError, "You need to provide a payload following the SUSHI specification and int compressed" unless params[:compressed].present? and params[:report_header].present? 
+    header, report = params.require([:report_header, :compressed])
+    # header[:report_datasets] = []
+    header[:compressed] = Rails.env.test? ?  report.string : report.gets
+    header
+  end
+
+  def decompressed_report_params
+    fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_datasets].present? and params[:report_header].present? 
+    header, datasets = params.require([:report_header, :report_datasets])
+    header[:report_datasets] = datasets
+    header
   end
 end

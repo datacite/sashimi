@@ -13,11 +13,6 @@ module Metadatable
       report = self.attributes.except("compressed")
       report.transform_keys! { |key| key.tr('_', '-') }
    
-      puts report["report-datasets"].class
-      puts report["report-datasets"]
-      # # size = (report["report-datasets"].length)
-      # # sample =  (size/8) > 0 ? size : 1
-      # # report["report-datasets"] = report["report-datasets"].sample(sample)
       JSON::Validator.fully_validate(schema, report.to_json, :errors_as_objects => true)
     end
 
@@ -41,7 +36,6 @@ module Metadatable
       # report = self.attributes.except("compressed").deep_transform_keys { |key| key.tr('_', '-') }
       report = self.attributes.except("compressed")
       report.transform_keys! { |key| key.tr('_', '-') }
-      puts report
       JSON::Validator.validate(schema, report.to_json)
     end
   
