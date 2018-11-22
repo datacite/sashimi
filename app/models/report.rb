@@ -50,7 +50,7 @@ class Report < ApplicationRecord
       {
         "report-name": self.report_name,
           "report-id": self.report_id,
-          "release": "rds",
+          "release": self.release,
           "created": self.created,
           "created-by": self.created_by,
           "reporting-period": self.reporting_period,
