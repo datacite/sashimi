@@ -179,24 +179,30 @@ class ReportsController < ApplicationController
     puts "Resolutions!!!!"
     fail  fail JSON::ParserError, "Resolution Reports need to be compressed" unless params[:compressed].present? and params[:encoding] == "gzip" 
     header, report = params.require([:report_header, :compressed])
-    # header[:report_datasets] = []
-    # puts report.body.class
-    header[:compressed] = Rails.env.test? ?  report.string : report.gets
+    header[:compressed] = Rails.env.test? ?  report.string : rewind_compressed_params(report)
     header
   end
 
   def compressed_report_params
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification and int compressed" unless params[:compressed].present? and params[:report_header].present? 
     header, report = params.require([:report_header, :compressed])
-    # header[:report_datasets] = []
-    header[:compressed] = Rails.env.test? ?  report.string : report.gets
+    header[:compressed] = Rails.env.test? ?  report.string : rewind_compressed_params(report)
     header
   end
 
   def decompressed_report_params
+    puts "this is not possible"
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_datasets].present? and params[:report_header].present? 
     header, datasets = params.require([:report_header, :report_datasets])
     header[:report_datasets] = datasets
     header
   end
+
+
+  def rewind_compressed_params params
+    # https://github.com/inossidabile/wash_out/issues/132
+    params.rewind
+    params.read
+  end
+
 end
