@@ -1,17 +1,23 @@
 {
   "report-header": {
     "report-name": "resolution report",
-    "report-id": "dsr",
+    "report-id": "xxx lllffff",
     "release": "drl",
-    "created": "2018-10-28",
-    "created-by": "datacite",
     "reporting-period": {
-      "begin-date": "2019-04-01",
-      "end-date": "2019-04-30"
+      "begin-date": "2314-11-02",
+      "end-date": "2314-11-25"
     },
+    "created": "2018-11-19",
+    "created-by": "datacite",
     "report-filters": [],
     "report-attributes": [],
-    "exceptions": [{"code": 69,"severity": "warning","message": "report is compressed using gzip","help-url": "https://github.com/datacite/sashimi","data": "usage data needs to be uncompressed"}]
+    "exceptions": [{
+      "code": 69,
+      "severity": "warning",
+      "message": "report is compressed using gzip",
+      "help-url": "https://github.com/datacite/sashimi",
+      "data": "usage data needs to be uncompressed"
+    }]
   },
   "report-datasets": [{
     "publisher": "U.S. Geological Survey",
@@ -20,8 +26,8 @@
     "yop": "2017",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -66,8 +72,8 @@
     "yop": "2016",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -112,8 +118,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -158,8 +164,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -231,8 +237,8 @@
     "yop": "2017",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -277,8 +283,8 @@
     "yop": "2000",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -323,8 +329,8 @@
     "yop": "2009",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -369,8 +375,8 @@
     "yop": "2015",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -415,8 +421,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -461,8 +467,8 @@
     "yop": "2014",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -513,8 +519,8 @@
     "yop": "2016",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -604,8 +610,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -650,8 +656,8 @@
     "yop": "2015",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -696,8 +702,8 @@
     "yop": "2013",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -742,8 +748,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -788,8 +794,8 @@
     "yop": "2014",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -873,8 +879,8 @@
     "yop": "2015",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1084,8 +1090,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1130,8 +1136,8 @@
     "yop": "2016",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1179,8 +1185,8 @@
     "yop": "2017",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1228,8 +1234,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1277,8 +1283,8 @@
     "yop": "2015",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1323,8 +1329,8 @@
     "yop": "2017",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1381,8 +1387,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1484,8 +1490,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1539,8 +1545,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1594,8 +1600,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1643,8 +1649,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1710,8 +1716,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1813,8 +1819,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1883,8 +1889,8 @@
     "yop": "2016",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1938,8 +1944,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -1990,8 +1996,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
@@ -2036,8 +2042,8 @@
     "yop": "2018",
     "performance": [{
       "period": {
-        "end-date": "",
-        "begin-date": ""
+        "end-date": "2019-04-30",
+        "begin-date": "2019-04-01"
       },
       "instance": [{
         "access-method": "regular",
