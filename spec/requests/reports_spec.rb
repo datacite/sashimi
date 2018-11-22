@@ -248,9 +248,9 @@ describe 'Reports', type: :request do
     context 'Resolution when the request is valid' do
       let(:resolutions) {file_fixture('report_resolution.json').read}
       let(:headers)  { {
-        'Content-Type' => 'json',
+        'Content-Type' => 'application/gzip',
         'Content-Encoding' => 'gzip',
-        'ACCEPT'=>'json',
+        'ACCEPT'=>'gzip',
         'Authorization' => 'Bearer ' + bearer
       } }
       let(:gzip) do
@@ -277,6 +277,7 @@ describe 'Reports', type: :request do
         gzip_2 = Base64.decode64(json.dig("report", "gzip"))
         fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip_2))
         expect(fjson.dig("report-datasets",0,"yop")).to eq("2017")
+        expect(fjson.dig("report-datasets",0,"platform")).to eq("datacite")
         expect(fjson.dig("report-datasets").length).to eq(34)
       end
 
