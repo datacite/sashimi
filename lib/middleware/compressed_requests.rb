@@ -18,22 +18,16 @@ class CompressedRequests
     request = Rack::Request.new(env)
     if method_handled?(env) && encoding_handled?(env)
       extracted = decode(env['rack.input'], env['HTTP_CONTENT_ENCODING'])
-      # request.update_param('report', JSON.parse(extracted).to_json )
-      parser = Yajl::Parser.new
-      # hsh = parser.parse(eval(extracted))
-      hsh = Rails.env.test? ?  parser.parse(extracted) : parser.parse(eval(extracted))
-      # hsh = JSON.parse(eval(extracted))
+
+      hsh = Rails.env.test? ?  Yajl::Parser.parse(extracted) : Yajl::Parser.parse(eval(extracted))
+
       puts "This is PARSED"
 
       request.update_param('report_header', hsh.fetch("report-header",{}).deep_transform_keys { |key| key.tr('-', '_') } )
       puts "This is header"
 
-      # request.update_param('report_datasets', hsh.fetch("report-datasets",[]))
-      # puts "This is body"
       request.update_param('compressed', env['rack.input'])
       puts "This is body"
-      # request.update_param('compressed', env['rack.input'])
-      # puts "This is body"
 
       request.update_param('encoding', env['HTTP_CONTENT_ENCODING'])
 
