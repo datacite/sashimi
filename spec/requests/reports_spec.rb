@@ -245,53 +245,53 @@ describe 'Reports', type: :request do
       end
     end
 
-    context 'Resolution when the request is valid' do
-      let(:resolutions) {file_fixture('report_resolution.json').read}
-      let(:headers)  { {
-        'Content-Type' => 'application/gzip',
-        'Content-Encoding' => 'gzip',
-        'ACCEPT'=>'gzip',
-        'Authorization' => 'Bearer ' + bearer
-      } }
-      let(:gzip) do
-        ActiveSupport::Gzip.compress(resolutions)
-      end
-      before { post '/reports', params: gzip, headers: headers }
+    # context 'Resolution when the request is valid' do
+    #   let(:resolutions) {file_fixture('report_resolution.json').read}
+    #   let(:headers)  { {
+    #     'Content-Type' => 'application/gzip',
+    #     'Content-Encoding' => 'gzip',
+    #     'ACCEPT'=>'gzip',
+    #     'Authorization' => 'Bearer ' + bearer
+    #   } }
+    #   let(:gzip) do
+    #     ActiveSupport::Gzip.compress(resolutions)
+    #   end
+    #   before { post '/reports', params: gzip, headers: headers }
 
-      it 'creates a Resolution report' do
-        #puts json
-        expect(json.dig("report", "report-header", "report-name")).to eq("resolution report")
-        expect(json.dig("report", "report-header", "release")).to eq("drl")
-        expect(response).to have_http_status(201)
-      end
+    #   it 'creates a Resolution report' do
+    #     #puts json
+    #     expect(json.dig("report", "report-header", "report-name")).to eq("resolution report")
+    #     expect(json.dig("report", "report-header", "release")).to eq("drl")
+    #     expect(response).to have_http_status(201)
+    #   end
 
-      it 'decodes correctly' do
-        gzip_3 = Base64.decode64(json.dig("report", "gzip"))
-        report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-        expect(gzip_3).to eq(report.compressed)
-      end
+    #   it 'decodes correctly' do
+    #     gzip_3 = Base64.decode64(json.dig("report", "gzip"))
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     expect(gzip_3).to eq(report.compressed)
+    #   end
 
-      it 'decrompress correctly' do
-        # puts resolutions
-        parser = Yajl::Parser.new
-        gzip_2 = Base64.decode64(json.dig("report", "gzip"))
-        fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip_2))
-        expect(fjson.dig("report-datasets",0,"yop")).to eq("2017")
-        expect(fjson.dig("report-datasets",0,"platform")).to eq("datacite")
-        expect(fjson.dig("report-datasets").length).to eq(34)
-      end
+    #   it 'decrompress correctly' do
+    #     # puts resolutions
+    #     parser = Yajl::Parser.new
+    #     gzip_2 = Base64.decode64(json.dig("report", "gzip"))
+    #     fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip_2))
+    #     expect(fjson.dig("report-datasets",0,"yop")).to eq("2017")
+    #     expect(fjson.dig("report-datasets",0,"platform")).to eq("datacite")
+    #     expect(fjson.dig("report-datasets").length).to eq(34)
+    #   end
 
-      it 'checksum doesnt fail' do
-        report_checksum = json.dig("report", "checkum")
-        gzip_2 = Base64.decode64(json.dig("report", "gzip"))
-        decode_checksum = Digest::SHA256.hexdigest(gzip_2)
-        report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-        original_checksum = report.checksum
-        expect(report_checksum).eql?(original_checksum)
-        expect(original_checksum).eql?(decode_checksum)
-        expect(report_checksum).eql?(decode_checksum)
-      end
-    end
+    #   it 'checksum doesnt fail' do
+    #     report_checksum = json.dig("report", "checkum")
+    #     gzip_2 = Base64.decode64(json.dig("report", "gzip"))
+    #     decode_checksum = Digest::SHA256.hexdigest(gzip_2)
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     original_checksum = report.checksum
+    #     expect(report_checksum).eql?(original_checksum)
+    #     expect(original_checksum).eql?(decode_checksum)
+    #     expect(report_checksum).eql?(decode_checksum)
+    #   end
+    # end
 
     context 'when acces_method not in the insatnce' do
       let(:dataone) {file_fixture('DSR-D1-2012-07-10.json').read}
