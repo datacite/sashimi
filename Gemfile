@@ -41,6 +41,7 @@ gem "aws-sdk-s3", require: false
 gem 'aws-sdk-sqs', '~> 1.3'
 gem 'iso_country_codes'
 gem 'yajl-ruby', require: 'yajl'
+gem "rack-timeout"
 
 
 group :development, :test do

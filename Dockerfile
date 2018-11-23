@@ -63,6 +63,6 @@ RUN gem update --system && \
 RUN mkdir -p /etc/my_init.d
 COPY vendor/docker/80_flush_cache.sh /etc/my_init.d/80_flush_cache.sh
 COPY vendor/docker/90_migrate.sh /etc/my_init.d/90_migrate.sh
-
+ENV RACK_TIMEOUT_SERVICE_TIMEOUT 40
 # Expose web
 EXPOSE 80
