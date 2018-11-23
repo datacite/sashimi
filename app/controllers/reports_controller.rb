@@ -133,13 +133,14 @@ class ReportsController < ApplicationController
 
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_header].present?
     x = usage_report_params        if params[:report_datasets].present?  && params[:report_header].fetch(:release) == "rd1" && params[:encoding] != "gzip" 
-    x = resolution_report_params   if params[:report_header].fetch(:release) == "drl" && params[:encoding] == "gzip" && x.nil?
+    x = resolution_report_params   if params[:report_header].fetch(:release) == "drl" && params[:encoding] != "gzip" && x.nil?
     x = compressed_report_params   if params[:compressed].present?  && params[:encoding] == "gzip" && params[:report_header].fetch(:release) == "rd1" && x.nil?
     x = decompressed_report_params if params[:encoding] == "gzip" && params[:compressed].nil? && params[:report_header].fetch(:release) == "rd1" && x.nil?
     x
   end
 
   def usage_report_params
+    Rails.logger.info "Normal Report"
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_datasets].present? and params[:report_header].present? 
 
     header, datasets = params.require([:report_header, :report_datasets])
@@ -176,14 +177,16 @@ class ReportsController < ApplicationController
   end
 
   def resolution_report_params
-    puts "Resolutions!!!!"
-    fail  fail JSON::ParserError, "Resolution Reports need to be compressed" unless params[:compressed].present? and params[:encoding] == "gzip" 
-    header, report = params.require([:report_header, :compressed])
-    header[:compressed] = Rails.env.test? ?  report.string : rewind_compressed_params(report)
+    Rails.logger.info "Resolutions Report"
+    fail  fail JSON::ParserError, "Resolution Reports need to be compressed" unless params[:gzip].present? and params[:encoding] != "gzip" 
+    header, report = params.require([:report_header, :gzip])
+    header[:compressed] = Base64.decode64(report)
     header
   end
 
+
   def compressed_report_params
+    Rails.logger.info "Compressed Report"
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification and int compressed" unless params[:compressed].present? and params[:report_header].present? 
     header, report = params.require([:report_header, :compressed])
     header[:compressed] = Rails.env.test? ?  report.string : rewind_compressed_params(report)
@@ -191,7 +194,7 @@ class ReportsController < ApplicationController
   end
 
   def decompressed_report_params
-    puts "this is not possible"
+    Rails.logger.info "not posssible"
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_datasets].present? and params[:report_header].present? 
     header, datasets = params.require([:report_header, :report_datasets])
     header[:report_datasets] = datasets
