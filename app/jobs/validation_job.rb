@@ -9,7 +9,7 @@ class ValidationJob < ActiveJob::Base
 
     item.report_datasets = full_report
     valid =  item.validate_this_sushi(full_report)
-    if valid
+    if valid == true
       message = "Usage Report #{item.uid} successfully validated and ready to Push"
       item.push_report
     else
