@@ -17,6 +17,7 @@ require 'yajl'
 class Report < ApplicationRecord
 
   # has_one_attached :report
+  COMPRESSED_HASH_MESSAGE = {"code"=>69, "severity"=>"warning", "message"=>"report is compressed using gzip", "help-url"=>"https://github.com/datacite/sashimi", "data"=>"usage data needs to be uncompressed"}
 
   # include validation methods for sushi
   include Metadatable
@@ -37,7 +38,13 @@ class Report < ApplicationRecord
   before_validation :set_uid, on: :create
   after_validation :clean_datasets
   before_create :set_id
-  after_commit :push_report
+  after_commit :push_report, if: :normal_report?
+  after_commit :validate_report_job, unless: :normal_report?
+
+
+  def validate_report_job
+    ValidationJob.perform_later(self)
+  end
 
   def push_report
     logger.warn "calling queue for " + uid
@@ -110,9 +117,13 @@ class Report < ApplicationRecord
   def compressed_report?
     return nil if self.exceptions.empty? 
     return nil if self.compressed.nil?
-    code = self.exceptions.dig(0).fetch("code",nil)
-    return nil if code != 69
-    true
+    # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
+    code = self.exceptions.first.fetch("code","")
+    if code == 69
+      true
+    else
+      nil
+    end
   end
 
 

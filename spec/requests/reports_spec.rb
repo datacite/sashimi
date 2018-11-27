@@ -5,7 +5,7 @@ describe 'Reports', type: :request do
   let(:headers) { {'ACCEPT'=>'application/json', 'CONTENT_TYPE'=>'application/json', 'Authorization' => 'Bearer ' + bearer}}
 
   describe 'GET /reports' do
-    let!(:reports)  { create_list(:report, 3) }
+    let!(:reports)  { create_list(:report, 3, compressed: nil) }
 
     context 'index' do
       before { get '/reports' }
@@ -17,7 +17,7 @@ describe 'Reports', type: :request do
       end
     end
     context 'index filter by year' do
-      let!(:report)  { create(:report, reporting_period:{"begin_date":"2222-01-01"}) }
+      let!(:report)  { create(:report, reporting_period:{"begin_date":"2222-01-01"}, compressed: nil) }
       before { get '/reports?year=2222'}
 
       it 'returns reports' do
@@ -27,7 +27,7 @@ describe 'Reports', type: :request do
       end
     end
     context 'index filter by publisher' do
-      let!(:report)  { create(:report, created_by:"Dash") }
+      let!(:report)  { create(:report, created_by:"Dash", compressed: nil) }
       before { get '/reports?created-by=Dash' }
 
       it 'returns reports' do
@@ -39,7 +39,7 @@ describe 'Reports', type: :request do
   end
 
   describe 'GET /reports/:id' do
-    let(:report)  { create(:report) }
+    let(:report)  { create(:report, compressed: nil) }
 
     before { get "/reports/#{report.uid}", headers: headers }
 
@@ -561,6 +561,39 @@ describe 'Reports', type: :request do
       end
     end
   
+    context 'when the request is valid and compressed with small file' do
+      let(:bigly)       {create(:report, created_by: "dash", release: "rd1", reporting_period: {"begin_date": "2128-04-01", "end_date": "2128-04-31" })}
+      let(:update_file) {file_fixture('report_compressed.json').read}
+
+      let(:headers)  { {
+        'Content-Type' => 'application/gzip',
+        'Content-Encoding' => 'gzip',
+        'ACCEPT'=>'json',
+        'Authorization' => 'Bearer ' + bearer
+      } }
+
+      let(:second_gzip) do
+        ActiveSupport::Gzip.compress(update_file)
+      end
+  
+      before do
+        put "/reports/#{bigly.uid}", params: second_gzip, headers: headers 
+      end
+
+      it 'creates a report' do
+        report = Report.where(uid:bigly.uid).first
+        expect(json.dig("report", "report-header", "report-name")).to eq(report.report_name)
+        expect(json.dig("report","report-datasets")).to eq(report.report_datasets)
+        expect(json.dig("report","report-datasets",0,"checksum")).not_to be_nil
+      end
+
+      it 'checksum doesnt fail' do
+        report_checksum = json.dig("report", "checkum")
+        gzip_2 = Base64.decode64(json.dig("report", "gzip"))
+        decode_checksum = Digest::SHA256.hexdigest(gzip_2)
+        expect(report_checksum).eql?(decode_checksum)
+      end
+    end
 
     context 'when the request is invalid' do
       let(:params) do
