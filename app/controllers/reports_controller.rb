@@ -78,13 +78,13 @@ class ReportsController < ApplicationController
     @report = Report.where(uid: params[:id]).first
     exists = @report.present?
     
-    if exists &&  safe_params[:compressed].present?
+    if exists && safe_params[:compressed].present?
       @report.report_subsets.destroy_all 
       @report.report_subsets <<  ReportSubset.new(compressed: safe_params[:compressed]) 
       authorize! :delete_all, @report.report_subsets
     end
     # create report if it doesn't exist already
-    @report = Report.new(safe_params.merge({uid: params[:id]})) unless exists
+    @report = Report.new(safe_params.merge({uid: params[:id]})) unless @report.present?
     authorize! :update, @report
 
     if @report.update_attributes(safe_params.merge(@user_hash))

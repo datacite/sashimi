@@ -394,14 +394,23 @@ describe 'Reports', type: :request do
       let(:params) {file_fixture('report_3.json').read}
       let(:params_update) {file_fixture('report_9.json').read}
 
-      before { put "/reports/#{uid}", params: params, headers: headers }
-      before { put "/reports/#{uid}", params: params_update, headers: headers }
-      before { get "/reports/#{uid}", headers: headers }
+      before do 
+        put "/reports/#{uid}", params: params, headers: headers 
+        put "/reports/#{uid}", params: params_update, headers: headers 
+        sleep 1 
+        get "/reports/#{uid}", headers: headers 
+      end
 
-
+      
+      it "it shoud not change db" do
+        report = Report.where(uid: uid ).first
+        date = json.dig("report", "report-header", "reporting-period", "begin-date")
+        expect(Date.parse(date).month.to_s).to eq(report.month)
+        expect(Date.parse(date).year.to_s).to eq(report.year)
+        expect(json.dig("report", "report-header", "created-by")).to eq(report.created_by)
+      end
       it "it should not update" do
-        puts response
-        puts json
+  
         expect(response).to have_http_status(200)
         expect(json["errors"]).to be_nil
         expect(json.dig("report", "id")).to eq(uid)
@@ -532,8 +541,7 @@ describe 'Reports', type: :request do
         
         it 'should return 201'do
           datasets = json.dig("report","report-subsets")
-          puts datasets
-          puts response.body
+   
           expect(datasets).to be_a(Array)
           expect(datasets.size).to eq(2)
           expect(datasets.dig(1,"gzip")).to be_a(String)

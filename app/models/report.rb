@@ -83,12 +83,10 @@ class Report < ApplicationRecord
   end
 
   def to_compress
-    if  self.compressed.nil?
-      puts "heheher right"
+    if  self.compressed.nil? && self.report_subsets.empty?
       ReportSubset.create(compressed: compress, report_id: self.uid)
     elsif self.report_subsets.empty?
     # else
-      puts "hfhfhfhfhf"
       ReportSubset.create(compressed: self.compressed, report_id: self.uid)
       # ReportSubset.create(compressed: self.compressed, report_id: self.report_id)
     end

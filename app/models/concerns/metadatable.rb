@@ -49,7 +49,7 @@ module Metadatable
     RESOLUTION_SCHEMA_FILE = "lib/sushi_schema/sushi_resolution_schema.json"
 
 
-    def load_schema options={}
+    def load_schema
       if self.is_a?(ReportSubset)
         release = self.report.release
       else
