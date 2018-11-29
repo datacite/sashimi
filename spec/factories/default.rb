@@ -86,4 +86,11 @@ FactoryBot.define do
       ]
     }]
   end
+
+  factory :report_subset do
+    report
+    sequence(:report_id) { |n| report.uid  }
+    checksum Faker::Crypto.sha256
+    compressed "gziped line"
+  end
 end

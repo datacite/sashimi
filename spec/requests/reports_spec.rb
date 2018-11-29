@@ -317,39 +317,39 @@ describe 'Reports', type: :request do
       end
     end
   
-    context 'when the request is valid and compressed with small file' do
-      let(:bigly)       {create(:report, created_by: "dash", release: "rd1", reporting_period: {"begin_date": "2128-04-01", "end_date": "2128-04-31" })}
-      let(:update_file) {file_fixture('report_compressed.json').read}
+    # context 'when the request is valid and compressed with small file' do
+    #   let(:bigly)       {create(:report, created_by: "dash", release: "rd1", reporting_period: {"begin_date": "2128-04-01", "end_date": "2128-04-31" })}
+    #   let(:update_file) {file_fixture('report_compressed.json').read}
 
-      let(:headers)  { {
-        'Content-Type' => 'application/gzip',
-        'Content-Encoding' => 'gzip',
-        'ACCEPT'=>'json',
-        'Authorization' => 'Bearer ' + bearer
-      } }
+    #   let(:headers)  { {
+    #     'Content-Type' => 'application/gzip',
+    #     'Content-Encoding' => 'gzip',
+    #     'ACCEPT'=>'json',
+    #     'Authorization' => 'Bearer ' + bearer
+    #   } }
 
-      let(:second_gzip) do
-        ActiveSupport::Gzip.compress(update_file)
-      end
+    #   let(:second_gzip) do
+    #     ActiveSupport::Gzip.compress(update_file)
+    #   end
   
-      before do
-        put "/reports/#{bigly.uid}", params: second_gzip, headers: headers 
-      end
+    #   before do
+    #     put "/reports/#{bigly.uid}", params: second_gzip, headers: headers 
+    #   end
 
-      it 'creates a report' do
-        report = Report.where(uid:bigly.uid).first
-        expect(json.dig("report", "report-header", "report-name")).to eq(report.report_name)
-        expect(json.dig("report","report-datasets")).to eq(report.report_datasets)
-        expect(json.dig("report","report-datasets",0,"checksum")).not_to be_nil
-      end
+    #   it 'creates a report' do
+    #     report = Report.where(uid:bigly.uid).first
+    #     expect(json.dig("report", "report-header", "report-name")).to eq(report.report_name)
+    #     expect(json.dig("report","report-datasets")).to eq(report.report_datasets)
+    #     expect(json.dig("report","report-datasets",0,"checksum")).not_to be_nil
+    #   end
 
-      it 'checksum doesnt fail' do
-        report_checksum = json.dig("report", "checkum")
-        gzip_2 = Base64.decode64(json.dig("report", "gzip"))
-        decode_checksum = Digest::SHA256.hexdigest(gzip_2)
-        expect(report_checksum).eql?(decode_checksum)
-      end
-    end
+    #   it 'checksum doesnt fail' do
+    #     report_checksum = json.dig("report", "checkum")
+    #     gzip_2 = Base64.decode64(json.dig("report", "gzip"))
+    #     decode_checksum = Digest::SHA256.hexdigest(gzip_2)
+    #     expect(report_checksum).eql?(decode_checksum)
+    #   end
+    # end
 
     context 'when the request is invalid' do
       let(:params) do
@@ -400,6 +400,8 @@ describe 'Reports', type: :request do
 
 
       it "it should not update" do
+        puts response
+        puts json
         expect(response).to have_http_status(200)
         expect(json["errors"]).to be_nil
         expect(json.dig("report", "id")).to eq(uid)
