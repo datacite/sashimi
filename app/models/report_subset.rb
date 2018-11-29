@@ -1,5 +1,5 @@
 require 'digest'
-require 'base32/url'
+require 'base64'
 
 class ReportSubset < ApplicationRecord
   belongs_to :report, primary_key: "uid", foreign_key: "report_id"
@@ -9,9 +9,8 @@ class ReportSubset < ApplicationRecord
   before_create :set_id
 
 
-  def compressed
-    # return nil if self.compressed.nil? # Base64.strict_encode64(self.compressed)
-    "this should be compressed"
+  def gzip
+    ::Base64.encode64(self.compressed)
   end
 
 

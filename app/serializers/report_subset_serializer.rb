@@ -4,7 +4,7 @@ class ReportSubsetSerializer < ActiveModel::Serializer
   attributes :gzip, :checksum
 
   def gzip
-    object.compressed
+    object.gzip
   end
 
 end

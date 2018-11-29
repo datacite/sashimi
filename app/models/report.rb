@@ -1,4 +1,4 @@
-require 'base32/url'
+require 'base64'
 require 'digest'
 require 'yajl'
 
