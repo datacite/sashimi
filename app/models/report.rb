@@ -87,7 +87,7 @@ class Report < ApplicationRecord
       ReportSubset.create(compressed: compress, report_id: self.uid)
     elsif self.report_subsets.empty?
     # else
-      ReportSubset.create(compressed: self.compressed, report_id: self.uid)
+      ReportSubset.create(compressed: compressed, report_id: uid)
       # ReportSubset.create(compressed: self.compressed, report_id: self.report_id)
     end
   end

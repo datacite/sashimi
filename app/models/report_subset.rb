@@ -18,12 +18,17 @@ class ReportSubset < ApplicationRecord
   end
 
   def gzip
-    ::Base64.encode64(self.compressed)
+    ::Base64.strict_encode64(compressed)
+  end
+
+  def pelon
+    ActiveSupport::Gzip.decompress(compressed)
+
   end
 
 
   def make_checksum
-    write_attribute(:checksum, Digest::SHA256.hexdigest(self.compressed))
+    write_attribute(:checksum, Digest::SHA256.hexdigest(compressed))
   end
 
   def set_id
