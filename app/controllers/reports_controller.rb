@@ -70,11 +70,7 @@ class ReportsController < ApplicationController
   end
 
   def show
-    if @report.compressed_report?
       render json: @report
-    else
-      render json: @report
-    end
   end
 
   def update

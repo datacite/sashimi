@@ -63,17 +63,7 @@ class Report < ApplicationRecord
     ActiveSupport::Gzip.compress(json_report.to_json)
   end
   
-  # def encode_compressed
-  #   return nil if self.compressed.nil?
-  #   Base64.strict_encode64(self.compressed)
-  # end
-
-  # def checksum
-  #   return nil if self.compressed.nil?
-  #    Digest::SHA256.hexdigest(self.compressed)
-  # end
-
-  def compressed_report?
+  def self.compressed_report?
     return nil if self.exceptions.empty? 
     return nil if self.compressed.nil?
     # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
@@ -108,18 +98,6 @@ class Report < ApplicationRecord
     write_attribute(:report_datasets, []) if compressed_report?
   end
 
-  # def compressed_message
-  #   [{
-  #     empty: "too large",
-  #     checksum: checksum,
-  #   }]
-  # end
-
-  def report_datasets
-    self.report_datasets unless compressed_report?
-    # self.report_subsets
-    []
-  end
 
   def normal_report?
     return nil if compressed_report?
@@ -127,17 +105,17 @@ class Report < ApplicationRecord
     true
   end
 
-  # def compressed_report?
-  #   return nil if self.exceptions.empty? 
-  #   return nil if self.compressed.nil?
-  #   # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
-  #   code = self.exceptions.first.fetch("code","")
-  #   if code == 69
-  #     true
-  #   else
-  #     nil
-  #   end
-  # end
+  def compressed_report?
+    return nil if self.exceptions.empty? 
+    return nil if self.compressed.nil?
+    # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
+    code = self.exceptions.first.fetch("code","")
+    if code == 69
+      true
+    else
+      nil
+    end
+  end
 
 
 
