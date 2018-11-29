@@ -6,16 +6,23 @@ class ValidationJob < ActiveJob::Base
     logger = Logger.new(STDOUT)
 
     full_report = ActiveSupport::Gzip.decompress(item.compressed)
+    parsed =JSON.parse(full_report)
+    header = parsed.dig("report-header")
+    header["report-datasets"] = parsed.dig("report-datasets")
 
-    item.report_datasets = full_report
-    valid =  item.validate_this_sushi(full_report)
-    if valid == true
-      message = "Usage Report #{item.uid} successfully validated and ready to Push"
-      item.push_report
+    report = Report.where(uid: item.report.uid).first
+    
+    valid =  item.validate_this_sushi(header)
+    if valid.empty?
+      message = "A subset of Usage Report #{item.report.uid} successfully validated and ready to Push"
+      # item.push_report
+      report.push_report
     else
-      message = "Usage Report #{item.uid} fail validation. Needs to be updated"
-      item.exceptions = valid
+      message = "A subset of Usage Report #{item.report.uid} fail validation. Needs to be updated, there are #{valid.size} errors. For example: #{valid.first[:message]}"
+      report.exceptions = valid
     end
     logger.info message
+    return report.exceptions unless valid.empty?
+    true
   end
 end

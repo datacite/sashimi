@@ -18,7 +18,7 @@ module Metadatable
 
     def validate_this_sushi sushi
       puts "this is being validated"
-      schema = load_schema   
+      schema = load_schema 
       JSON::Validator.fully_validate(schema, sushi.to_json, :errors_as_objects => true)
     end
 
@@ -49,10 +49,15 @@ module Metadatable
     RESOLUTION_SCHEMA_FILE = "lib/sushi_schema/sushi_resolution_schema.json"
 
 
-    def load_schema
-      report = self.attributes.except("compressed")
-      report.transform_keys! { |key| key.tr('_', '-') }
-      file = case report.dig("release")
+    def load_schema options={}
+      if self.is_a?(ReportSubset)
+        release = self.report.release
+      else
+        report = self.attributes.except("compressed")
+        report.transform_keys! { |key| key.tr('_', '-') }
+        release = report.dig("release")
+      end
+      file = case release
         when 'rd1' then USAGE_SCHEMA_FILE
         when 'drl' then RESOLUTION_SCHEMA_FILE
       end

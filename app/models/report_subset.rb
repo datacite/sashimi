@@ -8,6 +8,14 @@ class ReportSubset < ApplicationRecord
   after_validation :make_checksum
   before_create :set_id
 
+  # include validation methods for sushi
+  include Metadatable
+  after_commit :validate_report_job
+
+
+  def validate_report_job
+    ValidationJob.perform_later(self)
+  end
 
   def gzip
     ::Base64.encode64(self.compressed)

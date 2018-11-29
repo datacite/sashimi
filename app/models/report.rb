@@ -31,12 +31,12 @@ class Report < ApplicationRecord
   after_validation :clean_datasets
   # before_create :set_id
   after_commit :push_report, if: :normal_report?
-  after_commit :validate_report_job, unless: :normal_report?
+  # after_commit :validate_report_job, unless: :normal_report?
 
 
-  def validate_report_job
-    ValidationJob.perform_later(self)
-  end
+  # def validate_report_job
+  #   ValidationJob.perform_later(self)
+  # end
 
   def push_report
     logger.warn "calling queue for " + uid
