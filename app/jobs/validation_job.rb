@@ -6,7 +6,7 @@ class ValidationJob < ActiveJob::Base
     logger = Logger.new(STDOUT)
 
     full_report = ActiveSupport::Gzip.decompress(item.compressed)
-    parsed =JSON.parse(full_report)
+    parsed =JSON.parse((full_report))
     header = parsed.dig("report-header")
     header["report-datasets"] = parsed.dig("report-datasets")
 

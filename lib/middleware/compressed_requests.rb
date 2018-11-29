@@ -19,7 +19,7 @@ class CompressedRequests
     if method_handled?(env) && encoding_handled?(env)
       extracted = decode(env['rack.input'], env['HTTP_CONTENT_ENCODING'])
 
-      hsh = Rails.env.test? ?  Yajl::Parser.parse(extracted) : Yajl::Parser.parse(eval(extracted))
+      hsh = Rails.env.test? ?  Yajl::Parser.parse(extracted) : Yajl::Parser.parse((extracted))
 
       puts "This is PARSED"
 
@@ -44,7 +44,8 @@ class CompressedRequests
   def decode(input, content_encoding)
     puts "This is middleware"
     case content_encoding
-      when 'gzip' then Zlib::GzipReader.new(input).read
+      # https://tickets.puppetlabs.com/browse/PUP-7251
+      when 'gzip' then Zlib::GzipReader.new(input, :encoding => Encoding::BINARY).read
       when 'deflate' then Zlib::Inflate.inflate(input.read)
     end
   end
