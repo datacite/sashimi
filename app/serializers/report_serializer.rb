@@ -1,16 +1,11 @@
 class ReportSerializer < ActiveModel::Serializer
   type 'report'
-  has_many :report_subsets #, serializer: ReportSubsetSerializer
+  has_many :report_subsets
 
   attributes  :id, :report_header, :report_datasets
 
   def report_subsets
-    # object.report_subsets
-    # ""
-    # object.report_subsets
     object.report_subsets.map do |subset|
-      # puts subset.class
-      # ::ReportSubsetSerializer.new(subset)
       subset
     end
   end 

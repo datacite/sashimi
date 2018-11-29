@@ -81,12 +81,14 @@ class ReportsController < ApplicationController
     fail ActiveRecord::RecordInvalid unless validate_uuid(params[:id]) == true
     @report = Report.where(uid: params[:id]).first
     exists = @report.present?
-
-    @report.report_subsets.destroy_all if @report.present? &&  safe_params[:compressed].present?
-    authorize! :delete_all, @report.report_subsets
-
+    
+    if exists &&  safe_params[:compressed].present?
+      @report.report_subsets.destroy_all 
+      @report.report_subsets <<  ReportSubset.new(compressed: safe_params[:compressed]) 
+      authorize! :delete_all, @report.report_subsets
+    end
     # create report if it doesn't exist already
-    @report = Report.new(safe_params.merge({uid: params[:id]})) unless @report.present?
+    @report = Report.new(safe_params.merge({uid: params[:id]})) unless exists
     authorize! :update, @report
 
     if @report.update_attributes(safe_params.merge(@user_hash))
@@ -112,13 +114,6 @@ class ReportsController < ApplicationController
     authorize! :create, @report
 
     if @report.save
-      logger = Logger.new(STDOUT)
-      logger.info "lslsl"
-      logger.info @report.class
-      # @report.xx = Report.where(uid:@report.uid).first.report_subsets
-      # puts @report.report_subsets.empty?
-      # puts @report.class
-      # puts  @report.report_subsets.first
       render json: @report, status: :created
     else
       Rails.logger.warn @report.errors.inspect

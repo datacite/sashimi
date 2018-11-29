@@ -244,250 +244,6 @@ describe 'Reports', type: :request do
         expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
       end
     end
-
-    # context 'Resolution when the request is valid' do
-    #   let(:resolutions) {file_fixture('report_resolution.json').read}
-    #   let(:headers)  { {
-    #     'Content-Type' => 'application/gzip',
-    #     'Content-Encoding' => 'gzip',
-    #     'ACCEPT'=>'gzip',
-    #     'Authorization' => 'Bearer ' + bearer
-    #   } }
-    #   let(:gzip) do
-    #     ActiveSupport::Gzip.compress(resolutions)
-    #   end
-    #   before { post '/reports', params: gzip, headers: headers }
-
-    #   it 'creates a Resolution report' do
-    #     #puts json
-    #     expect(json.dig("report", "report-header", "report-name")).to eq("resolution report")
-    #     expect(json.dig("report", "report-header", "release")).to eq("drl")
-    #     expect(response).to have_http_status(201)
-    #   end
-
-    #   it 'decodes correctly' do
-    #     gzip_3 = Base64.decode64(json.dig("report", "gzip"))
-    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-    #     expect(gzip_3).to eq(report.compressed)
-    #   end
-
-    #   it 'decrompress correctly' do
-    #     # puts resolutions
-    #     parser = Yajl::Parser.new
-    #     gzip_2 = Base64.decode64(json.dig("report", "gzip"))
-    #     fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip_2))
-    #     expect(fjson.dig("report-datasets",0,"yop")).to eq("2017")
-    #     expect(fjson.dig("report-datasets",0,"platform")).to eq("datacite")
-    #     expect(fjson.dig("report-datasets").length).to eq(34)
-    #   end
-
-    #   it 'checksum doesnt fail' do
-    #     report_checksum = json.dig("report", "checkum")
-    #     gzip_2 = Base64.decode64(json.dig("report", "gzip"))
-    #     decode_checksum = Digest::SHA256.hexdigest(gzip_2)
-    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-    #     original_checksum = report.checksum
-    #     expect(report_checksum).eql?(original_checksum)
-    #     expect(original_checksum).eql?(decode_checksum)
-    #     expect(report_checksum).eql?(decode_checksum)
-    #   end
-    # end
-
-    context 'when acces_method not in the insatnce' do
-      let(:dataone) {file_fixture('DSR-D1-2012-07-10.json').read}
-      before { post '/reports', params: dataone, headers: headers }
-
-      it 'fail to create' do
-        #puts json
-        expect(json.dig("errors",0, "title")).to eq("found unpermitted parameter: :access-method")
-        expect(response).to have_http_status(422)
-      end
-    end
-
-    context 'when the request is valid and compressed with small file without message' do
-      let(:bigly) {file_fixture('report_compressed.json').read}
-
-      let(:headers)  { {
-        'Content-Type' => 'json',
-        'Content-Encoding' => 'gzip',
-        'ACCEPT'=>'json',
-        'Authorization' => 'Bearer ' + bearer
-      } }
-      let(:gzip) do
-        ActiveSupport::Gzip.compress(bigly)
-      end
-  
-      before { post '/reports', params: gzip, headers: headers }
-
-      it 'creates a report' do
-        expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
-        expect(json.dig("report","report-datasets",0,"empty")).to eq("too large")
-        expect(json.dig("report","report-datasets",0,"checksum")).not_to be_nil
-      end
-
-      it 'decodes correctly' do
-        gzip = Base64.decode64(json.dig("report", "gzip"))
-        report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-        expect(gzip).to eq(report.compressed)
-      end
-
-      it 'decrompress correctly' do
-        parser = Yajl::Parser.new
-        gzip_2 = Base64.decode64(json.dig("report", "gzip"))
-        puts ActiveSupport::Gzip.decompress(gzip_2)
-        fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip_2))
-        expect(fjson.dig("report-header", "report-name")).to eq("dataset report")
-        expect(fjson.dig("report-datasets",0,"yop")).to eq("2018")
-        expect(fjson.dig("report-datasets").length).to eq(1)
-        expect(fjson.dig("report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
-      end
-
-      it 'checksum doesnt fail' do
-        report_checksum = json.dig("report", "checkum")
-        gzip_2 = Base64.decode64(json.dig("report", "gzip"))
-        decode_checksum = Digest::SHA256.hexdigest(gzip_2)
-        report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-        original_checksum = report.checksum
-        expect(report_checksum).eql?(original_checksum)
-        expect(original_checksum).eql?(decode_checksum)
-        expect(report_checksum).eql?(decode_checksum)
-      end
-    end
-
-
-
-    # context 'when the request is valid and compressed but not very large file' do
-    #   let(:bigly) {file_fixture('large_file_lc_2.json').read}
-
-    #   let(:headers)  { {
-    #     'Content-Type' => 'json',
-    #     'Content-Encoding' => 'gzip',
-    #     'ACCEPT'=>'json',
-    #     'Authorization' => 'Bearer ' + bearer
-    #   } }
-    #   let(:gzip) do
-    #     ActiveSupport::Gzip.compress(bigly)
-    #   end
-  
-    #   before { post '/reports', params: gzip, headers: headers }
-
-    #   it 'creates a report' do
-    #     expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
-    #     expect(json.dig("report","report-datasets","empty")).to eq("too large")
-    #     expect(json.dig("report","report-datasets","checksum")).not_to be_nil
-    #   end
-
-    #   it 'decodes correctly' do
-    #     gzip = Base64.decode64(json.dig("report", "gzip"))
-    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-    #     expect(gzip).to eq(report.compressed)
-    #   end
-
-    #   # it 'decrompress correctly' do
-    #   #   parser = Yajl::Parser.new
-    #   #   gzip = Base64.decode64(json.dig("report", "gzip"))
-    #   #   puts ActiveSupport::Gzip.decompress(gzip)
-    #   #   fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip))
-    #   #   expect(fjson.dig("report-header", "report-name")).to eq("dataset report")
-    #   #   expect(fjson.dig("report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
-    #   #   expect(fjson.dig("report-datasets",0,"yop")).to eq("2018")
-    #   #   expect(fjson.dig("report-datasets").length).to eq(1)
-    #   # end
-
-    #   it 'checksum doesnt fail' do
-    #     report_checksum = json.dig("report", "checkum")
-    #     gzip = Base64.decode64(json.dig("report", "gzip"))
-    #     decode_checksum = Digest::SHA256.hexdigest(gzip)
-    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-    #     original_checksum = report.checksum
-    #     expect(report_checksum).eql?(original_checksum)
-    #     expect(original_checksum).eql?(decode_checksum)
-    #     expect(report_checksum).eql?(decode_checksum)
-    #   end
-    # end
-    # context 'when the request is valid and compressed very large file' do
-    #   # let(:bigly) {file_fixture('datacite_resolution_report_2018-04.json').read}
-    #   let(:bigly) {file_fixture('DSR-D1-2012-08-01-urn-node-PISCO_2.json').read}
-
-    #   let(:headers)  { {
-    #     'Content-Type' => 'json',
-    #     'Content-Encoding' => 'gzip',
-    #     'ACCEPT'=>'json',
-    #     'Authorization' => 'Bearer ' + bearer
-    #   } }
-    #   let(:gzip) do
-    #     ActiveSupport::Gzip.compress(bigly)
-    #   end
-  
-    #   before { post '/reports', params: gzip, headers: headers }
-
-    #   it 'creates a report' do
-    #     # puts gzip
-    #     # puts response.inspect
-    #     File.open("./spec/pisco_compress.json", 'w') { |file| file.write(json) }
-    #     # puts response
-    #     # puts 
-    #     expect(json.dig("report", "report-header", "report-name")).to eq("dataset master report")
-    #     expect(json.dig("report","report-datasets","empty")).to eq("too large")
-    #     # expect(json.dig("report","report-datasets","checksum")).not_to be_nil
-    #     expect(response).to have_http_status(201)
-    #   end
-
-    #   it 'decodes correctly and checksums' do
-    #     gzip = Base64.decode64(json.dig("report", "gzip"))
-    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-    #     expect(gzip).to eq(report.compressed)
-
-    #     report_checksum = json.dig("report", "checkum")
-    #     gzip = Base64.decode64(json.dig("report", "gzip"))
-    #     decode_checksum = Digest::SHA256.hexdigest(gzip)
-    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-    #     original_checksum = report.checksum
-    #     expect(report_checksum).eql?(original_checksum)
-    #     expect(original_checksum).eql?(decode_checksum)
-    #     expect(report_checksum).eql?(decode_checksum)
-    #   end
-    # end
-
-    # context 'when the request is valid and compressed very large file resolution file' do
-    #   let(:bigly) {file_fixture('datacite_resolution_report_2018-04.json').read}
-
-    #   let(:headers)  { {
-    #     'Content-Type' => 'json',
-    #     'Content-Encoding' => 'gzip',
-    #     'ACCEPT'=>'json',
-    #     'Authorization' => 'Bearer ' + bearer
-    #   } }
-    #   let(:gzip) do
-    #     ActiveSupport::Gzip.compress(bigly)
-    #   end
-  
-    #   before { post '/reports', params: gzip, headers: headers }
-
-    #   it 'creates a report' do
-    #     # puts gzip
-    #     # puts response.inspect
-    #     File.open("./spec/resolution_compress.json", 'w') { |file| file.write(json.to_json) }
-    #     # puts response
-    #     # puts 
-    #     expect(json.dig("report", "report-header", "report-name")).to eq("resolution report")
-    #     expect(json.dig("report","report-datasets","empty")).to eq("too large")
-    #     expect(response).to have_http_status(201)
-    #     gzip = Base64.decode64(json.dig("report", "gzip"))
-    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-    #     expect(gzip).to eq(report.compressed)
-
-    #     report_checksum = json.dig("report", "checkum")
-    #     gzip = Base64.decode64(json.dig("report", "gzip"))
-    #     decode_checksum = Digest::SHA256.hexdigest(gzip)
-    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-    #     original_checksum = report.checksum
-    #     expect(report_checksum).eql?(original_checksum)
-    #     expect(original_checksum).eql?(decode_checksum)
-    #     expect(report_checksum).eql?(decode_checksum)
-    #   end
-    # end
-
   end
 
 
@@ -747,4 +503,395 @@ describe 'Reports', type: :request do
 #     end
 #   end
 # end
+
+  describe "Compressed Reports" do
+    let(:bigly) {file_fixture('small_dataone.json').read}
+
+    let(:headers)  { {
+      'Content-Type' => 'application/gzip',
+      'Content-Encoding' => 'gzip',
+      'Authorization' => 'Bearer ' + bearer
+    } }
+    let(:gzipped) do
+      ActiveSupport::Gzip.compress(bigly)
+    end    
+
+    describe 'add subset to report' do
+
+
+      context 'when the report exist' do
+        # let(:dataone) {file_fixture('small_dataone.json').read}
+                
+        before do
+          post '/reports', params: gzipped, headers: headers 
+          sleep 1
+          post '/reports', params: gzipped, headers: headers 
+        end
+        
+        it 'should return 201'do
+          datasets = json.dig("report","report-subsets")
+          puts datasets
+          puts response.body
+          expect(datasets).to be_a(Array)
+          expect(datasets.size).to eq(2)
+          expect(datasets.dig(1,"gzip")).to be_a(String)
+          expect(datasets.dig(1,"checksum")).to be_a(String)
+          expect(response).to have_http_status(201)
+        end
+        it 'should add subsets' do
+          uid = json.dig("report","id")
+          report = Report.where(uid: uid ).first
+          expect(report.report_subsets.size).to eq(2)
+          expect(report.report_subsets.first.report_id).to eq(uid)
+        end
+      end
+      context 'when the report doesnt exist' do
+        # let(:dataone) {file_fixture('small_dataone.json').read}
+
+        before { post '/reports', params: gzipped, headers: headers }
+        
+        it 'should return 201' do
+          puts json
+          datasets = json.dig("report","report-subsets")
+          expect(datasets).to be_a(Array)
+          expect(datasets.size).to eq(1)
+          expect(datasets.dig(0,"gzip")).to be_a(String)
+          expect(response).to have_http_status(201)
+        end
+        it 'should add subsets' do
+          uid = json.dig("report","id")
+          report = Report.where(uid: uid ).first
+          expect(report.report_subsets.size).to eq(1)
+          expect(report.report_subsets.first.report_id).to eq(uid)
+        end
+      end
+    end
+
+    describe 'update compressed report' do
+
+      context 'when the report exist' do
+
+        before do
+          post '/reports', params: gzipped, headers: headers 
+          post '/reports', params: gzipped, headers: headers 
+          post '/reports', params: gzipped, headers: headers 
+          put "/reports/#{json.dig("report","id")}", params: gzipped, headers: headers 
+        end
+
+        it 'should return 200 and clear all other reports'do
+
+          datasets = json.dig("report","report-subsets")
+          puts json
+          expect(datasets).to be_a(Array)
+          expect(datasets.size).to eq(1)
+          expect(datasets.dig(0,"gzip")).to be_a(String)
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should add subsets' do
+          uid = json.dig("report","id")
+          report = Report.where(uid: uid ).first
+          expect(report.report_subsets.size).to eq(1)
+          expect(report.report_subsets.first.report_id).to eq(uid)
+        end
+      end
+      context 'when the report doesnt exist' do
+        # let(:dataone) {file_fixture('small_dataone.json').read}
+
+        before do
+           put "/reports/0b04a368-989b-405b-a382-a85ce558df40", params: gzipped, headers: headers 
+        end
+
+        it 'should return 201' do
+          puts json
+          datasets = json.dig("report","report-subsets")
+          expect(datasets).to be_a(Array)
+          expect(datasets.size).to eq(1)
+          expect(datasets.dig(0,"gzip")).to be_a(String)
+          expect(response).to have_http_status(201)
+        end
+        it 'should add subsets' do
+          uid = json.dig("report","id")
+          report = Report.where(uid: uid ).first
+          expect(report.report_subsets.size).to eq(1)
+        end
+      end
+    end
+
+    describe 'delete compressed report' do
+      context 'when the report exist' do
+
+        before do
+          post '/reports', params: gzipped, headers: headers 
+          delete "/reports/#{json.dig("report","id")}", headers: headers 
+        end
+
+        it 'should return 204 and clear all other reports' do
+          expect(response).to have_http_status(204)
+        end
+        # it 'should remove subsets' do
+        #   uid =   json.dig("report","id")
+        #   report = Report.where(uid: uid ).first
+        #   expect(report.report_subsets.empty?).to eq(true)
+        # end
+      end
+      context 'when the report doesnt exist' do
+
+        before { delete '/reports/0b04a368-989b-405b-a382-a85ce558df56', headers: headers }
+
+        it 'should return 204 and create report'do
+          expect(response).to have_http_status(404)
+        end
+      end
+    end
+
+
+
+    # context 'Resolution when the request is valid' do
+    #   let(:resolutions) {file_fixture('report_resolution.json').read}
+    #   let(:headers)  { {
+    #     'Content-Type' => 'application/gzip',
+    #     'Content-Encoding' => 'gzip',
+    #     'ACCEPT'=>'gzip',
+    #     'Authorization' => 'Bearer ' + bearer
+    #   } }
+    #   let(:gzip) do
+    #     ActiveSupport::Gzip.compress(resolutions)
+    #   end
+    #   before { post '/reports', params: gzip, headers: headers }
+
+    #   it 'creates a Resolution report' do
+    #     #puts json
+    #     expect(json.dig("report", "report-header", "report-name")).to eq("resolution report")
+    #     expect(json.dig("report", "report-header", "release")).to eq("drl")
+    #     expect(response).to have_http_status(201)
+    #   end
+
+    #   it 'decodes correctly' do
+    #     gzip_3 = Base64.decode64(json.dig("report", "gzip"))
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     expect(gzip_3).to eq(report.compressed)
+    #   end
+
+    #   it 'decrompress correctly' do
+    #     # puts resolutions
+    #     parser = Yajl::Parser.new
+    #     gzip_2 = Base64.decode64(json.dig("report", "gzip"))
+    #     fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip_2))
+    #     expect(fjson.dig("report-datasets",0,"yop")).to eq("2017")
+    #     expect(fjson.dig("report-datasets",0,"platform")).to eq("datacite")
+    #     expect(fjson.dig("report-datasets").length).to eq(34)
+    #   end
+
+    #   it 'checksum doesnt fail' do
+    #     report_checksum = json.dig("report", "checkum")
+    #     gzip_2 = Base64.decode64(json.dig("report", "gzip"))
+    #     decode_checksum = Digest::SHA256.hexdigest(gzip_2)
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     original_checksum = report.checksum
+    #     expect(report_checksum).eql?(original_checksum)
+    #     expect(original_checksum).eql?(decode_checksum)
+    #     expect(report_checksum).eql?(decode_checksum)
+    #   end
+    # end
+
+    # context 'when acces_method not in the insatnce' do
+    #   let(:dataone) {file_fixture('DSR-D1-2012-07-10.json').read}
+    #   before { post '/reports', params: dataone, headers: headers }
+
+    #   it 'fail to create' do
+    #     #puts json
+    #     expect(json.dig("errors",0, "title")).to eq("found unpermitted parameter: :access-method")
+    #     expect(response).to have_http_status(422)
+    #   end
+    # end
+
+    # context 'when the request is valid and compressed with small file without message' do
+    #   let(:bigly) {file_fixture('report_compressed.json').read}
+
+    #   let(:headers)  { {
+    #     'Content-Type' => 'json',
+    #     'Content-Encoding' => 'gzip',
+    #     'ACCEPT'=>'json',
+    #     'Authorization' => 'Bearer ' + bearer
+    #   } }
+    #   let(:gzip) do
+    #     ActiveSupport::Gzip.compress(bigly)
+    #   end
+  
+    #   before { post '/reports', params: gzip, headers: headers }
+
+    #   it 'creates a report' do
+    #     expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
+    #     expect(json.dig("report","report-datasets",0,"empty")).to eq("too large")
+    #     expect(json.dig("report","report-datasets",0,"checksum")).not_to be_nil
+    #   end
+
+    #   it 'decodes correctly' do
+    #     gzip = Base64.decode64(json.dig("report", "gzip"))
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     expect(gzip).to eq(report.compressed)
+    #   end
+
+    #   it 'decrompress correctly' do
+    #     parser = Yajl::Parser.new
+    #     gzip_2 = Base64.decode64(json.dig("report", "gzip"))
+    #     puts ActiveSupport::Gzip.decompress(gzip_2)
+    #     fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip_2))
+    #     expect(fjson.dig("report-header", "report-name")).to eq("dataset report")
+    #     expect(fjson.dig("report-datasets",0,"yop")).to eq("2018")
+    #     expect(fjson.dig("report-datasets").length).to eq(1)
+    #     expect(fjson.dig("report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
+    #   end
+
+    #   it 'checksum doesnt fail' do
+    #     report_checksum = json.dig("report", "checkum")
+    #     gzip_2 = Base64.decode64(json.dig("report", "gzip"))
+    #     decode_checksum = Digest::SHA256.hexdigest(gzip_2)
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     original_checksum = report.checksum
+    #     expect(report_checksum).eql?(original_checksum)
+    #     expect(original_checksum).eql?(decode_checksum)
+    #     expect(report_checksum).eql?(decode_checksum)
+    #   end
+    # end
+
+    
+
+
+
+    # context 'when the request is valid and compressed but not very large file' do
+    #   let(:bigly) {file_fixture('large_file_lc_2.json').read}
+
+    #   let(:headers)  { {
+    #     'Content-Type' => 'json',
+    #     'Content-Encoding' => 'gzip',
+    #     'ACCEPT'=>'json',
+    #     'Authorization' => 'Bearer ' + bearer
+    #   } }
+    #   let(:gzip) do
+    #     ActiveSupport::Gzip.compress(bigly)
+    #   end
+  
+    #   before { post '/reports', params: gzip, headers: headers }
+
+    #   it 'creates a report' do
+    #     expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
+    #     expect(json.dig("report","report-datasets","empty")).to eq("too large")
+    #     expect(json.dig("report","report-datasets","checksum")).not_to be_nil
+    #   end
+
+    #   it 'decodes correctly' do
+    #     gzip = Base64.decode64(json.dig("report", "gzip"))
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     expect(gzip).to eq(report.compressed)
+    #   end
+
+    #   # it 'decrompress correctly' do
+    #   #   parser = Yajl::Parser.new
+    #   #   gzip = Base64.decode64(json.dig("report", "gzip"))
+    #   #   puts ActiveSupport::Gzip.decompress(gzip)
+    #   #   fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip))
+    #   #   expect(fjson.dig("report-header", "report-name")).to eq("dataset report")
+    #   #   expect(fjson.dig("report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
+    #   #   expect(fjson.dig("report-datasets",0,"yop")).to eq("2018")
+    #   #   expect(fjson.dig("report-datasets").length).to eq(1)
+    #   # end
+
+    #   it 'checksum doesnt fail' do
+    #     report_checksum = json.dig("report", "checkum")
+    #     gzip = Base64.decode64(json.dig("report", "gzip"))
+    #     decode_checksum = Digest::SHA256.hexdigest(gzip)
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     original_checksum = report.checksum
+    #     expect(report_checksum).eql?(original_checksum)
+    #     expect(original_checksum).eql?(decode_checksum)
+    #     expect(report_checksum).eql?(decode_checksum)
+    #   end
+    # end
+    # context 'when the request is valid and compressed very large file' do
+    #   # let(:bigly) {file_fixture('datacite_resolution_report_2018-04.json').read}
+    #   let(:bigly) {file_fixture('DSR-D1-2012-08-01-urn-node-PISCO_2.json').read}
+
+    #   let(:headers)  { {
+    #     'Content-Type' => 'json',
+    #     'Content-Encoding' => 'gzip',
+    #     'ACCEPT'=>'json',
+    #     'Authorization' => 'Bearer ' + bearer
+    #   } }
+    #   let(:gzip) do
+    #     ActiveSupport::Gzip.compress(bigly)
+    #   end
+  
+    #   before { post '/reports', params: gzip, headers: headers }
+
+    #   it 'creates a report' do
+    #     # puts gzip
+    #     # puts response.inspect
+    #     File.open("./spec/pisco_compress.json", 'w') { |file| file.write(json) }
+    #     # puts response
+    #     # puts 
+    #     expect(json.dig("report", "report-header", "report-name")).to eq("dataset master report")
+    #     expect(json.dig("report","report-datasets","empty")).to eq("too large")
+    #     # expect(json.dig("report","report-datasets","checksum")).not_to be_nil
+    #     expect(response).to have_http_status(201)
+    #   end
+
+    #   it 'decodes correctly and checksums' do
+    #     gzip = Base64.decode64(json.dig("report", "gzip"))
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     expect(gzip).to eq(report.compressed)
+
+    #     report_checksum = json.dig("report", "checkum")
+    #     gzip = Base64.decode64(json.dig("report", "gzip"))
+    #     decode_checksum = Digest::SHA256.hexdigest(gzip)
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     original_checksum = report.checksum
+    #     expect(report_checksum).eql?(original_checksum)
+    #     expect(original_checksum).eql?(decode_checksum)
+    #     expect(report_checksum).eql?(decode_checksum)
+    #   end
+    # end
+
+    # context 'when the request is valid and compressed very large file resolution file' do
+    #   let(:bigly) {file_fixture('datacite_resolution_report_2018-04.json').read}
+
+    #   let(:headers)  { {
+    #     'Content-Type' => 'json',
+    #     'Content-Encoding' => 'gzip',
+    #     'ACCEPT'=>'json',
+    #     'Authorization' => 'Bearer ' + bearer
+    #   } }
+    #   let(:gzip) do
+    #     ActiveSupport::Gzip.compress(bigly)
+    #   end
+  
+    #   before { post '/reports', params: gzip, headers: headers }
+
+    #   it 'creates a report' do
+    #     # puts gzip
+    #     # puts response.inspect
+    #     File.open("./spec/resolution_compress.json", 'w') { |file| file.write(json.to_json) }
+    #     # puts response
+    #     # puts 
+    #     expect(json.dig("report", "report-header", "report-name")).to eq("resolution report")
+    #     expect(json.dig("report","report-datasets","empty")).to eq("too large")
+    #     expect(response).to have_http_status(201)
+    #     gzip = Base64.decode64(json.dig("report", "gzip"))
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     expect(gzip).to eq(report.compressed)
+
+    #     report_checksum = json.dig("report", "checkum")
+    #     gzip = Base64.decode64(json.dig("report", "gzip"))
+    #     decode_checksum = Digest::SHA256.hexdigest(gzip)
+    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+    #     original_checksum = report.checksum
+    #     expect(report_checksum).eql?(original_checksum)
+    #     expect(original_checksum).eql?(decode_checksum)
+    #     expect(report_checksum).eql?(decode_checksum)
+    #   end
+    # end
+
+  end
+
 end

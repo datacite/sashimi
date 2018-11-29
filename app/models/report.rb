@@ -4,9 +4,9 @@ require 'yajl'
 
 
 class Report < ApplicationRecord
-  self.primary_key = :report_id
+  self.primary_key = :uid
 
-  has_many :report_subsets, autosave: true
+  has_many :report_subsets, autosave: true, dependent: :destroy
 
   # has_one_attached :report
   COMPRESSED_HASH_MESSAGE = {"code"=>69, "severity"=>"warning", "message"=>"report is compressed using gzip", "help-url"=>"https://github.com/datacite/sashimi", "data"=>"usage data needs to be uncompressed"}
@@ -23,11 +23,11 @@ class Report < ApplicationRecord
   #, :report_datasets
   validates :uid, uniqueness: true
   validates :validate_sushi, sushi: {presence: true}, if: :normal_report?
-  attr_readonly :created_by, :month, :year, :client_id
+  attr_readonly :created_by, :month, :year, :client_id, :report_id, :uid
 
   # serialize :exceptions, Array
   before_validation :set_uid, on: :create
-  after_create :to_compress 
+  after_save :to_compress 
   after_validation :clean_datasets
   # before_create :set_id
   after_commit :push_report, if: :normal_report?
@@ -94,11 +94,12 @@ class Report < ApplicationRecord
 
   def to_compress
     if  self.compressed.nil?
+      puts "heheher right"
       ReportSubset.create(compressed: compress, report_id: self.uid)
-    # elsif self.report_subsets.empty?
-    else
+    elsif self.report_subsets.empty?
+    # else
       puts "hfhfhfhfhf"
-      ReportSubset.create(compressed: self.compressed, report_id: self.report_id)
+      ReportSubset.create(compressed: self.compressed, report_id: self.uid)
       # ReportSubset.create(compressed: self.compressed, report_id: self.report_id)
     end
   end
@@ -143,7 +144,7 @@ class Report < ApplicationRecord
   def set_uid
     return ActionController::ParameterMissing if self.reporting_period.nil?
     self.uid = SecureRandom.uuid if uid.blank?
-    self.report_id = self.uid 
+    # self.report_id = self.uid 
     month = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").month.to_s 
     year = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").year.to_s 
     write_attribute(:month,  month ) 

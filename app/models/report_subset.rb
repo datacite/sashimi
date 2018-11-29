@@ -2,7 +2,7 @@ require 'digest'
 require 'base32/url'
 
 class ReportSubset < ApplicationRecord
-  belongs_to :report, primary_key: "report_id", foreign_key: "report_id"
+  belongs_to :report, primary_key: "uid", foreign_key: "report_id"
 
   # validates_presence_of :compressed, :report_id
   after_validation :make_checksum
