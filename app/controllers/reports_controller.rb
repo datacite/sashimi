@@ -70,7 +70,11 @@ class ReportsController < ApplicationController
   end
 
   def show
-    render json: @report
+    if @report.compressed_report?
+      render json: @report
+    else
+      render json: @report
+    end
   end
 
   def update
@@ -78,10 +82,13 @@ class ReportsController < ApplicationController
     @report = Report.where(uid: params[:id]).first
     exists = @report.present?
 
+    @report.report_subsets.destroy_all if @report.present? &&  safe_params[:compressed].present?
+    authorize! :delete_all, @report.report_subsets
+
     # create report if it doesn't exist already
     @report = Report.new(safe_params.merge({uid: params[:id]})) unless @report.present?
-
     authorize! :update, @report
+
     if @report.update_attributes(safe_params.merge(@user_hash))
       render json: @report, status: exists ? :ok : :created
     else
@@ -98,10 +105,20 @@ class ReportsController < ApplicationController
     .first
     exists = @report.present?
 
+    @report.report_subsets <<  ReportSubset.new(compressed: safe_params[:compressed]) if @report.present? &&  safe_params[:compressed].present?
+
+
     @report = Report.new(safe_params.merge(@user_hash)) unless @report.present?
     authorize! :create, @report
 
     if @report.save
+      logger = Logger.new(STDOUT)
+      logger.info "lslsl"
+      logger.info @report.class
+      # @report.xx = Report.where(uid:@report.uid).first.report_subsets
+      # puts @report.report_subsets.empty?
+      # puts @report.class
+      # puts  @report.report_subsets.first
       render json: @report, status: :created
     else
       Rails.logger.warn @report.errors.inspect
