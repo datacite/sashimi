@@ -11,14 +11,6 @@
      },
      "report-attributes": [],
      "report-filters": [
-        {
-         "name": "begin-date",
-         "value": "2018-03-01"
-       },
-       {
-         "name": "end-date",
-         "value": "2018-03-31"
-       }
      ],
      "exceptions": [
        {

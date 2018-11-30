@@ -182,6 +182,67 @@ The allowed and recommended characters for an URL safe naming of parameters are 
 
 Reports are stored in a S3 bucket using ActiveStore. We are storing them rather than in MYSQL because report can get rather big as mentioned in [COUNTER documentation](https://groups.niso.org/workrooms/sushi/start/clients). 
 
+
+### Managing Large Report
+
+Large reports need to be divided and compressed. there is a top limiti of 50,000 datasets per report. this helps us to keep the report parsing fast.
+
+```ruby
+def compress file
+  report = File.read(file)
+  gzip = Zlib::GzipWriter.new(StringIO.new)
+  string = JSON.parse(report).to_json
+  gzip << string
+  body = gzip.close.string
+  body
+end
+```
+
+When sending the compressed reports you need to send them using `application/gzip` as Content Type and `gzip` as Content Encoding. For example
+
+```ruby
+URI = 'https://api.datacite.org/reports'
+
+def post_file file
+  
+  headers = {
+    content_type: "application/gzip",
+    content_encoding: 'gzip',
+    accept: 'gzip'
+  }
+  
+  body = compress(file)
+
+  request = Maremma.post(URI, data: body,
+    bearer: ENV['TOKEN'],
+    headers: headers,
+    timeout: 100)
+end
+
+```
+
+In order to create a report with more of 50,000 records, just keep making POST requests with teh same `report-header`. 
+
+```shell
+
+POST /reports
+POST /reports
+POST /reports
+
+```
+
+
+To update a existing report makea PUT request followed with as many POST requests with the same `report-header` as you need.
+
+```shell
+
+PUT /reports/{report-id}
+POST /reports
+POST /reports
+
+```
+
+
 ### Metadata Validation
 
 The validation of the metadata in the reports its a two-step process. The controller takes care of checking presence of fields. While the Schema validation is performed before saving in ActiveRecord. We use json-schema validation for this.
