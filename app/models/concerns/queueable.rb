@@ -5,9 +5,11 @@ module Queueable
 
   included do
     def queue_report(options={})
+      logger = Logger.new(STDOUT)
+
       queue_name = "#{Rails.env}_usage" 
-      logger.info  "******** inside queque #{queue_name}"
-      logger.info "Trigger queue for " + uid
+      logger.info  "[UsageUpdateImportWorker] inside queque #{queue_name}"
+      logger.info "[UsageUpdateImportWorker] Trigger queue for " + uid
       queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
       options[:shoryuken_class] ||= "UsageUpdateImportWorker"
   
@@ -29,13 +31,13 @@ module Queueable
           }
         }
         sent_message = sqs.send_message(options)
-        Rails.logger.info "response: " + sent_message.inspect 
+        logger.info "[UsageUpdateImportWorker] response: " + sent_message.inspect 
         if sent_message.respond_to?("successful")
-          Rails.logger.info "Report " + report_id + "  has been queued."
+          logger.info "[UsageUpdateImportWorker] Report " + report_id + "  has been queued."
         end
         sent_message
       rescue Aws::SQS::Errors::NonExistentQueue
-        Rails.logger.warn "A queue named '#{queue_name}' does not exist."
+        logger.warn "[UsageUpdateImportWorker] A queue named '#{queue_name}' does not exist."
         exit(false)
       end
       true

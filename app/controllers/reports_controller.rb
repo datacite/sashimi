@@ -104,7 +104,7 @@ class ReportsController < ApplicationController
     exists = @report.present?
 
     @report.report_subsets <<  ReportSubset.new(compressed: safe_params[:compressed]) if @report.present? &&  safe_params[:compressed].present?
-
+    # add_subsets
 
     @report = Report.new(safe_params.merge(@user_hash)) unless @report.present?
     authorize! :create, @report

@@ -39,7 +39,7 @@ class Report < ApplicationRecord
   # end
 
   def push_report
-    logger.warn "calling queue for " + uid
+    logger.info "[MetricsHub] calling queue for " + uid
     queue_report if ENV["AWS_REGION"].present?
   end
 
