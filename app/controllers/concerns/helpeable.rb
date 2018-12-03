@@ -28,6 +28,12 @@ module Helpeable
       end
     end
 
+    def subset_exist? report_id, compressed_subset
+      checksum = Digest::SHA256.hexdigest(compressed_subset)
+      return true if ReportSubset.where(report_id: report_id, checksum: checksum).any?
+      false
+    end
+
     def get_month date
       Date.strptime(date,"%Y-%m-%d").month.to_s 
     end
