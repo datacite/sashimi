@@ -7,25 +7,18 @@ class ReportSubset < ApplicationRecord
   validates_presence_of :report_id
   after_validation :make_checksum
   before_create :set_id
-
   # include validation methods for sushi
   include Metadatable
-  after_commit :validate_report_job
+  after_commit :validate_report_job, on: :create
 
 
   def validate_report_job
-    ValidationJob.perform_later(self)
+    ValidationJob.perform_later(id)
   end
 
   def gzip
     ::Base64.strict_encode64(compressed)
   end
-
-  def pelon
-    ActiveSupport::Gzip.decompress(compressed)
-
-  end
-
 
   def make_checksum
     write_attribute(:checksum, Digest::SHA256.hexdigest(compressed))

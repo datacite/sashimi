@@ -8,7 +8,7 @@ module Metadatable
   included do
 
     def validate_sushi 
-      puts "this is being validated"
+      puts "report validation"
       schema = load_schema
       report = self.attributes.except("compressed")
       report.transform_keys! { |key| key.tr('_', '-') }
@@ -17,7 +17,7 @@ module Metadatable
     end
 
     def validate_this_sushi sushi
-      puts "this is being validated"
+      puts "subset validation"
       schema = load_schema 
       JSON::Validator.fully_validate(schema, sushi.to_json, :errors_as_objects => true)
     end

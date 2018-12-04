@@ -34,6 +34,14 @@ module Helpeable
       false
     end
 
+    def add_subsets
+      if @report.present? &&  safe_params[:compressed].present?
+        unless subset_exist?(@report.uid, safe_params[:compressed])
+          @report.report_subsets <<  ReportSubset.new(compressed: safe_params[:compressed]) 
+        end
+      end
+    end
+
     def get_month date
       Date.strptime(date,"%Y-%m-%d").month.to_s 
     end
