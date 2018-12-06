@@ -85,15 +85,15 @@ after_success:
       
       if [ "${TRAVIS_TAG?}" ]; then
         git add prod-eu-west/services/metrics-api/_sashimi.auto.tfvars;
-        git commit -m "${AUTHOR_NAME} Adding lupo git variables for commit tagged ${TRAVIS_TAG?}";
+        git commit -m "${AUTHOR_NAME} Adding sashimi git variables for commit tagged ${TRAVIS_TAG?}";
         git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
       elif [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
         git add stage/services/metrics-api/_sashimi.auto.tfvars;
-        git commit -m "Adding lupo git variables for pull request ${TRAVIS_PULL_REQUEST}";
+        git commit -m "Adding sashimi git variables for pull request ${TRAVIS_PULL_REQUEST}";
         git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" ${TRAVIS_PULL_REQUEST_BRANCH};
       else
         git add stage/services/metrics-api/_sashimi.auto.tfvars;
-        git commit -m "Adding lupo git variables for latest commit";
+        git commit -m "Adding sashimi git variables for latest commit";
         git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
       fi
     fi
