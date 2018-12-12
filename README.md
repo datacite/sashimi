@@ -183,9 +183,26 @@ The allowed and recommended characters for an URL safe naming of parameters are 
 Reports are stored in a S3 bucket using ActiveStore. We are storing them rather than in MYSQL because report can get rather big as mentioned in [COUNTER documentation](https://groups.niso.org/workrooms/sushi/start/clients). 
 
 
-### Managing Large Report
+## Register a large Usage Report
 
-Large reports need to be divided and compressed. there is a top limiti of 50,000 datasets per report. this helps us to keep the report parsing fast.
+Usage report can get very large and we have to ways to approach submission of very large reports. The first approach is compression and the second is subsetting. Large reports need to be divided and compressed. We have set up a top limit of 50,000 datasets per report.
+
+
+In both cases, you need to add this exception in the report header:
+
+```json
+"exceptions": [{
+  "code": 69,
+  "severity": "warning",
+  "message": "Report is compressed using gzip",
+  "help-url": "https://github.com/datacite/sashimi",
+  "data": "usage data needs to be uncompressed"
+}]
+```
+
+### Sending compressed reports
+
+ We suggest compressing any report that is larger than 10MB. Here it is a ruby example of report compression:
 
 ```ruby
 def compress file
@@ -197,8 +214,7 @@ def compress file
   body
 end
 ```
-
-When sending the compressed reports you need to send them using `application/gzip` as Content Type and `gzip` as Content Encoding. For example
+When sending the compressed reports you need to send them using application/gzip as Content Type and gzip as Content Encoding. For example
 
 ```ruby
 URI = 'https://api.datacite.org/reports'
@@ -218,30 +234,33 @@ def post_file file
     headers: headers,
     timeout: 100)
 end
-
 ```
 
-In order to create a report with more of 50,000 records, just keep making POST requests with teh same `report-header`. 
+The equivalent Curl call would be:
 
 ```shell
-
-POST /reports
-POST /reports
-POST /reports
-
+$ curl --header "Content-Type: application/gzip; Content-Encoding: gzip" -H "X-Authorization: Bearer {YOUR-JSON-WEB-TOKEN}" -X POST https://api.datacite.org/reports/ -d @usage-report-compressed
 ```
 
+### Send Usage Report in subsets
 
-To update a existing report makea PUT request followed with as many POST requests with the same `report-header` as you need.
+In order to create a report with more of 50,000 records, just keep making POST requests with the same report-header. This will create subsets of the report. For example:
 
 ```shell
+POST /reports
+POST /reports
+POST /reports
+```
 
+To update an existing compressed report make a PUT request followed with as many POST requests with the same report-header as you need. For example: 
+
+```shell
 PUT /reports/{report-id}
 POST /reports
 POST /reports
-
 ```
 
+##
 
 ### Metadata Validation
 
