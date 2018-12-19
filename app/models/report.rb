@@ -31,12 +31,37 @@ class Report < ApplicationRecord
   after_validation :clean_datasets
   # before_create :set_id
   after_commit :push_report, if: :normal_report?
+  after_destroy_commit :destroy_report_events,  on: :delete
+
   # after_commit :validate_report_job, unless: :normal_report?
 
 
   # def validate_report_job
   #   ValidationJob.perform_later(self)
   # end
+
+  def destroy_report_events
+    DestroyEventsJob.perform_later(uid)
+  end
+
+
+  def self.destroy_events uid, options
+    logger = Logger.new(STDOUT)
+    url = "#{ENV["API_URL"]}/events?" + URI.encode_www_form("subj-id" =>"#{ENV["API_URL"]}/reports/#{uid}")
+    response = Maremma.get url
+    events = response.fetch("data",[])
+    fail "there are no events for this report" if events.is_empty?
+
+    events.each do |event|
+      id = event.fetch("id",nil)
+      next if id.is_nil?
+      delete_url = "#{ENV["API_URL"]}/events/#{id}"
+      r = Maremma.delete(delete_url)
+      message = r.status == 204 ? "[Metrcis HUB] Event #{id} from report #{uid} was deleted"  :  "[Metrcis HUB] did not delete #{id}"
+      logger.info message
+    end
+  end
+
 
   def push_report
     logger.info "[MetricsHub] calling queue for " + uid

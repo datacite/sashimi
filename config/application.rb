@@ -54,6 +54,7 @@ ENV['MYSQL_PORT'] ||= "3306"
 ENV['TRUSTED_IP'] ||= "10.0.40.1"
 ENV['LEVRIERO_URL'] ||= "https://api.datacite.org"
 ENV['USAGE_URL'] ||= "https://api.datacite.org"
+ENV['API_URL'] ||= "https://api.datacite.org"
 ENV['RACK_TIMEOUT_SERVICE_TIMEOUT'] = "40"
 
 module Sashimi
