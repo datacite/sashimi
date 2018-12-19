@@ -1,5 +1,6 @@
 ENV['RAILS_ENV'] = 'test'
 ENV['USAGE_URL'] = "https://api.test.datacite.org"
+ENV['API_URL'] = "https://api.test.datacite.org"
 # set up Code Climate
 require 'simplecov'
 SimpleCov.start
@@ -55,4 +56,5 @@ VCR.configure do |c|
   c.ignore_localhost = true
   c.ignore_hosts "codeclimate.com"
   c.configure_rspec_metadata!
+  c.default_cassette_options = { :match_requests_on => [:method, :path] }
 end
