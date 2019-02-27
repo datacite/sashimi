@@ -35,8 +35,8 @@ module Helpeable
     end
 
     def add_subsets
-      if @report.present? &&  safe_params[:compressed].present?
-        unless subset_exist?(@report.uid, safe_params[:compressed])
+      if @report.present? &&  params[:compressed].present?
+        unless subset_exist?(@report.uid, params[:compressed])
           @report.report_subsets <<  ReportSubset.new(compressed: safe_params[:compressed]) 
         end
       end

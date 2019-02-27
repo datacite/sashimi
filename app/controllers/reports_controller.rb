@@ -78,7 +78,7 @@ class ReportsController < ApplicationController
     @report = Report.where(uid: params[:id]).first
     exists = @report.present?
     
-    if exists && safe_params[:compressed].present?
+    if exists && params[:compressed].present?
       @report.report_subsets.destroy_all 
       @report.report_subsets <<  ReportSubset.new(compressed: safe_params[:compressed]) 
       authorize! :delete_all, @report.report_subsets
@@ -96,14 +96,14 @@ class ReportsController < ApplicationController
   end
 
   def create
-    @report = Report.where(created_by: safe_params[:created_by])
-    .where(month: get_month(safe_params.dig("reporting_period","begin_date")))
-    .where(year: get_year(safe_params.dig("reporting_period","begin_date")))
-    .where(client_id: safe_params.merge(@user_hash)[:client_id])
+    @report = Report.where(created_by: params[:report_header].dig(:created_by))
+    .where(month: get_month(params[:report_header].dig(:reporting_period,"begin_date")))
+    .where(year: get_year(params[:report_header].dig(:reporting_period,"begin_date")))
+    .where(client_id: params.merge(@user_hash)[:client_id])
     .first
     exists = @report.present?
 
-    @report.report_subsets <<  ReportSubset.new(compressed: safe_params[:compressed]) if @report.present? &&  safe_params[:compressed].present?
+    @report.report_subsets <<  ReportSubset.new(compressed: safe_params[:compressed]) if @report.present? &&  params[:compressed].present?
     # add_subsets
 
     @report = Report.new(safe_params.merge(@user_hash)) unless @report.present?
@@ -131,14 +131,14 @@ class ReportsController < ApplicationController
   end
 
   def validate_monthly_report
-    fail JSON::ParserError, "Reports are monthly. reporting dates are within the same month" if get_month(safe_params.dig("reporting_period","begin_date")) !=  get_month(safe_params.dig("reporting_period","end_date"))
+    # period =safe_params.fetch("reporting_period",nil)
+    fail JSON::ParserError, "Reports are monthly. reporting dates are within the same month" if get_month(params[:report_header].dig(:reporting_period,"begin_date")) !=  get_month(params[:report_header].dig(:reporting_period,"end_date"))
   end
 
   private
 
 
   def safe_params
-
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_header].present?
     x = usage_report_params        if params[:report_datasets].present?  && params[:report_header].fetch(:release) == "rd1" && params[:encoding] != "gzip" 
     x = resolution_report_params   if params[:report_header].fetch(:release) == "drl" && params[:encoding] == "gzip" && x.nil?
