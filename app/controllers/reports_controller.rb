@@ -13,6 +13,8 @@ class ReportsController < ApplicationController
   # include validation methods for sushi
   include Helpeable
 
+  COUNTRY_CODES = IsoCountryCodes.for_select.map {|code| code.last.downcase}
+
 
   prepend_before_action :authenticate_user_from_token!
   before_action :set_report, only: [:show, :destroy]
@@ -156,7 +158,6 @@ class ReportsController < ApplicationController
 
     nested_names = [:name, :value]
     nested_types = [:type, :value]
-    codes =  IsoCountryCodes.for_select.map {|code| code.last.downcase}
 
     header.permit(
       :report_name, :report_id, :release, :created, :created_by, 
@@ -175,7 +176,7 @@ class ReportsController < ApplicationController
         "dataset-dates": nested_types, 
         performance: [
           period: ["end-date", "begin-date"],
-          instance: ["access-method", "metric-type", :count, "country-counts": codes]
+          instance: ["access-method", "metric-type", :count, "country-counts": COUNTRY_CODES]
         ],
         "dataset-contributors": nested_types,
         "dataset-attributes": nested_types,
