@@ -21,14 +21,8 @@ class CompressedRequests
 
       hsh = Rails.env.test? ?  Yajl::Parser.parse(extracted) : Yajl::Parser.parse((extracted))
 
-      puts "This is PARSED"
-
       request.update_param('report_header', hsh.fetch("report-header",{}).deep_transform_keys { |key| key.tr('-', '_') } )
-      puts "This is header"
-
       request.update_param('compressed', env['rack.input'])
-      puts "This is body"
-
       request.update_param('encoding', env['HTTP_CONTENT_ENCODING'])
 
       env.delete('HTTP_CONTENT_ENCODING')
