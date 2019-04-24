@@ -6,6 +6,7 @@ services:
     image: datacite/sashimi
     ports:
       - "8075:80"
+      - "2265:22"
     volumes:
       - ./app:/home/app/webapp/app
       - ./config:/home/app/webapp/config
