@@ -41,6 +41,9 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
 COPY vendor/docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
 COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
 
+# enable SSH
+RUN rm -f /etc/service/sshd/down 
+
 # Use Amazon NTP servers
 COPY vendor/docker/ntp.conf /etc/ntp.conf
 
@@ -64,6 +67,8 @@ ADD vendor/docker/shoryuken.sh /etc/service/shoryuken/run
 
 # Run additional scripts during container startup (i.e. not at build time)
 RUN mkdir -p /etc/my_init.d
+# install custom ssh key during startup
+COPY vendor/docker/10_ssh.sh /etc/my_init.d/10_ssh.sh
 COPY vendor/docker/80_flush_cache.sh /etc/my_init.d/80_flush_cache.sh
 COPY vendor/docker/90_migrate.sh /etc/my_init.d/90_migrate.sh
 ENV RACK_TIMEOUT_SERVICE_TIMEOUT 40
