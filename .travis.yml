@@ -26,7 +26,9 @@ before_install:
   - mysql -e 'CREATE DATABASE sashimi_test;'
 
 install:
-  - travis_retry bundle install
+  - travis_retry bundle install  
+  - curl -sL https://sentry.io/get-cli/ | bash
+  - sentry-cli --version
 
 before_script:
   - memcached -p 11211 &
@@ -77,6 +79,17 @@ after_success:
       if [ "${TRAVIS_TAG?}" ]; then
         ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:mastino/prod-eu-west/services/metrics-api/_sashimi.auto.tfvars;
       fi
+
+      sentry-cli releases new sashimi:${GIT_TAG} --finalize --project sashimi;
+
+      if [ "${TRAVIS_TAG?}" ]; then
+        ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:mastino/prod-eu-west/services/client-api/_sashimi.auto.tfvars;
+        sentry-cli releases deploys sashimi:${GIT_TAG} new -e production;
+      else
+        sentry-cli releases deploys sashimi:${GIT_TAG} new -e stage;
+      fi
+
+      sentry-cli releases set-commits --auto sashimi:${GIT_TAG};
       
       cd mastino;
       git remote;

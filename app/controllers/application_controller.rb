@@ -7,7 +7,7 @@ class ApplicationController < ActionController::API
 
   attr_accessor :current_user
 
-  before_action :default_format_json, :transform_params, :permit_all_params
+  before_action :default_format_json, :transform_params, :permit_all_params, :set_raven_context
   after_action :set_jsonp_format, :set_consumer_header
   after_action :set_jsonp_format
 
@@ -78,11 +78,24 @@ class ApplicationController < ActionController::API
         elsif status == 409
           message = "The resource already exists."
         else
-          Bugsnag.notify(exception)
           message = exception.message
         end
 
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
+    end
+  end
+
+  def set_raven_context
+    if current_user.try(:uid)
+      Raven.user_context(
+        email: current_user.email,
+        id: current_user.uid,
+        ip_address: request.ip
+      )
+    else
+      Raven.user_context(
+        ip_address: request.ip
+      ) 
     end
   end
 

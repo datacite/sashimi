@@ -22,7 +22,6 @@ gem "dalli", "~> 2.7.6"
 gem 'lograge', '~> 0.10'
 gem 'logstash-event', '~> 1.2', '>= 1.2.02'
 gem 'logstash-logger', '~> 0.26.1'
-gem 'bugsnag', '~> 6.1', '>= 6.1.1'
 gem 'librato-rails', '~> 1.4.2'
 gem 'active_model_serializers', '~> 0.10.0'
 gem 'jwt'
@@ -42,6 +41,8 @@ gem 'aws-sdk-sqs', '~> 1.3'
 gem 'iso_country_codes'
 gem 'yajl-ruby', require: 'yajl'
 gem "rack-timeout"
+gem 'sentry-raven', '~> 2.9'
+gem 'git', '~> 1.5'
 
 
 group :development, :test do
