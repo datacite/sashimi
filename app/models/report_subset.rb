@@ -16,8 +16,31 @@ class ReportSubset < ApplicationRecord
     ValidationJob.perform_later(id)
   end
 
+  def push_report
+    logger.info "[MetricsHub] calling queue for " + uid
+    queue_report_subset if ENV["AWS_REGION"].present?
+  end
+
   def gzip
     ::Base64.strict_encode64(compressed)
+  end
+
+  def report_header
+    report = Report.where(uid: report_id).first
+
+    fail ActiveRecord::RecordNotFound unless report.present?
+  
+    {
+      "report-name": report.report_name,
+      "report-id": report.report_id,
+      "release": report.release,
+      "created": report.created,
+      "created-by": report.created_by,
+      "reporting-period": report.reporting_period,
+      "report-filters": report.report_filters,
+      "report-attributes": report.report_attributes,
+      "exceptions": report.exceptions
+     }
   end
 
   def make_checksum
@@ -27,7 +50,4 @@ class ReportSubset < ApplicationRecord
   def set_id
     self.id = SecureRandom.random_number(9223372036854775807)
   end
-
- 
-
 end

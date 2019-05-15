@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   add_swagger_route 'GET', '//reports', controller_name: 'reports', action_name: 'index'
   add_swagger_route 'DELETE', '//reports/{id}', controller_name: 'reports', action_name: 'destroy'
   add_swagger_route 'GET', '//reports/{id}', controller_name: 'reports', action_name: 'show'
+  add_swagger_route 'GET', '//report-subsets/{id}', controller_name: 'report_subsets', action_name: 'show'
   add_swagger_route 'PUT', '//reports/{id}', controller_name: 'reports', action_name: 'update'
   add_swagger_route 'POST', '//reports', controller_name: 'reports', action_name: 'create'
 end
