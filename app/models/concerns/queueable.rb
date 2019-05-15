@@ -48,7 +48,7 @@ module Queueable
 
       queue_name = "#{Rails.env}_usage" 
       logger.info  "[UsageUpdateImportWorker] inside queque #{queue_name}"
-      logger.info "[UsageUpdateImportWorker] Trigger queue for " + id
+      logger.info "[Subset-UsageUpdateImportWorker] Trigger queue for subset #{id}" 
       queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
       options[:shoryuken_class] ||= "UsageUpdateImportWorker"
   
