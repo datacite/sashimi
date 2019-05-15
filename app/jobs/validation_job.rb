@@ -13,21 +13,22 @@ class ValidationJob < ActiveJob::Base
     header = parsed.dig("report-header")
     header["report-datasets"] = parsed.dig("report-datasets")
 
-    report = Report.where(uid: subset.report.uid).first
+    # report = Report.where(uid: subset.report.uid).first
     
     valid =  subset.validate_this_sushi(header)
     if valid.empty?
       message = "[ValidationJob] A subset of Usage Report #{subset.report.uid} successfully validated and ready to Push"
       # item.push_report
-      report.push_report
+      subset.push_report
       subset.update_column(:aasm, "valid")
+      logger.info message
     else
       message = "[ValidationJob] A subset of Usage Report #{subset.report.uid} fail validation. Needs to be updated, there are #{valid.size} errors. For example: #{valid.first[:message]}"
-      report.exceptions = valid
+      subset.exceptions = valid
       subset.update_column(:aasm, "not_valid")
+      logger.warn message
     end
-    logger.info message
-    return report.exceptions unless valid.empty?
+    return subset.exceptions unless valid.empty?
     true
   end
 end

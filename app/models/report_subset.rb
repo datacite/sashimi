@@ -4,6 +4,12 @@ require 'base64'
 class ReportSubset < ApplicationRecord
   belongs_to :report, primary_key: "uid", foreign_key: "report_id"
 
+
+    # include validation methods for sushi
+    include Queueable 
+
+  attr_accessor :exceptions
+
   validates_presence_of :report_id
   after_validation :make_checksum
   before_create :set_id
@@ -17,7 +23,7 @@ class ReportSubset < ApplicationRecord
   end
 
   def push_report
-    logger.info "[MetricsHub] calling queue for " + uid
+    logger.info "[MetricsHub] calling queue for #{id}" 
     queue_report_subset if ENV["AWS_REGION"].present?
   end
 
