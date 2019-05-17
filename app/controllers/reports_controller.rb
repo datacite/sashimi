@@ -15,17 +15,13 @@ class ReportsController < ApplicationController
 
   COUNTRY_CODES = IsoCountryCodes.for_select.map {|code| code.last.downcase}
 
-
   prepend_before_action :authenticate_user_from_token!
   before_action :set_report, only: [:show, :destroy]
   before_action :set_user_hash, only: [:create, :update, :destroy]
   before_action :validate_monthly_report, only: [:create, :update]
   authorize_resource :except => [:index, :show]
 
-
-
   def index
-
     page = (params.dig(:page, :number) || 1).to_i
     size = (params.dig(:page, :size) || 25).to_i
     from = (page - 1) * size
@@ -38,7 +34,7 @@ class ReportsController < ApplicationController
            end
 
     if params[:id].present?
-      collection = Report.where(uid: params[:id])
+      collection = Report.where(uid: params[:id].split(","))
     elsif params[:created_by].present?
       collection = Report.where(created_by: params[:created_by])
     elsif params[:year].present?
@@ -72,7 +68,7 @@ class ReportsController < ApplicationController
   end
 
   def show
-      render json: @report
+    render json: @report
   end
 
   def update
@@ -122,7 +118,6 @@ class ReportsController < ApplicationController
   protected
 
   def set_report
-   
     @report = Report.where(uid: params[:id]).first
 
     fail ActiveRecord::RecordNotFound unless @report.present?
@@ -196,7 +191,6 @@ class ReportsController < ApplicationController
     header
   end
 
-
   def compressed_report_params
     Rails.logger.info "Compressed Report"
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification and int compressed" unless params[:compressed].present? and params[:report_header].present? 
@@ -213,11 +207,9 @@ class ReportsController < ApplicationController
     header
   end
 
-
   def rewind_compressed_params params
     # https://github.com/inossidabile/wash_out/issues/132
     params.rewind
     params.read
   end
-
 end
