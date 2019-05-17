@@ -100,6 +100,25 @@ class Report < ApplicationRecord
     end
   end
 
+  def normal_report?
+    return nil if compressed_report?
+    return nil if self.report_datasets.nil?
+    true
+  end
+
+  def compressed_report?
+    return nil if self.exceptions.empty? 
+    return nil if self.compressed.nil?
+    # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
+    code = self.exceptions.first.fetch("code","")
+    if code == 69
+      true
+    else
+      nil
+    end
+  end
+
+
   private
 
   # random number that fits into MySQL bigint field (8 bytes)
@@ -122,23 +141,7 @@ class Report < ApplicationRecord
   end
 
 
-  def normal_report?
-    return nil if compressed_report?
-    return nil if self.report_datasets.nil?
-    true
-  end
 
-  def compressed_report?
-    return nil if self.exceptions.empty? 
-    return nil if self.compressed.nil?
-    # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
-    code = self.exceptions.first.fetch("code","")
-    if code == 69
-      true
-    else
-      nil
-    end
-  end
 
 
 
