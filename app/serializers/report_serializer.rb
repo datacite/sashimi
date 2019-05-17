@@ -18,6 +18,9 @@ class ReportSerializer < ActiveModel::Serializer
     {
       :report_name => object.report_name,
       :report_id => object.report_id,
+      :client_id => object.client_id,
+      :year => object.year,
+      :month => object.month,
       :release => object.release,
       :created_by => object.created_by,
       :created => object.created,
