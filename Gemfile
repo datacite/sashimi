@@ -22,7 +22,7 @@ gem "dalli", "~> 2.7.6"
 gem 'lograge', '~> 0.10'
 gem 'logstash-event', '~> 1.2', '>= 1.2.02'
 gem 'logstash-logger', '~> 0.26.1'
-gem 'librato-rails', '~> 1.4.2'
+gem 'librato-rails', '~> 2.1.0'
 gem 'active_model_serializers', '~> 0.10.0'
 gem 'jwt'
 gem 'bcrypt', '~> 3.1.7'
