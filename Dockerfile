@@ -12,8 +12,8 @@ RUN usermod -a -G docker_env app
 # Use baseimage-docker's init process.
 CMD ["/sbin/my_init"]
 
-# Install Ruby 2.3.3
-RUN bash -lc 'rvm --default use ruby-2.4.1'
+# Install Ruby 2.4.4
+RUN bash -lc 'rvm --default use ruby-2.4.4'
 
 # Update installed APT packages
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
@@ -33,13 +33,7 @@ RUN rm -f /etc/service/nginx/down && \
     rm /etc/nginx/sites-enabled/default
 COPY vendor/docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
 COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
-
-# send logs to STDOUT and STDERR
-RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
-    ln -sf /dev/stderr /var/log/nginx/error.log
-
 COPY vendor/docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
-COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
 
 # enable SSH
 RUN rm -f /etc/service/sshd/down 
@@ -67,10 +61,11 @@ ADD vendor/docker/shoryuken.sh /etc/service/shoryuken/run
 
 # Run additional scripts during container startup (i.e. not at build time)
 RUN mkdir -p /etc/my_init.d
+
 # install custom ssh key during startup
 COPY vendor/docker/10_ssh.sh /etc/my_init.d/10_ssh.sh
 COPY vendor/docker/80_flush_cache.sh /etc/my_init.d/80_flush_cache.sh
 COPY vendor/docker/90_migrate.sh /etc/my_init.d/90_migrate.sh
-ENV RACK_TIMEOUT_SERVICE_TIMEOUT 40
+
 # Expose web
 EXPOSE 80
