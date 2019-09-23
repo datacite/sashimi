@@ -1,4 +1,4 @@
-FROM phusion/passenger-full:0.9.22
+FROM phusion/passenger-full:0.9.30
 LABEL maintainer="kgarza@datacite.org"
 LABEL maintainer_name="Kristian Garza"
 
