@@ -51,6 +51,7 @@ group :development, :test do
   gem "binding_of_caller"
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end
+
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'spring'
@@ -64,8 +65,6 @@ group :test do
   gem 'vcr', '~> 5.0.0'
   gem 'codeclimate-test-reporter', '~> 1.0.0'
   gem 'simplecov'
-  gem 'yajl-ruby', require: 'yajl'
-
   gem 'factory_bot_rails', '~> 5.0'
   gem 'shoulda-matchers', '~> 4.1'
   gem 'faker'
