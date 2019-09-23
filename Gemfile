@@ -33,7 +33,7 @@ gem 'cancancan', '~> 2.0'
 gem "facets", require: false
 gem 'bergamasco', '~> 0.3.10'
 gem 'base32-url', '~> 0.3'
-gem 'rack-cors', '~> 1.0', '>= 1.0.2', :require => 'rack/cors'
+gem 'rack-cors', '~> 1.0', :require => 'rack/cors'
 gem 'json-schema'
 gem 'shoryuken', '~> 5.0'
 gem "aws-sdk-s3", require: false
