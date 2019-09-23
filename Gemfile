@@ -19,7 +19,7 @@ gem 'nokogiri', '~> 1.8.1'
 gem 'iso8601', '~> 0.9.0'
 gem 'maremma', '~> 4.0'
 gem "dalli", "~> 2.7.6"
-gem 'lograge', '~> 0.10'
+gem 'lograge', '~> 0.11'
 gem 'logstash-event', '~> 1.2', '>= 1.2.02'
 gem 'logstash-logger', '~> 0.26.1'
 gem 'librato-rails', '~> 1.4.2'
