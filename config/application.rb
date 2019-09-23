@@ -55,7 +55,7 @@ ENV['TRUSTED_IP'] ||= "10.0.40.1"
 ENV['LEVRIERO_URL'] ||= "https://api.datacite.org"
 ENV['USAGE_URL'] ||= "https://api.datacite.org"
 ENV['API_URL'] ||= "https://api.datacite.org"
-ENV['RACK_TIMEOUT_SERVICE_TIMEOUT'] = "40"
+ENV['RACK_TIMEOUT_SERVICE_TIMEOUT'] ||= "40"
 
 module Sashimi
   class Application < Rails::Application
@@ -76,12 +76,13 @@ module Sashimi
     # secret_key_base is not used by Rails API, as there are no sessions
     config.secret_key_base = 'blipblapblup'
 
-    # configure logging
-    logger = ActiveSupport::Logger.new(STDOUT)
+    # Write all logs to STDOUT instead of file
+    logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
-    config.logger = ActiveSupport::TaggedLogging.new(logger)
-    config.lograge.enabled = true
+    config.logger    = ActiveSupport::TaggedLogging.new(logger)
     config.log_level = ENV['LOG_LEVEL'].to_sym
+
+    config.active_job.logger = config.logger
 
     # configure caching
     config.cache_store = :dalli_store, nil, { :namespace => ENV['APPLICATION'] }
