@@ -60,8 +60,8 @@ end
 
 group :test do
   gem 'capybara'
-  gem 'webmock', '~> 3.1'
-  gem 'vcr', '~> 3.0.3'
+  gem 'webmock', '~> 3.7'
+  gem 'vcr', '~> 5.0.0'
   gem 'codeclimate-test-reporter', '~> 1.0.0'
   gem 'simplecov'
   gem 'yajl-ruby', require: 'yajl'
