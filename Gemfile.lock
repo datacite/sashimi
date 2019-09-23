@@ -92,7 +92,7 @@ GEM
     bootsnap (1.4.5)
       msgpack (~> 1.0)
     builder (3.2.3)
-    byebug (10.0.2)
+    byebug (11.0.1)
     cancancan (2.3.0)
     capybara (3.28.0)
       addressable
