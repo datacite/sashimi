@@ -2,16 +2,16 @@ require "faker"
 FactoryBot.define do
   factory :report do
     sequence(:report_id) { |n| "dsr-12hd-zt#{n}" }
-    client_id "datacite.datacite"
-    provider_id "datacite"
+    client_id { "datacite.datacite" }
+    provider_id { "datacite" }
     sequence(:created_by) { |n| "datacite#{n}" }
-    created "2020-03-02"
-    reporting_period  "begin_date": "2018-03-01", "end_date": "2018-03-31" 
-    report_filters []
-    release "rd1"
-    report_attributes []
-    exceptions []
-    report_datasets [{
+    created { "2020-03-02" }
+    reporting_period  { { "begin_date": "2018-03-01", "end_date": "2018-03-31" } }
+    report_filters { [] }
+    release { "rd1" }
+    report_attributes { [] }
+    exceptions { [] }
+    report_datasets { [{
       "yop": "2010",
       "platform": "DataONE",
       "data-type": "dataset",
@@ -45,21 +45,21 @@ FactoryBot.define do
           ]
         }
       ]
-    }]
+    }] }
   end
 
   factory :resolution_report do
     sequence(:report_id) { |n| "dsr-12hd-zt#{n}" }
-    client_id "datacite.datacite"
-    provider_id "datacite"
+    client_id { "datacite.datacite" }
+    provider_id { "datacite" }
     sequence(:created_by) { |n| "datacite#{n}" }
-    created "2020-03-02"
-    reporting_period  "begin_date": "2018-03-01", "end_date": "2018-03-31" 
-    report_filters []
-    release "drl"
-    report_attributes []
-    exceptions []
-    report_datasets [{
+    created { "2020-03-02" }
+    reporting_period  { { "begin_date": "2018-03-01", "end_date": "2018-03-31" } }
+    report_filters { [] }
+    release { "drl" }
+    report_attributes { [] }
+    exceptions { [] }
+    report_datasets { [{
       "dataset-id": [{
           "type": "doi",
           "value": "10.5072/0931-865"
@@ -84,13 +84,14 @@ FactoryBot.define do
           ]
         }
       ]
-    }]
+    }] }
   end
 
   factory :report_subset do
     report
+
     sequence(:report_id) { |n| report.uid  }
-    checksum Faker::Crypto.sha256
-    compressed "gziped line"
+    checksum { Faker::Crypto.sha256 }
+    compressed { "gziped line" }
   end
 end

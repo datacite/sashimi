@@ -7,16 +7,22 @@ module Authenticable
   included do
     # encode JWT token using SHA-256 hash algorithm
     def encode_token(payload)
+      return nil if payload.blank?
+      
       # replace newline characters with actual newlines
       private_key = OpenSSL::PKey::RSA.new(ENV['JWT_PRIVATE_KEY'].to_s.gsub('\n', "\n"))
       JWT.encode(payload, private_key, 'RS256')
-    rescue JSON::GeneratorError => error
-      Rails.logger.error "JSON::GeneratorError: " + error.message + " for " + payload
-      return nil
+    rescue OpenSSL::PKey::RSAError => e
+      logger = Logger.new(STDOUT)
+      logger.error e.inspect + " for " + payload.inspect
+
+      nil
     end
 
     # decode JWT token using SHA-256 hash algorithm
     def decode_token(token)
+      logger = Logger.new(STDOUT)
+
       public_key = OpenSSL::PKey::RSA.new(ENV['JWT_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
       payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
 
@@ -25,11 +31,11 @@ module Authenticable
 
       payload
     rescue JWT::DecodeError => error
-      Rails.logger.error "JWT::DecodeError: " + error.message + " for " + token
+      logger.error "JWT::DecodeError: " + error.message + " for " + token
       return {}
     rescue OpenSSL::PKey::RSAError => error
       public_key = ENV['JWT_PUBLIC_KEY'].presence || "nil"
-      Rails.logger.error "OpenSSL::PKey::RSAError: " + error.message + " for " + public_key
+      logger.error "OpenSSL::PKey::RSAError: " + error.message + " for " + public_key
       return {}
     end
 

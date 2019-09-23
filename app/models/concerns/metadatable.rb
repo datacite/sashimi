@@ -6,7 +6,6 @@ module Metadatable
   require 'json' 
 
   included do
-
     def validate_sushi 
       puts "report validation"
       schema = load_schema
@@ -16,7 +15,7 @@ module Metadatable
       JSON::Validator.fully_validate(schema, report.to_json, :errors_as_objects => true)
     end
 
-    def validate_this_sushi sushi
+    def validate_this_sushi(sushi)
       puts "subset validation"
       schema = load_schema 
       JSON::Validator.fully_validate(schema, sushi.to_json, :errors_as_objects => true)
@@ -29,7 +28,7 @@ module Metadatable
       report.transform_keys! { |key| key.tr('_', '-') }
       size = report["report-datasets"].length
       if (size/8) > 0  
-        sample =  (size/8) > 100 ? 100 : size
+        sample = (size/8) > 100 ? 100 : size
       else
         sample = 1
       end
@@ -44,12 +43,10 @@ module Metadatable
       report.transform_keys! { |key| key.tr('_', '-') }
       JSON::Validator.validate(schema, report.to_json)
     end
-  
-    USAGE_SCHEMA_FILE = "lib/sushi_schema/sushi_usage_schema.json"
-    RESOLUTION_SCHEMA_FILE = "lib/sushi_schema/sushi_resolution_schema.json"
-
 
     def load_schema
+      logger = Logger.new(STDOUT)
+
       if self.is_a?(ReportSubset)
         release = self.report.release
       else
@@ -57,15 +54,17 @@ module Metadatable
         report.transform_keys! { |key| key.tr('_', '-') }
         release = report.dig("release")
       end
+      
       file = case release
-        when 'rd1' then USAGE_SCHEMA_FILE
-        when 'drl' then RESOLUTION_SCHEMA_FILE
+        when 'rd1' then "lib/sushi_schema/sushi_usage_schema.json"
+        when 'drl' then "lib/sushi_schema/sushi_resolution_schema.json"
       end
+
       begin
         File.read(file)
       rescue
-        puts 'must redo the settings file'
-        {} # return an empty Hash object
+        logger.error 'must redo the settings file'
+        {} # return an empty hash
       end
     end
   end

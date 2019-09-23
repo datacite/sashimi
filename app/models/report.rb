@@ -44,7 +44,6 @@ class Report < ApplicationRecord
     DestroyEventsJob.perform_later(uid)
   end
 
-
   def self.destroy_events uid, options
     logger = Logger.new(STDOUT)
     url = "#{ENV["API_URL"]}/events?" + URI.encode_www_form("subj-id" =>"#{ENV["API_URL"]}/reports/#{uid}")
@@ -53,18 +52,20 @@ class Report < ApplicationRecord
     fail "there are no events for this report" if events.is_empty?
 
     events.each do |event|
-      id = event.fetch("id",nil)
+      id = event.fetch("id", nil)
       next if id.is_nil?
+
       delete_url = "#{ENV["API_URL"]}/events/#{id}"
       r = Maremma.delete(delete_url)
-      message = r.status == 204 ? "[Metrcis HUB] Event #{id} from report #{uid} was deleted"  :  "[Metrcis HUB] did not delete #{id}"
+      message = r.status == 204 ? "[UsageReports] Event #{id} from report #{uid} was deleted" : "[UsageReports] did not delete #{id}"
       logger.info message
     end
   end
 
-
   def push_report
-    logger.info "[MetricsHub] calling queue for " + uid
+    logger = Logger.new(STDOUT)
+    logger.info "[UsageReports] calling queue for " + uid
+
     queue_report if ENV["AWS_REGION"].present?
   end
 
@@ -89,10 +90,11 @@ class Report < ApplicationRecord
   end
   
   def self.compressed_report?
-    return nil if self.exceptions.empty? 
-    return nil if self.compressed.nil?
+    return nil if self.exceptions.empty? || self.compressed.nil?
+
     # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
     code = self.exceptions.first.fetch("code","")
+
     if code == 69
       true
     else
@@ -101,23 +103,23 @@ class Report < ApplicationRecord
   end
 
   def normal_report?
-    return nil if compressed_report?
-    return nil if self.report_datasets.nil?
+    return nil if compressed_report? || self.report_datasets.nil?
+
     true
   end
 
   def compressed_report?
-    return nil if self.exceptions.empty? 
-    return nil if self.compressed.nil?
+    return nil if self.exceptions.empty? || self.compressed.nil?
+
     # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
     code = self.exceptions.first.fetch("code","")
+
     if code == 69
       true
     else
       nil
     end
   end
-
 
   private
 
@@ -139,11 +141,6 @@ class Report < ApplicationRecord
   def clean_datasets
     write_attribute(:report_datasets, []) if compressed_report?
   end
-
-
-
-
-
 
   def set_uid
     return ActionController::ParameterMissing if self.reporting_period.nil?

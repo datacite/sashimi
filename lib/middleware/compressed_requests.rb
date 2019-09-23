@@ -30,7 +30,6 @@ class CompressedRequests
       env['rack.input'] = StringIO.new(extracted)
     end
 
-
     status, headers, response = @app.call(env)
     return [status, headers, response]
   end

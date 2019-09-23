@@ -1,13 +1,10 @@
 class ValidationJob < ActiveJob::Base
   queue_as :sashimi
 
-
   def perform(id, options={})
     logger = Logger.new(STDOUT)
 
     subset = ReportSubset.where(id: id).first
-
-
     full_report = ActiveSupport::Gzip.decompress(subset.compressed)
     parsed =JSON.parse((full_report))
     header = parsed.dig("report-header")
@@ -23,12 +20,14 @@ class ValidationJob < ActiveJob::Base
       subset.update_column(:aasm, "valid")
       logger.info message
     else
-      message = "[ValidationJob] A subset of Usage Report #{subset.report.uid} fail validation. Needs to be updated, there are #{valid.size} errors. For example: #{valid.first[:message]}"
+      message = "[ValidationJob] A subset of Usage Report #{subset.report.uid} failed validation. Needs to be updated, there are #{valid.size} errors. For example: #{valid.first[:message]}"
       subset.exceptions = valid
       subset.update_column(:aasm, "not_valid")
-      logger.warn message
+      logger.error message
     end
+
     return subset.exceptions unless valid.empty?
+
     true
   end
 end

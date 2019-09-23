@@ -22,7 +22,6 @@ gem "dalli", "~> 2.7.6"
 gem 'lograge', '~> 0.11'
 gem 'logstash-event', '~> 1.2', '>= 1.2.02'
 gem 'logstash-logger', '~> 0.26.1'
-gem 'librato-rails', '~> 1.4.2'
 gem 'active_model_serializers', '~> 0.10.10'
 gem 'jwt'
 gem 'bcrypt', '~> 3.1.13'
@@ -47,6 +46,7 @@ gem 'git', '~> 1.5'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.8'
+  gem 'rubocop-rspec', '~> 1.35'
   gem "better_errors"
   gem "binding_of_caller"
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
