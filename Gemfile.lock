@@ -50,7 +50,7 @@ GEM
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     aggregate (0.2.2)
-    api-pagination (4.8.1)
+    api-pagination (4.8.2)
     arel (9.0.0)
     aws-eventstream (1.0.3)
     aws-partitions (1.207.0)
