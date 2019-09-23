@@ -13,7 +13,7 @@ gem 'mysql2'
 gem 'dotenv'
 gem 'multi_json'
 gem 'json', '~> 2.2'
-gem 'oj', '~> 2.18', '>= 2.18.1'
+gem 'oj', '~> 3.9'
 gem 'equivalent-xml', '~> 0.6.0'
 gem 'nokogiri', '~> 1.8.1'
 gem 'iso8601', '~> 0.12.1'
@@ -33,9 +33,9 @@ gem 'cancancan', '~> 2.0'
 gem "facets", require: false
 gem 'bergamasco', '~> 0.3.10'
 gem 'base32-url', '~> 0.3'
-gem 'rack-cors', '~> 1.0', '>= 1.0.2', :require => 'rack/cors'
+gem 'rack-cors', '~> 1.0', :require => 'rack/cors'
 gem 'json-schema'
-gem 'shoryuken', '~> 3.2', '>= 3.2.2'
+gem 'shoryuken', '~> 5.0'
 gem "aws-sdk-s3", require: false
 gem 'aws-sdk-sqs', '~> 1.22'
 gem 'iso_country_codes'
@@ -46,7 +46,7 @@ gem 'git', '~> 1.5'
 
 
 group :development, :test do
-  gem 'rspec-rails', '~> 3.5', '>= 3.5.2'
+  gem 'rspec-rails', '~> 3.8'
   gem "better_errors"
   gem "binding_of_caller"
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -61,7 +61,7 @@ end
 group :test do
   gem 'capybara'
   gem 'webmock', '~> 3.7'
-  gem 'vcr', '~> 3.0.3'
+  gem 'vcr', '~> 5.0.0'
   gem 'codeclimate-test-reporter', '~> 1.0.0'
   gem 'simplecov'
   gem 'yajl-ruby', require: 'yajl'
