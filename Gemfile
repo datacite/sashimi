@@ -61,12 +61,13 @@ end
 
 group :test do
   gem 'capybara'
-  gem 'webmock', '~> 3.7'
-  gem 'vcr', '~> 5.0.0'
+  gem 'webmock', '~> 3.1'
+  gem 'hashdiff', ['>= 1.0.0.beta1', '< 2.0.0']
+  gem 'vcr', '~> 3.0.3'
   gem 'codeclimate-test-reporter', '~> 1.0.0'
   gem 'simplecov'
-  gem 'factory_bot_rails', '~> 5.0'
-  gem 'shoulda-matchers', '~> 4.1'
+  gem 'factory_bot_rails', '~> 4.8', '>= 4.8.2'
+  gem 'shoulda-matchers', '~> 3.1'
   gem 'faker'
   gem 'database_cleaner'
 end

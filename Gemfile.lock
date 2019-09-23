@@ -122,11 +122,11 @@ GEM
     erubi (1.8.0)
     excon (0.62.0)
     facets (3.1.0)
-    factory_bot (5.0.2)
-      activesupport (>= 4.2.0)
-    factory_bot_rails (5.0.2)
-      factory_bot (~> 5.0.2)
-      railties (>= 4.2.0)
+    factory_bot (4.11.1)
+      activesupport (>= 3.0.0)
+    factory_bot_rails (4.11.1)
+      factory_bot (~> 4.11.1)
+      railties (>= 3.0.0)
     faker (2.4.0)
       i18n (~> 1.6.0)
     faraday (0.14.0)
@@ -284,8 +284,8 @@ GEM
       aws-sdk-core (>= 2)
       concurrent-ruby
       thor
-    shoulda-matchers (4.1.2)
-      activesupport (>= 4.2.0)
+    shoulda-matchers (3.1.3)
+      activesupport (>= 4.0.0)
     simple_command (0.1.0)
     simplecov (0.13.0)
       docile (~> 1.1.0)
@@ -307,7 +307,7 @@ GEM
     thread_safe (0.3.6)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
-    vcr (5.0.0)
+    vcr (3.0.3)
     webmock (3.7.5)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
@@ -342,9 +342,10 @@ DEPENDENCIES
   dotenv
   equivalent-xml (~> 0.6.0)
   facets
-  factory_bot_rails (~> 5.0)
+  factory_bot_rails (~> 4.8, >= 4.8.2)
   faker
   git (~> 1.5)
+  hashdiff (>= 1.0.0.beta1, < 2.0.0)
   httplog (~> 1.3)
   iso8601 (~> 0.12.1)
   iso_country_codes
@@ -368,13 +369,13 @@ DEPENDENCIES
   rspec-rails (~> 3.8)
   sentry-raven (~> 2.9)
   shoryuken (~> 5.0)
-  shoulda-matchers (~> 4.1)
+  shoulda-matchers (~> 3.1)
   simple_command
   simplecov
   spring
   spring-watcher-listen (~> 2.0.0)
-  vcr (~> 5.0.0)
-  webmock (~> 3.7)
+  vcr (~> 3.0.3)
+  webmock (~> 3.1)
   yajl-ruby
 
 BUNDLED WITH
