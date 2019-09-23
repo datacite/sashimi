@@ -219,7 +219,7 @@ GEM
     nio4r (2.5.1)
     nokogiri (1.8.5)
       mini_portile2 (~> 2.3.0)
-    oj (2.18.5)
+    oj (3.9.1)
     pandoc-ruby (2.0.2)
     public_suffix (4.0.1)
     rack (2.0.7)
@@ -361,8 +361,8 @@ DEPENDENCIES
   multi_json
   mysql2
   nokogiri (~> 1.8.1)
-  oj (~> 2.18, >= 2.18.1)
-  rack-cors (~> 1.0)
+  oj (~> 3.9)
+  rack-cors (~> 1.0, >= 1.0.2)
   rack-timeout
   rails (~> 5.2.2)
   rspec-rails (~> 3.5, >= 3.5.2)
