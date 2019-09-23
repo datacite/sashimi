@@ -1,13 +1,12 @@
 namespace :reports do
-
   desc 'Index all reports'
   task :index => :environment do
     logger = Logger.new(STDOUT)
     reports = Report.all
     reports.each do |report|
       logger.info report.uid
-      report.queue_report  if report.normal_report? 
-      logger.info "[SashimiManualIndex] Queued indexing for #{report.uid} Data Usage Reports."  if report.normal_report? 
+      report.queue_report if report.normal_report? 
+      logger.info "[UsageReports] Queued indexing for #{report.uid} Data Usage Reports."  if report.normal_report? 
     end
   end
 
@@ -25,14 +24,14 @@ namespace :reports do
     if report.normal_report? 
       logger.info report.uid
       report.queue_report
-      logger.info "[SashimiManualIndex] Queued indexing for #{report.uid} Data Usage Reports."
+      logger.info "[UsageReports] Queued indexing for #{report.uid} Data Usage Reports."
     elsif report.compressed_report?
       report.report_subsets.each do |subset|
         if subset.aasm == "valid"
           subset.queue_report_subset 
-          logger.info "[SashimiManualIndex] Queued indexing #{subset.id} for #{report.uid} Data Usage Reports."
+          logger.info "[UsageReports] Queued indexing #{subset.id} for #{report.uid} Data Usage Reports."
         else
-          logger.warn "[SashimiManualIndex] Report #{report.uid} has invalid subsets #{subset.id}."
+          logger.warn "[UsageReports] Report #{report.uid} has invalid subsets #{subset.id}."
         end
       end
     end

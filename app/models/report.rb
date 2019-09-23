@@ -109,7 +109,7 @@ class Report < ApplicationRecord
   end
 
   def compressed_report?
-    return nil if self.exceptions.empty? || self.compressed.nil?
+    return nil if self.exceptions && self.exceptions.empty? || self.compressed.nil?
 
     # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
     code = self.exceptions.first.fetch("code","")
