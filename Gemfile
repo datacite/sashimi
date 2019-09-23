@@ -29,7 +29,7 @@ gem 'bcrypt', '~> 3.1.13'
 gem 'simple_command'
 gem 'kaminari', '~> 1.0', '>= 1.0.1'
 gem 'api-pagination'
-gem 'cancancan', '~> 2.0'
+gem 'cancancan', '~> 3.0'
 gem "facets", require: false
 gem 'bergamasco', '~> 0.3.10'
 gem 'base32-url', '~> 0.3'
