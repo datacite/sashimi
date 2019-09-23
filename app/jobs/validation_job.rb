@@ -20,7 +20,7 @@ class ValidationJob < ActiveJob::Base
       subset.update_column(:aasm, "valid")
       logger.info message
     else
-      message = "[ValidationJob] A subset of Usage Report #{subset.report.uid} failed validation. Needs to be updated, there are #{valid.size} errors. For example: #{valid.first[:message]}"
+      message = "[ValidationError] A subset of Usage Report #{subset.report.uid} failed validation. Needs to be updated, there are #{valid.size} errors. For example: #{valid.first[:message]}"
       subset.exceptions = valid
       subset.update_column(:aasm, "not_valid")
       logger.error message
