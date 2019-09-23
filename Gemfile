@@ -66,7 +66,7 @@ group :test do
   gem 'simplecov'
   gem 'yajl-ruby', require: 'yajl'
 
-  gem 'factory_bot_rails', '~> 4.8', '>= 4.8.2'
+  gem 'factory_bot_rails', '~> 5.0'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'faker'
   gem 'database_cleaner'
