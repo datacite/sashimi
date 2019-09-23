@@ -284,8 +284,8 @@ GEM
       aws-sdk-core (>= 2)
       concurrent-ruby
       thor
-    shoulda-matchers (3.1.2)
-      activesupport (>= 4.0.0)
+    shoulda-matchers (4.1.2)
+      activesupport (>= 4.2.0)
     simple_command (0.0.9)
     simplecov (0.13.0)
       docile (~> 1.1.0)
@@ -369,7 +369,7 @@ DEPENDENCIES
   rspec-rails (~> 3.5, >= 3.5.2)
   sentry-raven (~> 2.9)
   shoryuken (~> 3.2, >= 3.2.2)
-  shoulda-matchers (~> 3.1)
+  shoulda-matchers (~> 4.1)
   simple_command
   simplecov
   spring

@@ -67,7 +67,7 @@ group :test do
   gem 'yajl-ruby', require: 'yajl'
 
   gem 'factory_bot_rails', '~> 5.0'
-  gem 'shoulda-matchers', '~> 3.1'
+  gem 'shoulda-matchers', '~> 4.1'
   gem 'faker'
   gem 'database_cleaner'
 end
