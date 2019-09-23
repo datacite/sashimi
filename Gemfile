@@ -8,7 +8,7 @@ end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.0'
-gem 'bootsnap', '~> 1.2', '>= 1.2.1'
+gem 'bootsnap', '~> 1.4'
 gem 'mysql2'
 gem 'dotenv'
 gem 'multi_json'
@@ -16,7 +16,7 @@ gem 'json', '~> 1.8', '>= 1.8.5'
 gem 'oj', '~> 2.18', '>= 2.18.1'
 gem 'equivalent-xml', '~> 0.6.0'
 gem 'nokogiri', '~> 1.8.1'
-gem 'iso8601', '~> 0.9.0'
+gem 'iso8601', '~> 0.12.1'
 gem 'maremma', '~> 4.0'
 gem "dalli", "~> 2.7.6"
 gem 'lograge', '~> 0.11'
@@ -66,7 +66,7 @@ group :test do
   gem 'simplecov'
   gem 'yajl-ruby', require: 'yajl'
 
-  gem 'factory_bot_rails', '~> 4.8', '>= 4.8.2'
+  gem 'factory_bot_rails', '~> 5.0'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'faker'
   gem 'database_cleaner'
