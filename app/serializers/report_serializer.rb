@@ -29,6 +29,5 @@ class ReportSerializer < ActiveModel::Serializer
       :report_attributes => object.report_attributes,
       :exceptions => object.exceptions, 
     }
-
   end
 end

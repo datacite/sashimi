@@ -9,7 +9,6 @@ class ApplicationController < ActionController::API
 
   before_action :default_format_json, :transform_params, :permit_all_params, :set_raven_context
   after_action :set_jsonp_format, :set_consumer_header
-  after_action :set_jsonp_format
 
   # from https://github.com/spree/spree/blob/master/api/app/controllers/spree/api/base_controller.rb
   def set_jsonp_format
@@ -98,6 +97,4 @@ class ApplicationController < ActionController::API
       ) 
     end
   end
-
-
 end

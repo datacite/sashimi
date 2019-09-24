@@ -20,5 +20,4 @@ class HeaderSerializer < ActiveModel::Serializer
       :exceptions => object.exceptions
     }
   end
-
 end

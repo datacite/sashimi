@@ -1,7 +1,7 @@
 class ReportFullSubsetSerializer < ActiveModel::Serializer
   type 'report'
 
-  attributes :id, :report_header, :report_datasets, :report_subsets
+  attributes :id, :report_header, :report_datasets, :report_subsets, :exceptions
 
   def id
     object.report_id
@@ -18,5 +18,4 @@ class ReportFullSubsetSerializer < ActiveModel::Serializer
   def report_datasets
     []
   end
-
 end

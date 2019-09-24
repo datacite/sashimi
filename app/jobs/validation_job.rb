@@ -23,8 +23,7 @@ class ValidationJob < ActiveJob::Base
       true
     else
       message = "[ValidationJobError] Subset #{id} of Usage Report #{subset.report.uid} failed validation. There are #{validation_errors.size} errors, starting with \"#{validation_errors.first[:message]}\"."
-      subset.update_column(:aasm, "not_valid")
-      subset.report.update_column(:exceptions, validation_errors)
+      subset.update_columns(aasm: "not_valid", exceptions: validation_errors)
       logger.error message
       false
     end

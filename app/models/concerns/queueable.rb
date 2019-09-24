@@ -8,8 +8,8 @@ module Queueable
       logger = Logger.new(STDOUT)
 
       queue_name = "#{Rails.env}_usage" 
-      logger.info  "[UsageUpdateImportWorker] inside queque #{queue_name}"
-      logger.info "[UsageUpdateImportWorker] Trigger queue for " + uid
+      logger.debug  "[UsageUpdateImportWorker] inside queque #{queue_name}"
+      logger.debug "[UsageUpdateImportWorker] Trigger queue for " + uid
       queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
       options[:shoryuken_class] ||= "UsageUpdateImportWorker"
   
@@ -31,13 +31,13 @@ module Queueable
           }
         }
         sent_message = sqs.send_message(options)
-        logger.info "[UsageUpdateImportWorker] response: " + sent_message.inspect 
+        logger.debug "[UsageUpdateImportWorker] response: " + sent_message.inspect 
         if sent_message.respond_to?("successful")
-          logger.info "[UsageUpdateImportWorker] Report " + report_id + "  has been queued."
+          logger.debug "[UsageUpdateImportWorker] Report " + report_id + "  has been queued."
         end
         sent_message
       rescue Aws::SQS::Errors::NonExistentQueue
-        logger.warn "[UsageUpdateImportWorker] A queue named '#{queue_name}' does not exist."
+        logger.error "[UsageUpdateImportWorker] A queue named '#{queue_name}' does not exist."
         exit(false)
       end
       true
@@ -47,8 +47,8 @@ module Queueable
       logger = Logger.new(STDOUT)
 
       queue_name = "#{Rails.env}_usage" 
-      logger.info  "[UsageUpdateImportWorker] inside queque #{queue_name}"
-      logger.info "[Subset-UsageUpdateImportWorker] Trigger queue for subset #{id}" 
+      logger.debug  "[UsageUpdateImportWorker] inside queque #{queue_name}"
+      logger.debug "[Subset-UsageUpdateImportWorker] Trigger queue for subset #{id}" 
       queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
       options[:shoryuken_class] ||= "UsageUpdateImportWorker"
   
@@ -70,13 +70,13 @@ module Queueable
           }
         }
         sent_message = sqs.send_message(options)
-        logger.info "[UsageUpdateImportWorker] response: " + sent_message.inspect 
+        logger.debug "[UsageUpdateImportWorker] response: " + sent_message.inspect 
         if sent_message.respond_to?("successful")
-          logger.info "[UsageUpdateImportWorker] Report " + report_id + "  has been queued."
+          logger.debug "[UsageUpdateImportWorker] Report " + report_id + "  has been queued."
         end
         sent_message
       rescue Aws::SQS::Errors::NonExistentQueue
-        logger.warn "[UsageUpdateImportWorker] A queue named '#{queue_name}' does not exist."
+        logger.error "[UsageUpdateImportWorker] A queue named '#{queue_name}' does not exist."
         exit(false)
       end
       true
