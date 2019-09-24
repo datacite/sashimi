@@ -13,12 +13,7 @@ require "rspec/rails"
 require "shoulda-matchers"
 require "webmock/rspec"
 require "rack/test"
-# require "colorize"
 require "database_cleaner"
-require 'yajl'
-
-
-
 
 # Checks for pending migration and applies them before tests are run.
 ActiveRecord::Migration.maintain_test_schema!
@@ -40,6 +35,8 @@ RSpec.configure do |config|
   # add `FactoryBot` methods
   config.include FactoryBot::Syntax::Methods
 
+  config.include JobHelper, type: :job
+  
   # don't use transactions, use database_clear gem via support file
   config.use_transactional_fixtures = false
 
@@ -47,7 +44,6 @@ RSpec.configure do |config|
   config.include RequestSpecHelper, type: :request
 
   ActiveJob::Base.queue_adapter = :test
-
 end
 
 VCR.configure do |c|

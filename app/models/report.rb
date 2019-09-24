@@ -14,7 +14,7 @@ class Report < ApplicationRecord
   include Metadatable
 
   # include validation methods for sushi
-  include Queueable 
+  include Queueable
 
   # attr_accessor :month, :year, :compressed
   validates_presence_of :report_id, :created_by, :client_id, :provider_id, :created, :reporting_period 

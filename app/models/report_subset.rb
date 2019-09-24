@@ -20,6 +20,10 @@ class ReportSubset < ApplicationRecord
     ValidationJob.perform_later(id)
   end
 
+  def convert_report_job
+    ConvertJob.perform_later(id)
+  end
+
   def push_report
     logger = Logger.new(STDOUT)
     logger.debug "[UsageReports] calling queue for #{id}"
