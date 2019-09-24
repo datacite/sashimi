@@ -39,7 +39,7 @@ gem "aws-sdk-s3", require: false
 gem 'aws-sdk-sqs', '~> 1.22'
 gem 'iso_country_codes'
 gem 'yajl-ruby', require: 'yajl'
-gem "rack-timeout"
+# gem "rack-timeout"
 gem 'sentry-raven', '~> 2.9'
 gem 'git', '~> 1.5'
 
