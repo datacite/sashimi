@@ -8,8 +8,6 @@ class ReportSubset < ApplicationRecord
   # include validation methods for sushi
   include Metadatable
 
-  attr_accessor :exceptions
-
   belongs_to :report, primary_key: "uid", foreign_key: "report_id"
 
   validates_presence_of :report_id
@@ -24,7 +22,7 @@ class ReportSubset < ApplicationRecord
 
   def push_report
     logger = Logger.new(STDOUT)
-    logger.info "[UsageReports] calling queue for #{id}"
+    logger.debug "[UsageReports] calling queue for #{id}"
     
     queue_report_subset if ENV["AWS_REGION"].present?
   end

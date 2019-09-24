@@ -2,7 +2,6 @@ require 'base64'
 require 'digest'
 require 'yajl'
 
-
 class Report < ApplicationRecord
   self.primary_key = :uid
 
@@ -22,7 +21,7 @@ class Report < ApplicationRecord
   validates_presence_of :report_datasets, if: :normal_report?
   #, :report_datasets
   validates :uid, uniqueness: true
-  validates :validate_sushi, sushi: {presence: true}, if: :normal_report?
+  validates :validate_sushi, sushi: { presence: true }, if: :normal_report?
   attr_readonly :created_by, :month, :year, :client_id, :report_id, :uid
 
   # serialize :exceptions, Array
@@ -35,7 +34,6 @@ class Report < ApplicationRecord
 
   # after_commit :validate_report_job, unless: :normal_report?
 
-
   # def validate_report_job
   #   ValidationJob.perform_later(self)
   # end
@@ -44,7 +42,7 @@ class Report < ApplicationRecord
     DestroyEventsJob.perform_later(uid)
   end
 
-  def self.destroy_events uid, options
+  def self.destroy_events(uid, options={})
     logger = Logger.new(STDOUT)
     url = "#{ENV["API_URL"]}/events?" + URI.encode_www_form("subj-id" =>"#{ENV["API_URL"]}/reports/#{uid}")
     response = Maremma.get url
@@ -64,7 +62,7 @@ class Report < ApplicationRecord
 
   def push_report
     logger = Logger.new(STDOUT)
-    logger.info "[UsageReports] calling queue for " + uid
+    logger.debug "[UsageReports] calling queue for " + uid
 
     queue_report if ENV["AWS_REGION"].present?
   end

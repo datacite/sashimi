@@ -6,13 +6,11 @@ Sashimi is an api-only application for Usage Reports in [SUSHI](https://www.niso
 
 The application closely follows the [RESEARCH_DATA_SUSHI specification](https://app.swaggerhub.com/apis/COUNTER/researchdata-sushi_1_0_api/1.0.0#/).
 
-
 ![](https://c1.staticflickr.com/1/21/31470457_3680ff198e_b.jpg)
-
 
 ## Service Documentation
 
-DataCites provides an API for usage reports as a service. For a description about the API Rerefence and how to guides, please visit:
+DataCites provides an API for usage reports as a service. For a description about the API Rerefence and how-to guides, please visit:
 
 * [API Reference](https://support.datacite.org/v1.1/reference#usage-reports)
 * [How To Guide for Usage Reports API](https://support.datacite.org/docs/usage-reports-api-guide)
@@ -43,12 +41,10 @@ bundle exec rspec
 
 ### Resource components
 
-
 Major resource components supported by the Data Usage API are:
 
 - reports
 - hearthbeat
-
 
 These can be used alone like this
 
@@ -57,16 +53,13 @@ These can be used alone like this
 | `/reports`      | returns a list of all reports in the Hub
 | `/hearthbeat` | returns the service status |
 
-
 ### Resource components and identifiers
+
 Resource components can be used in conjunction with identifiers to retrieve the metadata for that report.
 
 | resource                    | description                       |
 |:----------------------------|:----------------------------------|
 | `/reports/{report-uid}`           | returns metadata for the specified Report. The report UID is a UUID according to RFC 4122. |
-
-
-
 
 ## Depositing Reports
 
@@ -180,13 +173,11 @@ The allowed and recommended characters for an URL safe naming of parameters are 
 
 ## Report Storage
 
-Reports are stored in a S3 bucket using ActiveStore. We are storing them rather than in MYSQL because report can get rather big as mentioned in [COUNTER documentation](https://groups.niso.org/workrooms/sushi/start/clients). 
-
+Reports are stored in a S3 bucket using ActiveStorage. We are storing them rather than in MySQL because report can get rather big as mentioned in the [COUNTER documentation](https://groups.niso.org/workrooms/sushi/start/clients). 
 
 ## Register a large Usage Report
 
-Usage report can get very large and we have to ways to approach submission of very large reports. The first approach is compression and the second is subsetting. Large reports need to be divided and compressed. We have set up a top limit of 50,000 datasets per report.
-
+Usage report can get very large and we use two approaches handle them. The first approach is compression and the second is subsetting. Large reports need to be divided and compressed. We have set up a top limit of 50,000 datasets per report.
 
 In both cases, you need to add this exception in the report header:
 
@@ -214,6 +205,7 @@ def compress file
   body
 end
 ```
+
 When sending the compressed reports you need to send them using application/gzip as Content Type and gzip as Content Encoding. For example
 
 ```ruby
@@ -260,23 +252,17 @@ POST /reports
 POST /reports
 ```
 
-##
-
 ### Metadata Validation
 
-The validation of the metadata in the reports its a two-step process. The controller takes care of checking presence of fields. While the Schema validation is performed before saving in ActiveRecord. We use json-schema validation for this.
-
+The validation of the metadata in the reports its a two-step process. The controller takes care of checking presence of fields. Then the Schema validation is performed before saving the report. We use json-schema validation for this.
 
 ## Queries
 
-Very basic querying is supported and just for fields in the header of the reports. For more complex quering we suggest to use the DataCite Event Data Service. In its live instace The Hub API pushes every new created report to a AWS SQS queue for  processign by the Event Data Agent.
-
+Very basic querying is supported and just for fields in the header of the reports. For more complex quering we suggest to use the DataCite Event Data Service.
 
 ## Pagination
 
 Pagination follows the JSOANPI specification. 
-
-
 
 Follow along via [Github Issues](https://github.com/datacite/sashimi/issues).
 
@@ -289,4 +275,5 @@ Follow along via [Github Issues](https://github.com/datacite/sashimi/issues).
 * Commit, push and make a pull request. Bonus points for topical branches.
 
 ## License
+
 **Sashimi** is released under the [MIT License](https://github.com/datacite/sashimi/blob/master/LICENSE).

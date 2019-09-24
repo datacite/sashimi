@@ -353,7 +353,7 @@ DEPENDENCIES
   iso8601 (~> 0.12.1)
   iso_country_codes
   json (~> 2.2)
-  json-schema
+  json-schema (~> 2.8, >= 2.8.1)
   jwt
   kaminari (~> 1.0, >= 1.0.1)
   listen (>= 3.0.5, < 3.2)

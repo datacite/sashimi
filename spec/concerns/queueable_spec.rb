@@ -8,7 +8,6 @@ describe Report, vcr: true do
 
     subject { build(:report) }
 
-
     it 'should queue' do
       # expect(subject.queue_report()).to eq('{"queue_url":"test_usage","message_body":{"report_id":"https://metrics.test.datacite.org/reports/dsr-12hd-zt1"}}')
     end

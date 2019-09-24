@@ -129,11 +129,10 @@ class ReportsController < ApplicationController
 
   def validate_monthly_report
     # period =safe_params.fetch("reporting_period",nil)
-    fail JSON::ParserError, "Reports are monthly. reporting dates are within the same month" if get_month(params[:report_header].dig(:reporting_period,"begin_date")) !=  get_month(params[:report_header].dig(:reporting_period,"end_date"))
+    fail JSON::ParserError, "Reports are monthly, reporting dates need to be within the same month" if get_month(params[:report_header].dig(:reporting_period,"begin_date")) !=  get_month(params[:report_header].dig(:reporting_period,"end_date"))
   end
 
   private
-
 
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_header].present?
@@ -207,7 +206,7 @@ class ReportsController < ApplicationController
     header
   end
 
-  def rewind_compressed_params params
+  def rewind_compressed_params(params)
     # https://github.com/inossidabile/wash_out/issues/132
     params.rewind
     params.read

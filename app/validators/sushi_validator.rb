@@ -3,7 +3,7 @@ class SushiValidator < ActiveModel::EachValidator
   def validate_each(record, _schema, _value)
     # unless  record.is_valid_sushi? 
     valid = record.validate_sushi
-    unless  valid == true
+    unless valid == true
 
       def dig_errors(errors)
         return [] if errors.nil?

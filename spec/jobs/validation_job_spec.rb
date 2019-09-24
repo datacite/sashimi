@@ -8,11 +8,8 @@ describe ValidationJob, type: :job do
     # let(:report) {create(:report)}
     # let(:report_id) {report.uid}
 
-    let(:gzipped) do
-      ActiveSupport::Gzip.compress(bigly)
-    end    
-
-    let(:compresed_report) { create(:report_subset, compressed: gzipped) }
+    let(:gzipped) { ActiveSupport::Gzip.compress(bigly) }
+    let(:compressed_report) { create(:report_subset, compressed: gzipped) }
 
     # subject(:job) { ValidationJob.perform_later(gzipped, {report_id: report_id}) }
     subject(:job) { ValidationJob.perform_later(compresed_report.id) }
@@ -25,9 +22,9 @@ describe ValidationJob, type: :job do
     it 'execute further call' do
       response = perform_enqueued_jobs do
         # ValidationJob.new.perform(gzipped, {report_id: report_id})
-        ValidationJob.new.perform(compresed_report.id)
+        ValidationJob.new.perform(compressed_report.id)
       end
-      expect(response).not_to be_a(Array)
+      expect(response).to be true
     end
 
     # after do
@@ -41,13 +38,10 @@ describe ValidationJob, type: :job do
     # let(:report) {create(:report)}
     # let(:report_id) {report.uid}
 
-    let(:gzipped) do
-      ActiveSupport::Gzip.compress(bigly)
-    end    
+    let(:gzipped) { ActiveSupport::Gzip.compress(bigly) }
+    let(:compressed_report) { create(:report_subset, compressed: gzipped) }
 
-    let(:compresed_report) { create(:report_subset, compressed: gzipped) }
-
-    subject(:job) { ValidationJob.perform_later(compresed_report.id) }
+    subject(:job) { ValidationJob.perform_later(compressed_report.id) }
     # subject(:job) { ValidationJob.perform_later(gzipped, {report_id: report_id}) }
 
     it 'queues the job' do
@@ -58,9 +52,9 @@ describe ValidationJob, type: :job do
     it 'execute further call' do
       response = perform_enqueued_jobs do
         # ValidationJob.new.perform(gzipped, {report_id: report_id})
-        ValidationJob.new.perform(compresed_report.id)
+        ValidationJob.new.perform(compressed_report.id)
       end
-      expect(response).to be_a(Array)
+      expect(response).to be false
     end
 
     # after do

@@ -4,9 +4,9 @@
     "report-id": "full",
     "release": "rd1",
     "created": "2018-05-11",
-    "reporting_period": {
-      "begin_date": "2128-05-09",
-      "end_date": "2128-05-09"
+    "reporting-period": {
+      "begin-date": "2128-05-09",
+      "end-date": "2128-05-09"
      },
     "created-by": "dash",
     "report-attributes": [],
@@ -15058,7 +15058,7 @@
       ]
     },
     {
-      "dataset-title": "sanfranciscobay_adapt2sealevelrise_regionaldata",
+      "dataset-title": "sanfranciscobay-adapt2sealevelrise-regionaldata",
       "dataset-id": [
         {
           "type": "doi",
@@ -15148,7 +15148,7 @@
       ]
     },
     {
-      "dataset-title": "sanfranciscobay_adapt2sealevelrise_casestudies",
+      "dataset-title": "sanfranciscobay-adapt2sealevelrise-casestudies",
       "dataset-id": [
         {
           "type": "doi",
@@ -16864,7 +16864,7 @@
       ]
     },
     {
-      "dataset-title": "migori county referral hospital_gestational age data_nov15-april16",
+      "dataset-title": "migori county referral hospital-gestational age data-nov15-april16",
       "dataset-id": [
         {
           "type": "doi",
@@ -20222,7 +20222,7 @@
       ]
     },
     {
-      "dataset-title": "sanfranciscobay_adapt2sealevelrise_countydata",
+      "dataset-title": "sanfranciscobay-adapt2sealevelrise-countydata",
       "dataset-id": [
         {
           "type": "doi",
@@ -30144,7 +30144,7 @@
       ]
     },
     {
-      "dataset-title": "sanfranciscobay_adapt2sealevelrise_costdata",
+      "dataset-title": "sanfranciscobay-adapt2sealevelrise-costdata",
       "dataset-id": [
         {
           "type": "doi",

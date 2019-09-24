@@ -3,7 +3,7 @@
     "report-name": "Dataset Master Report",
     "report-id": "5cb09a1e-e204-48e7-b9b8-93327659ab43",
     "release": "rd1",
-    "created-by": "urn:node:US_MPC",
+    "created-by": "urn:node:US-MPC",
     "created": "2018-11-26",
     "reporting-period": {
       "end-date": "2015-06-30",

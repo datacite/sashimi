@@ -1,49 +1,49 @@
 {
     "id": "edce947f-5681-4402-aad0-508fa7ececff",
-    "report_name": "Dataset Report",
-    "report_id": "DSR",
+    "report-name": "Dataset Report",
+    "report-id": "DSR",
     "release": "rd1",
-    "created_by": "DataONE",
+    "created-by": "DataONE",
     "created": "2022-01-01",
     "exceptions": [],
     "reporting-period": {
         "begin-date": "2022-01-01",
         "end-date": "2022-01-0"
     },
-    "report_datasets": [{
+    "report-datasets": [{
         "yop": "2010",
         "platform": "DataONE",
-        "data_type": "Dataset",
+        "data-type": "Dataset",
         "publisher": "DataONE",
-        "dataset_id": [{
+        "dataset-id": [{
             "type": "DOI",
             "value": "0931-865"
         }],
         "performance": [{
             "period": {
-                "end_date": "2015-01-31",
-                "begin_date": "2015-01-01"
+                "end-date": "2015-01-31",
+                "begin-date": "2015-01-01"
             },
             "instance": [{
                 "count": 21,
-                "metric_type": "Total-Dataset-Requests"
+                "metric-type": "Total-Dataset-Requests"
             }]
         }],
-        "publisher_id": [{
+        "publisher-id": [{
             "type": "ORCID",
             "value": "1234-1234-1234-1234"
         }],
-        "access_method": "Regular",
-        "dataset_dates": [{
+        "access-method": "Regular",
+        "dataset-dates": [{
             "type": "Pub-Date",
             "value": "2002-01-15"
         }],
-        "dataset_title": "Lake Erie Fish Community Data",
-        "dataset_attributes": [{
+        "dataset-title": "Lake Erie Fish Community Data",
+        "dataset-attributes": [{
             "type": "Dataset-Version",
             "value": "VoR"
         }],
-        "dataset_contributors": [{
+        "dataset-contributors": [{
             "type": "Name",
             "value": "John Smith"
         }]

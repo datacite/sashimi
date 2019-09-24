@@ -4,9 +4,9 @@
      "report-id": "DSR",
      "release": "rd1",
      "created": "2128-04-09",
-     "reporting_period": {
-      "end_date": "2128-04-09",
-      "begin_date": "2128-04-09"
+     "reporting-period": {
+      "end-date": "2128-04-09",
+      "begin-date": "2128-04-09"
      },
      "created-by": "dash",
      "report-attributes": [],
@@ -55,7 +55,7 @@
        ],
        "dataset-dates": [
          {
-           "type": "pub_date",
+           "type": "pub-date",
            "value": "2018-05-01"
          }
        ],

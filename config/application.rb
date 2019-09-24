@@ -8,10 +8,6 @@ require "active_model/railtie"
 require "active_job/railtie"
 require "active_record/railtie"
 require "action_controller/railtie"
-# require "action_mailer/railtie"
-# require "action_view/railtie"
-# require "action_cable/engine"
-# require "sprockets/railtie"
 require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
@@ -90,9 +86,6 @@ module Sashimi
     # raise error with unpermitted parameters
     config.action_controller.action_on_unpermitted_parameters = :raise
 
-    config.action_view.sanitized_allowed_tags = %w(strong em b i code pre sub sup br)
-    config.action_view.sanitized_allowed_attributes = []
-
     # compress responses with deflate or gzip
     config.middleware.use Rack::Deflater
 
@@ -109,4 +102,3 @@ module Sashimi
     end
   end
 end
-

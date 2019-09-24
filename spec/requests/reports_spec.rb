@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'Reports', type: :request do
-  let(:bearer) { User.generate_token(exp:Time.now.to_i+300,client_id: "datacite.datacite", provider_id: "datacite", role_id: "staff_admin") }
+  let(:bearer) { User.generate_token(exp:Time.now.to_i + 300,client_id: "datacite.datacite", provider_id: "datacite", role_id: "staff_admin") }
   let(:headers) { {'ACCEPT'=>'application/json', 'CONTENT_TYPE'=>'application/json', 'Authorization' => 'Bearer ' + bearer}}
 
   describe 'GET /reports' do
@@ -17,7 +17,7 @@ describe 'Reports', type: :request do
       end
     end
     context 'index filter by year' do
-      let!(:report)  { create(:report, reporting_period:{"begin_date":"2222-01-01"}, compressed: nil) }
+      let!(:report)  { create(:report, reporting_period: { "begin_date": "2222-01-01"}, compressed: nil) }
       before { get '/reports?year=2222'}
 
       it 'returns reports' do
@@ -45,7 +45,6 @@ describe 'Reports', type: :request do
 
     context 'when the record exists' do
       it 'returns the report' do
-        #puts json
         expect(json.dig("report","report-header", "report-name")).to eq(report.report_name)
         expect(response).to have_http_status(200)
       end
@@ -187,7 +186,6 @@ describe 'Reports', type: :request do
       before { post '/reports', params: params.to_json, headers: headers }
 
       it 'creates a report' do
-        #puts json
         expect(json.dig("report", "report-header", "report-name")).to eq("Dataset Report")
         expect(response).to have_http_status(201)
       end

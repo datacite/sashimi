@@ -403,7 +403,7 @@
     "dataset-title": "ASTER Level 1 Precision Terrain Corrected Registered At-Sensor Radiance V003",
     "platform": "datacite",
     "dataset-id": [{
-      "value": "10.5067/aster/ast_l1t.003",
+      "value": "10.5067/aster/ast-l1t.003",
       "type": "doi"
     }],
     "dataset-dates": [{
