@@ -7,7 +7,6 @@ module Metadatable
 
   included do
     def validate_sushi 
-      puts "report validation"
       schema = load_schema
       report = self.attributes.except("compressed")
       report.transform_keys! { |key| key.tr('_', '-') }
@@ -16,13 +15,11 @@ module Metadatable
     end
 
     def validate_this_sushi(sushi)
-      puts "subset validation"
       schema = load_schema 
       JSON::Validator.fully_validate(schema, sushi.to_json, :errors_as_objects => true)
     end
 
     def validate_sample_sushi
-      puts "this is being sampled validated"
       schema = load_schema
       report = self.attributes.except("compressed")
       report.transform_keys! { |key| key.tr('_', '-') }
@@ -51,7 +48,7 @@ module Metadatable
         release = self.report.release
       else
         report = self.attributes.except("compressed")
-        report.transform_keys! { |key| key.tr('_', '-') }
+        #report.transform_keys! { |key| key.tr('_', '-') }
         release = report.dig("release")
       end
       
@@ -63,7 +60,7 @@ module Metadatable
       begin
         File.read(file)
       rescue
-        logger.error 'must redo the settings file'
+        logger.error 'must redo the JSON schema file'
         {} # return an empty hash
       end
     end
