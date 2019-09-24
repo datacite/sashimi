@@ -8,7 +8,7 @@ module Queueable
       logger = Logger.new(STDOUT)
 
       queue_name = "#{Rails.env}_usage" 
-      logger.debug  "[UsageUpdateImportWorker] inside queque #{queue_name}"
+      logger.debug  "[UsageUpdateImportWorker] inside queue #{queue_name}"
       logger.debug "[UsageUpdateImportWorker] Trigger queue for " + uid
       queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
       options[:shoryuken_class] ||= "UsageUpdateImportWorker"
@@ -47,7 +47,7 @@ module Queueable
       logger = Logger.new(STDOUT)
 
       queue_name = "#{Rails.env}_usage" 
-      logger.debug  "[UsageUpdateImportWorker] inside queque #{queue_name}"
+      logger.debug  "[UsageUpdateImportWorker] inside queue #{queue_name}"
       logger.debug "[Subset-UsageUpdateImportWorker] Trigger queue for subset #{id}" 
       queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
       options[:shoryuken_class] ||= "UsageUpdateImportWorker"
