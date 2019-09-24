@@ -10,18 +10,19 @@ class ValidationJob < ActiveJob::Base
     header = parsed.dig("report-header")
     header["report-datasets"] = parsed.dig("report-datasets")
 
-    # report = Report.where(uid: subset.report.uid).first
-    
-    validation_errors =  subset.validate_this_sushi(header)
+    # validate subset of usage report, raise error with bug tracker otherwise
+    is_valid = subset.validate_this_sushi_with_error(header)
 
-    if validation_errors.empty?
+    if is_valid
       message = "[ValidationJob] Subset #{id} of Usage Report #{subset.report.uid} successfully validated."
-      # item.push_report
       subset.push_report
       subset.update_column(:aasm, "valid")
       logger.info message
       true
     else
+      # store error details in database
+      validation_errors =  subset.validate_this_sushi(header)
+
       message = "[ValidationJobError] Subset #{id} of Usage Report #{subset.report.uid} failed validation. There are #{validation_errors.size} errors, starting with \"#{validation_errors.first[:message]}\"."
       subset.update_columns(aasm: "not_valid", exceptions: validation_errors)
       logger.error message

@@ -19,6 +19,14 @@ module Metadatable
       JSON::Validator.fully_validate(schema, sushi.to_json, :errors_as_objects => true)
     end
 
+    def validate_this_sushi_with_error(sushi)
+      schema = load_schema 
+      JSON::Validator.validate!(schema, sushi.to_json)
+    rescue JSON::Schema::ValidationError => exception
+      Raven.capture_exception(exception)
+      false
+    end
+
     def validate_sample_sushi
       schema = load_schema
       report = self.attributes.except("compressed")
