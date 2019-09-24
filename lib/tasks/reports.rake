@@ -63,6 +63,8 @@ namespace :reports do
 
   desc 'Validate single report'
   task :validate_report => :environment do
+    logger = Logger.new(STDOUT)
+    
     if ENV['REPORT_UUID'].nil?
       logger.error "#{ENV['REPORT_UUID']} is required."
       exit
