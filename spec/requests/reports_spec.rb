@@ -72,7 +72,7 @@ describe 'Reports', type: :request do
       end
     end
 
-    # commented because it takes too long
+    # # commented because it takes too long
     # context 'when the params is large' do
     #   let(:params) {file_fixture('large_file.json').read}
     #   before { post '/reports', params: params, headers: headers }
@@ -197,6 +197,16 @@ describe 'Reports', type: :request do
 
       it 'fails to create a report' do
         expect(response).to have_http_status(422)
+      end
+    end
+
+    context 'when the no required attributes are not included' do
+      let(:params) {file_fixture('report_11.json').read}
+      before { post '/reports', params: params, headers: headers }
+
+      it 'succeds to create a report' do
+        puts json
+        expect(response).to have_http_status(201)
       end
     end
 
