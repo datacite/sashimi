@@ -2,8 +2,6 @@ class ValidationJob < ActiveJob::Base
   queue_as :sashimi
 
   def perform(id, options={})
-    logger = Logger.new(STDOUT)
-
     subset = ReportSubset.where(id: id).first
     full_report = ActiveSupport::Gzip.decompress(subset.compressed)
     parsed = JSON.parse((full_report))
@@ -17,7 +15,7 @@ class ValidationJob < ActiveJob::Base
       message = "[ValidationJob] Subset #{id} of Usage Report #{subset.report.uid} successfully validated."
       subset.push_report
       subset.update_column(:aasm, "valid")
-      logger.info message
+      Rails.logger.info message
       true
     else
       # store error details in database
@@ -25,7 +23,7 @@ class ValidationJob < ActiveJob::Base
 
       message = "[ValidationJobError] Subset #{id} of Usage Report #{subset.report.uid} failed validation. There are #{validation_errors.size} errors, starting with \"#{validation_errors.first[:message]}\"."
       subset.update_columns(aasm: "not_valid", exceptions: validation_errors)
-      logger.error message
+      Rails.logger.error message
       false
     end
   end

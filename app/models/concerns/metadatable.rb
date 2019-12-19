@@ -50,8 +50,6 @@ module Metadatable
     end
 
     def load_schema
-      logger = Logger.new(STDOUT)
-
       if self.is_a?(ReportSubset)
         release = self.report.release
       else
@@ -61,14 +59,14 @@ module Metadatable
       end
       
       file = case release
-        when 'rd1' then "lib/sushi_schema/sushi_usage_schema.json"
-        when 'drl' then "lib/sushi_schema/sushi_resolution_schema.json"
-      end
+             when 'rd1' then "lib/sushi_schema/sushi_usage_schema.json"
+             when 'drl' then "lib/sushi_schema/sushi_resolution_schema.json"
+             end
 
       begin
         File.read(file)
       rescue
-        logger.error 'must redo the JSON schema file'
+        Rails.logger.error 'must redo the JSON schema file'
         {} # return an empty hash
       end
     end

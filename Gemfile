@@ -1,27 +1,19 @@
 source 'https://rubygems.org'
 
-git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
-  "https://github.com/#{repo_name}.git"
-end
-
-
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.2'
 gem 'bootsnap', '~> 1.4'
-gem 'mysql2'
+gem 'mysql2', "~> 0.4.4"
 gem 'dotenv'
-gem 'multi_json'
-gem 'json', '~> 2.2'
-gem 'oj', '~> 3.9'
+gem "oj", ">= 2.8.3"
+gem "oj_mimic_json", "~> 1.0", ">= 1.0.1"
 gem 'equivalent-xml', '~> 0.6.0'
-gem 'nokogiri', '~> 1.8.1'
+gem 'nokogiri', '~> 1.10.4'
 gem 'iso8601', '~> 0.12.1'
-gem 'maremma', '~> 4.0'
+gem 'maremma', '~> 4.4'
 gem "dalli", "~> 2.7.6"
-gem 'lograge', '~> 0.11'
-gem 'logstash-event', '~> 1.2', '>= 1.2.02'
-gem 'logstash-logger', '~> 0.26.1'
+gem "lograge", "~> 0.11.2"
+gem "logstash-event", "~> 1.2", ">= 1.2.02"
+gem "logstash-logger", "~> 0.26.1"
 gem 'active_model_serializers', '~> 0.10.10'
 gem 'jwt'
 gem 'bcrypt', '~> 3.1.13'
@@ -38,15 +30,17 @@ gem 'shoryuken', '~> 5.0'
 gem "aws-sdk-s3", require: false
 gem 'aws-sdk-sqs', '~> 1.22'
 gem 'iso_country_codes'
-gem 'yajl-ruby', require: 'yajl'
 # gem "rack-timeout"
 gem 'sentry-raven', '~> 2.9'
 gem 'git', '~> 1.5'
-
+gem "sprockets", "~> 3.7", ">= 3.7.2"
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.8'
   gem 'rubocop-rspec', '~> 1.35'
+  gem 'rubocop', '~> 0.77.0'
+  gem 'rubocop-performance', '~> 1.5', '>= 1.5.1'
+  gem 'rubocop-rails', '~> 2.4'
   gem "better_errors"
   gem "binding_of_caller"
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

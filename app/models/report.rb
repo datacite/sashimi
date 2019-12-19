@@ -1,6 +1,5 @@
 require 'base64'
 require 'digest'
-require 'yajl'
 
 class Report < ApplicationRecord
   self.primary_key = :uid
@@ -8,7 +7,7 @@ class Report < ApplicationRecord
   has_many :report_subsets, autosave: true, dependent: :destroy
 
   # has_one_attached :report
-  COMPRESSED_HASH_MESSAGE = {"code"=>69, "severity"=>"warning", "message"=>"report is compressed using gzip", "help-url"=>"https://github.com/datacite/sashimi", "data"=>"usage data needs to be uncompressed"}
+  COMPRESSED_HASH_MESSAGE = { "code"=>69, "severity"=>"warning", "message"=>"report is compressed using gzip", "help-url"=>"https://github.com/datacite/sashimi", "data"=>"usage data needs to be uncompressed"}
 
   # include validation methods for sushi
   include Metadatable
@@ -43,45 +42,44 @@ class Report < ApplicationRecord
   end
 
   def self.destroy_events(uid, options={})
-    logger = Logger.new(STDOUT)
     url = "#{ENV["API_URL"]}/events?" + URI.encode_www_form("subj-id" =>"#{ENV["API_URL"]}/reports/#{uid}")
     response = Maremma.get url
-    events = response.fetch("data",[])
+    events = response.fetch("data", [])
+    # TODO add error class
     fail "there are no events for this report" if events.is_empty?
 
     events.each do |event|
       id = event.fetch("id", nil)
       next if id.is_nil?
 
-      delete_url = "#{ENV["API_URL"]}/events/#{id}"
+      delete_url = "#{ENV['API_URL']}/events/#{id}"
       r = Maremma.delete(delete_url)
       message = r.status == 204 ? "[UsageReports] Event #{id} from report #{uid} was deleted" : "[UsageReports] did not delete #{id}"
-      logger.info message
+      Rails.logger.info message
     end
   end
 
   def push_report
-    logger = Logger.new(STDOUT)
-    logger.debug "[UsageReports] calling queue for " + uid
+    Rails.logger.debug "[UsageReports] calling queue for " + uid
 
     queue_report if ENV["AWS_REGION"].present?
   end
 
   def compress
     json_report = {
-      "report-header": 
+      "report-header":
       {
         "report-name": self.report_name,
-          "report-id": self.report_id,
-          "release": self.release,
-          "created": self.created,
-          "created-by": self.created_by,
-          "reporting-period": self.reporting_period,
-          "report-filters": self.report_filters,
-          "report-attributes": self.report_attributes,
-          "exceptions": self.exceptions
-        },
-        "report-datasets": self.report_datasets
+        "report-id": self.report_id,
+        "release": self.release,
+        "created": self.created,
+        "created-by": self.created_by,
+        "reporting-period": self.reporting_period,
+        "report-filters": self.report_filters,
+        "report-attributes": self.report_attributes,
+        "exceptions": self.exceptions,
+      },
+      "report-datasets": self.report_datasets,
     }
 
     ActiveSupport::Gzip.compress(json_report.to_json)
@@ -91,7 +89,7 @@ class Report < ApplicationRecord
     return nil if self.exceptions.empty? || self.compressed.nil?
 
     # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
-    code = self.exceptions.first.fetch("code","")
+    code = self.exceptions.first.fetch("code", "")
 
     if code == 69
       true
@@ -127,10 +125,9 @@ class Report < ApplicationRecord
   end
 
   def to_compress
-    if  self.compressed.nil? && self.report_subsets.empty?
+    if self.compressed.nil? && self.report_subsets.empty?
       ReportSubset.create(compressed: compress, report_id: self.uid)
     elsif self.report_subsets.empty?
-    # else
       ReportSubset.create(compressed: compressed, report_id: uid)
       # ReportSubset.create(compressed: self.compressed, report_id: self.report_id)
     end
@@ -142,11 +139,12 @@ class Report < ApplicationRecord
 
   def set_uid
     return ActionController::ParameterMissing if self.reporting_period.nil?
+
     self.uid = SecureRandom.uuid if uid.blank?
     # self.report_id = self.uid 
     month = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").month.to_s 
     year = Date.strptime(self.reporting_period["begin_date"],"%Y-%m-%d").year.to_s 
-    write_attribute(:month,  month ) 
-    write_attribute(:year,  year) 
+    write_attribute(:month, month)
+    write_attribute(:year, year)
   end
 end

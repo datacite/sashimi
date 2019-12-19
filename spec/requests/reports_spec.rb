@@ -521,54 +521,52 @@ describe 'Reports', type: :request do
       'Content-Encoding' => 'gzip',
       'Authorization' => 'Bearer ' + bearer
     } }
-    let(:gzipped) do
-      ActiveSupport::Gzip.compress(bigly)
-    end    
+    let(:gzipped) { ActiveSupport::Gzip.compress(bigly) }
 
     describe 'add subset to report' do
-
-
       context 'when the report exist' do
         # let(:dataone) {file_fixture('small_dataone.json').read}
                 
         before do
-          post '/reports', params: gzipped, headers: headers 
+          post '/reports', params: gzipped, headers: headers
           sleep 1
-          post '/reports', params: gzipped, headers: headers 
+          post '/reports', params: gzipped, headers: headers
         end
         
         it 'should return 201'do
-          datasets = json.dig("report","report-subsets")
+          datasets = json.dig("report", "report-subsets")
    
           expect(datasets).to be_a(Array)
           expect(datasets.size).to eq(2)
-          expect(datasets.dig(1,"gzip")).to be_a(String)
-          expect(datasets.dig(1,"checksum")).to be_a(String)
+          expect(datasets.dig(1, "gzip")).to be_a(String)
+          expect(datasets.dig(1, "checksum")).to be_a(String)
           expect(response).to have_http_status(201)
         end
+
         it 'should add subsets' do
-          uid = json.dig("report","id")
+          uid = json.dig("report", "id")
           report = Report.where(uid: uid ).first
           expect(report.report_subsets.size).to eq(2)
           expect(report.report_subsets.first.report_id).to eq(uid)
         end
       end
+
       context 'when the report doesnt exist' do
         # let(:dataone) {file_fixture('small_dataone.json').read}
 
         before { post '/reports', params: gzipped, headers: headers }
         
         it 'should return 201' do
-          puts json
-          datasets = json.dig("report","report-subsets")
+          datasets = json.dig("report", "report-subsets")
           expect(datasets).to be_a(Array)
           expect(datasets.size).to eq(1)
-          expect(datasets.dig(0,"gzip")).to be_a(String)
+          expect(datasets.dig(0, "gzip")).to be_a(String)
           expect(response).to have_http_status(201)
         end
+
         it 'should add subsets' do
-          uid = json.dig("report","id")
-          report = Report.where(uid: uid ).first
+          uid = json.dig("report", "id")
+          report = Report.where(uid: uid).first
           expect(report.report_subsets.size).to eq(1)
           expect(report.report_subsets.first.report_id).to eq(uid)
         end
@@ -576,9 +574,7 @@ describe 'Reports', type: :request do
     end
 
     describe 'update compressed report' do
-
       context 'when the report exist' do
-
         before do
           post '/reports', params: gzipped, headers: headers 
           post '/reports', params: gzipped, headers: headers 
@@ -587,12 +583,10 @@ describe 'Reports', type: :request do
         end
 
         it 'should return 200 and clear all other reports'do
-
-          datasets = json.dig("report","report-subsets")
-          puts json
+          datasets = json.dig("report","report-subsets") 
           expect(datasets).to be_a(Array)
           expect(datasets.size).to eq(1)
-          expect(datasets.dig(0,"gzip")).to be_a(String)
+          expect(datasets.dig(0, "gzip")).to be_a(String)
           expect(response).to have_http_status(200)
         end
 
@@ -603,21 +597,22 @@ describe 'Reports', type: :request do
           expect(report.report_subsets.first.report_id).to eq(uid)
         end
       end
+
       context 'when the report doesnt exist' do
         # let(:dataone) {file_fixture('small_dataone.json').read}
 
         before do
-           put "/reports/0b04a368-989b-405b-a382-a85ce558df40", params: gzipped, headers: headers 
+          put "/reports/0b04a368-989b-405b-a382-a85ce558df40", params: gzipped, headers: headers 
         end
 
         it 'should return 201' do
-          puts json
           datasets = json.dig("report","report-subsets")
           expect(datasets).to be_a(Array)
           expect(datasets.size).to eq(1)
           expect(datasets.dig(0,"gzip")).to be_a(String)
           expect(response).to have_http_status(201)
         end
+
         it 'should add subsets' do
           uid = json.dig("report","id")
           report = Report.where(uid: uid ).first
@@ -637,13 +632,15 @@ describe 'Reports', type: :request do
         it 'should return 204 and clear all other reports' do
           expect(response).to have_http_status(204)
         end
+
         # it 'should remove subsets' do
         #   uid =   json.dig("report","id")
         #   report = Report.where(uid: uid ).first
         #   expect(report.report_subsets.empty?).to eq(true)
         # end
       end
-      context 'when the report doesnt exist' do
+
+      context 'when the report doesn\'t exist' do
 
         before { delete '/reports/0b04a368-989b-405b-a382-a85ce558df56', headers: headers }
 
@@ -652,8 +649,6 @@ describe 'Reports', type: :request do
         end
       end
     end
-
-
 
     # context 'Resolution when the request is valid' do
     #   let(:resolutions) {file_fixture('report_resolution.json').read}
@@ -763,10 +758,6 @@ describe 'Reports', type: :request do
     #     expect(report_checksum).eql?(decode_checksum)
     #   end
     # end
-
-    
-
-
 
     # context 'when the request is valid and compressed but not very large file' do
     #   let(:bigly) {file_fixture('large_file_lc_2.json').read}
@@ -899,7 +890,5 @@ describe 'Reports', type: :request do
     #     expect(report_checksum).eql?(decode_checksum)
     #   end
     # end
-
   end
-
 end

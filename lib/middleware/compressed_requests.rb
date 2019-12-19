@@ -1,6 +1,3 @@
-require 'yajl'
-require 'json'
-
 class CompressedRequests
   def initialize(app)
     @app = app
@@ -18,10 +15,9 @@ class CompressedRequests
     request = Rack::Request.new(env)
     if method_handled?(env) && encoding_handled?(env)
       extracted = decode(env['rack.input'], env['HTTP_CONTENT_ENCODING'])
+      hsh = JSON.parse(extracted)
 
-      hsh = Rails.env.test? ?  Yajl::Parser.parse(extracted) : Yajl::Parser.parse((extracted))
-
-      request.update_param('report_header', hsh.fetch("report-header",{}).deep_transform_keys { |key| key.tr('-', '_') } )
+      request.update_param('report_header', hsh.fetch("report-header", {}).deep_transform_keys { |key| key.tr('-', '_') })
       request.update_param('compressed', env['rack.input'])
       request.update_param('encoding', env['HTTP_CONTENT_ENCODING'])
 
@@ -31,15 +27,14 @@ class CompressedRequests
     end
 
     status, headers, response = @app.call(env)
-    return [status, headers, response]
+    [status, headers, response]
   end
 
   def decode(input, content_encoding)
-    puts "This is middleware"
     case content_encoding
-      # https://tickets.puppetlabs.com/browse/PUP-7251
-      when 'gzip' then Zlib::GzipReader.new(input, :encoding => Encoding::BINARY).read
-      when 'deflate' then Zlib::Inflate.inflate(input.read)
+    # https://tickets.puppetlabs.com/browse/PUP-7251
+    when 'gzip' then Zlib::GzipReader.new(input, encoding: Encoding::BINARY).read
+    when 'deflate' then Zlib::Inflate.inflate(input.read)
     end
   end
 end

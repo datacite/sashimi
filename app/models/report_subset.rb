@@ -25,8 +25,7 @@ class ReportSubset < ApplicationRecord
   end
 
   def push_report
-    logger = Logger.new(STDOUT)
-    logger.debug "[UsageReports] calling queue for #{id}"
+    Rails.logger.debug "[UsageReports] calling queue for #{id}"
     
     queue_report_subset if ENV["AWS_REGION"].present?
   end
@@ -38,7 +37,7 @@ class ReportSubset < ApplicationRecord
   def report_header
     report = Report.where(uid: report_id).first
 
-    fail ActiveRecord::RecordNotFound unless report.present?
+    fail ActiveRecord::RecordNotFound if report.blank?
   
     {
       "report-name": report.report_name,
@@ -49,7 +48,7 @@ class ReportSubset < ApplicationRecord
       "reporting-period": report.reporting_period,
       "report-filters": report.report_filters,
       "report-attributes": report.report_attributes,
-      "exceptions": report.exceptions
+      "exceptions": report.exceptions,
      }
   end
 

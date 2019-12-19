@@ -33,7 +33,6 @@ RUN rm -f /etc/service/nginx/down && \
     rm /etc/nginx/sites-enabled/default
 COPY vendor/docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
 COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
-COPY vendor/docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
 
 # enable SSH
 RUN rm -f /etc/service/sshd/down 
@@ -57,7 +56,6 @@ RUN gem update --system && \
 # Add Runit script for shoryuken workers
 RUN mkdir /etc/service/shoryuken
 ADD vendor/docker/shoryuken.sh /etc/service/shoryuken/run
-
 
 # Run additional scripts during container startup (i.e. not at build time)
 RUN mkdir -p /etc/my_init.d

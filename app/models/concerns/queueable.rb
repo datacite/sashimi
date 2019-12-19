@@ -5,11 +5,7 @@ module Queueable
 
   included do
     def queue_report(options={})
-      logger = Logger.new(STDOUT)
-
       queue_name = "#{Rails.env}_usage" 
-      logger.debug  "[UsageUpdateImportWorker] inside queue #{queue_name}"
-      logger.debug "[UsageUpdateImportWorker] Trigger queue for " + uid
       queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
       options[:shoryuken_class] ||= "UsageUpdateImportWorker"
   
@@ -31,24 +27,21 @@ module Queueable
           }
         }
         sent_message = sqs.send_message(options)
-        logger.debug "[UsageUpdateImportWorker] response: " + sent_message.inspect 
+
         if sent_message.respond_to?("successful")
-          logger.debug "[UsageUpdateImportWorker] Report " + report_id + "  has been queued."
+          Rails.logger.debug "[UsageUpdateImportWorker] Report " + report_id + "  has been queued."
         end
+
         sent_message
+        true
       rescue Aws::SQS::Errors::NonExistentQueue
         logger.error "[UsageUpdateImportWorker] A queue named '#{queue_name}' does not exist."
-        exit(false)
+        false
       end
-      true
     end
 
     def queue_report_subset(options={})
-      logger = Logger.new(STDOUT)
-
       queue_name = "#{Rails.env}_usage" 
-      logger.debug  "[UsageUpdateImportWorker] inside queue #{queue_name}"
-      logger.debug "[Subset-UsageUpdateImportWorker] Trigger queue for subset #{id}" 
       queue_url = sqs.get_queue_url(queue_name: queue_name).queue_url
       options[:shoryuken_class] ||= "UsageUpdateImportWorker"
   
@@ -70,24 +63,23 @@ module Queueable
           }
         }
         sent_message = sqs.send_message(options)
-        logger.debug "[UsageUpdateImportWorker] response: " + sent_message.inspect 
+        Rails.logger.debug "[UsageUpdateImportWorker] response: " + sent_message.inspect 
         if sent_message.respond_to?("successful")
-          logger.debug "[UsageUpdateImportWorker] Report " + report_id + "  has been queued."
+          Rails.logger.debug "[UsageUpdateImportWorker] Report " + report_id + "  has been queued."
         end
-        sent_message
+        true
       rescue Aws::SQS::Errors::NonExistentQueue
-        logger.error "[UsageUpdateImportWorker] A queue named '#{queue_name}' does not exist."
-        exit(false)
+        Rails.logger.error "[UsageUpdateImportWorker] A queue named '#{queue_name}' does not exist."
+        false
       end
-      true
     end
 
     def report_url
-      "#{ENV["USAGE_URL"]}/reports/#{uid}"
+      "#{ENV['USAGE_URL']}/reports/#{uid}"
     end
 
     def report_subset_url
-      "#{ENV["USAGE_URL"]}/report-subsets/#{id}"
+      "#{ENV['USAGE_URL']}/report-subsets/#{id}"
     end
 
     def sqs
@@ -95,5 +87,3 @@ module Queueable
     end
   end
 end
-
-
