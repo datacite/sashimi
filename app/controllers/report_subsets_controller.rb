@@ -4,8 +4,6 @@ class ReportSubsetsController < ApplicationController
   # include validation methods for sushi
   include Helpeable
 
-  COUNTRY_CODES = IsoCountryCodes.for_select.map {|code| code.last.downcase}
-
   prepend_before_action :authenticate_user_from_token!
   before_action :set_report_subset, only: [:show]
 

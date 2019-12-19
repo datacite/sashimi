@@ -11,3 +11,5 @@ RESCUABLE_EXCEPTIONS = [CanCan::AccessDenied,
                         ActionController::UnpermittedParameters,
                         ActiveRecord::RecordInvalid,
                         NoMethodError]
+
+COUNTRY_CODES = IsoCountryCodes.for_select.map {|code| code.last.downcase}
