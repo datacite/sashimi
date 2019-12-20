@@ -4,7 +4,7 @@ class ValidationJob < ActiveJob::Base
   def perform(id, options={})
     subset = ReportSubset.where(id: id).first
     full_report = ActiveSupport::Gzip.decompress(subset.compressed)
-    parsed = JSON.parse((full_report))
+    parsed = JSON.parse(full_report)
     header = parsed.dig("report-header")
     header["report-datasets"] = parsed.dig("report-datasets")
 

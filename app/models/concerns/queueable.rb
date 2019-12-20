@@ -14,9 +14,9 @@ module Queueable
       options = {
         queue_url: queue_url,
         message_attributes: {
-          'shoryuken_class' => {
+          "shoryuken_class" => {
             string_value: options[:shoryuken_class],
-            data_type: 'String'
+            data_type: "String",
           },
         },
         message_body: body.to_json,

@@ -38,12 +38,14 @@ namespace :reports do
     end
 
     if report.normal_report?
-      report.send_message
+      body = { report_id: subset.report_url }
+      report.send_message(body)
       logger.info "[UsageReports] Queued indexing for #{report.uid} Data Usage Reports."
     elsif report.compressed_report?
       report.report_subsets.each do |subset|
         if subset.aasm == "valid"
-          subset.queue_report_subset 
+          body = { report_id: subset.report_subset_url }
+          subset.send_message(body)
           logger.info "[UsageReports] Queued indexing #{subset.id} for #{report.uid} Data Usage Reports."
         else
           logger.warn "[UsageReports] Report #{report.uid} has invalid subset #{subset.id}."
@@ -53,7 +55,7 @@ namespace :reports do
   end
 
   desc 'Validate all reports'
-  task :validate => :environment do    
+  task :validate => :environment do
     Report.all.find_each do |report|
       if report.compressed_report?
         report.report_subsets.each do |subset|
