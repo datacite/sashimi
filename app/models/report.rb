@@ -61,8 +61,9 @@ class Report < ApplicationRecord
 
   def push_report
     Rails.logger.debug "[UsageReports] calling queue for " + uid
+    body = { report_id: report_url }
 
-    queue_report if ENV["AWS_REGION"].present?
+    send_message(body) if ENV["AWS_REGION"].present?
   end
 
   def compress

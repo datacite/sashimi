@@ -5,12 +5,14 @@ namespace :reports do
     
     Report.all.find_each do |report|
       if report.normal_report?
-        report.queue_report
+        body = { report_id: report.report_url }
+        report.send_message(body)
         logger.info "[UsageReports] Queued indexing for #{report.uid} Data Usage Reports."
       elsif report.compressed_report?
         report.report_subsets.each do |subset|
           if subset.aasm == "valid"
-            subset.queue_report_subset 
+            body = { report_id: subset.report_subset_url }
+            subset.send_message(body)
             logger.info "[UsageReports] Queued indexing #{subset.id} for #{report.uid} Data Usage Reports."
           else
             logger.warn "[UsageReports] Report #{report.uid} has invalid subset #{subset.id}."
@@ -36,7 +38,7 @@ namespace :reports do
     end
 
     if report.normal_report?
-      report.queue_report
+      report.send_message
       logger.info "[UsageReports] Queued indexing for #{report.uid} Data Usage Reports."
     elsif report.compressed_report?
       report.report_subsets.each do |subset|
@@ -85,8 +87,6 @@ namespace :reports do
 
   desc 'Convert JSON of all reports'
   task :convert => :environment do
-    logger = Logger.new(STDOUT)
-    
     Report.all.find_each do |report|
       if report.compressed_report?
         if report.compressed_report?

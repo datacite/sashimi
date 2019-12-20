@@ -26,8 +26,9 @@ class ReportSubset < ApplicationRecord
 
   def push_report
     Rails.logger.debug "[UsageReports] calling queue for #{id}"
-    
-    queue_report_subset if ENV["AWS_REGION"].present?
+    body = { report_id: report_subset_url }
+
+    send_message(body) if ENV["AWS_REGION"].present?
   end
 
   def gzip
@@ -38,7 +39,7 @@ class ReportSubset < ApplicationRecord
     report = Report.where(uid: report_id).first
 
     fail ActiveRecord::RecordNotFound if report.blank?
-  
+
     {
       "report-name": report.report_name,
       "report-id": report.report_id,

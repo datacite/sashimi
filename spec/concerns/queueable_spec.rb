@@ -3,13 +3,13 @@ require 'rails_helper'
 describe Report, vcr: true do
   subject { create(:report) }
 
-  context "queue_report" do
+  context "send_message" do
     let(:client) { create(:client) }
 
     subject { build(:report) }
 
     it 'should queue' do
-      # expect(subject.queue_report()).to eq('{"queue_url":"test_usage","message_body":{"report_id":"https://metrics.test.datacite.org/reports/dsr-12hd-zt1"}}')
+      # expect(subject.send_message(subject.report_url)).to eq('{"queue_url":"test_usage","message_body":{"report_id":"https://metrics.test.datacite.org/reports/dsr-12hd-zt1"}}')
     end
 
     it 'report_url' do
@@ -21,4 +21,3 @@ describe Report, vcr: true do
     end
   end
 end
-
