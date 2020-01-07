@@ -7,15 +7,15 @@ namespace :reports do
       if report.normal_report?
         body = { report_id: report.report_url }
         report.send_message(body)
-        logger.info "[UsageReports] Queued indexing for #{report.uid} Data Usage Reports."
+        logger.info "[UsageReportsRake] Queued indexing for #{report.uid} Data Usage Reports."
       elsif report.compressed_report?
         report.report_subsets.each do |subset|
           if subset.aasm == "valid"
             body = { report_id: subset.report_subset_url }
             subset.send_message(body)
-            logger.info "[UsageReports] Queued indexing #{subset.id} for #{report.uid} Data Usage Reports."
+            logger.info "[UsageReportsRake] Queued indexing #{subset.id} for #{report.uid} Data Usage Reports."
           else
-            logger.warn "[UsageReports] Report #{report.uid} has invalid subset #{subset.id}."
+            logger.warn "[UsageReportsRake] Report #{report.uid} has invalid subset #{subset.id}."
           end
         end
       end
@@ -38,17 +38,17 @@ namespace :reports do
     end
 
     if report.normal_report?
-      body = { report_id: subset.report_url }
+      body = { report_id: report.report_url }
       report.send_message(body)
-      logger.info "[UsageReports] Queued indexing for #{report.uid} Data Usage Reports."
+      logger.info "[UsageReportsRake] Queued indexing for #{report.uid} Data Usage Reports."
     elsif report.compressed_report?
       report.report_subsets.each do |subset|
         if subset.aasm == "valid"
           body = { report_id: subset.report_subset_url }
           subset.send_message(body)
-          logger.info "[UsageReports] Queued indexing #{subset.id} for #{report.uid} Data Usage Reports."
+          logger.info "[UsageReportsRake] Queued indexing #{subset.id} for #{report.uid} Data Usage Reports."
         else
-          logger.warn "[UsageReports] Report #{report.uid} has invalid subset #{subset.id}."
+          logger.warn "[UsageReportsRake] Report #{report.uid} has invalid subset #{subset.id}."
         end
       end
     end
