@@ -18,11 +18,13 @@ module Shoryuken
 end
 
 Shoryuken.configure_server do |config|
-  config.server_middleware do |chain|
-    # remove logging of timing events
-    chain.remove Shoryuken::Middleware::Server::Timing
-    chain.add Shoryuken::Middleware::Server::RavenReporter
-  end
+  Rails.logger = Shoryuken::Logging.logger
+  Rails.logger.level = Rails.application.config.log_level
+  # config.server_middleware do |chain|
+  #   # remove logging of timing events
+  #   chain.remove Shoryuken::Middleware::Server::Timing
+  #   chain.add Shoryuken::Middleware::Server::RavenReporter
+  # end
 end
 
 Shoryuken.active_job_queue_name_prefixing = true
