@@ -26,7 +26,7 @@ gem 'bergamasco', '~> 0.3.10'
 gem 'base32-url', '~> 0.3'
 gem 'rack-cors', '~> 1.0', :require => 'rack/cors'
 gem 'json-schema', '~> 2.8', '>= 2.8.1'
-gem 'shoryuken', '~> 5.0'
+gem 'shoryuken', '~> 3.2', '>= 3.2.2'
 gem "aws-sdk-s3", require: false
 gem 'aws-sdk-sqs', '~> 1.22'
 gem 'iso_country_codes'
