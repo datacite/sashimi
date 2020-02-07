@@ -13,7 +13,7 @@ class ValidationJob < ActiveJob::Base
 
     if is_valid
       message = "[ValidationJob] Subset #{id} of Usage Report #{subset.report.uid} successfully validated."
-      subset.push_report
+      # subset.push_report
       subset.update_column(:aasm, "valid")
       Rails.logger.info message
       true
