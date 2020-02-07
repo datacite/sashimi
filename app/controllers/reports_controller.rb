@@ -60,7 +60,7 @@ class ReportsController < ApplicationController
     if @report.destroy
       head :no_content
     else
-      Rails.logger.warn @report.errors.inspect
+      Rails.logger.error @report.errors.inspect
       render jsonapi: serialize(@report.errors), status: :unprocessable_entity
     end
   end
@@ -108,7 +108,7 @@ class ReportsController < ApplicationController
     if @report.save
       render json: @report, status: :created
     else
-      Rails.logger.warn @report.errors.inspect
+      Rails.logger.error @report.errors.inspect
       render json: @report.errors, status: :unprocessable_entity
     end
   end
