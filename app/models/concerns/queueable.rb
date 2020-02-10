@@ -22,7 +22,9 @@ module Queueable
         message_body: body.to_json,
       }
 
-      sqs.send_message(options)
+      sent_message = sqs.send_message(options)
+      Rails.logger.info "[UsageUpdateImportWorker] Report " + report_id + "  has been queued." if sent_message.respond_to?("successful")
+      sent_message
     end
 
     # def queue_report(options={})
