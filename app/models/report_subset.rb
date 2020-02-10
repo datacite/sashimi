@@ -1,6 +1,7 @@
-require 'digest'
-require 'base64'
+require "digest"
+require "base64"
 
+### Subset are never updated. there will be always deleted and recreated
 class ReportSubset < ApplicationRecord
   # include validation methods for sushi
   include Queueable
@@ -25,7 +26,9 @@ class ReportSubset < ApplicationRecord
   end
 
   def push_report
-    Rails.logger.debug "[UsageReports] calling queue for #{id}"
+    return false if aasm != "valid"
+
+    Rails.logger.info "[UsageReports] calling queue for #{id}"
     body = { report_id: report_subset_url }
 
     send_message(body) if ENV["AWS_REGION"].present?
@@ -50,7 +53,7 @@ class ReportSubset < ApplicationRecord
       "report-filters": report.report_filters,
       "report-attributes": report.report_attributes,
       "exceptions": report.exceptions,
-     }
+    }
   end
 
   def make_checksum

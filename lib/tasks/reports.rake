@@ -59,7 +59,7 @@ namespace :reports do
     Report.all.find_each do |report|
       if report.compressed_report?
         report.report_subsets.each do |subset|
-          subset.validate_report_job
+          subset.validate_report_job(validate_only: true)
         end
       end
     end
@@ -82,7 +82,7 @@ namespace :reports do
     
     if report.compressed_report?
       report.report_subsets.each do |subset|
-        subset.validate_report_job
+        subset.validate_report_job(validate_only: true)
       end
     end
   end
