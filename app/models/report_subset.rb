@@ -17,7 +17,7 @@ class ReportSubset < ApplicationRecord
 
   after_commit :validate_report_job, on: :create
 
-  def validate_report_job(_options = {})
+  def validate_report_job(options = {})
     ValidationJob.perform_later(id, options)
   end
 
