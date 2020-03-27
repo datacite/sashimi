@@ -21,7 +21,7 @@ class ApplicationController < ActionController::API
   def authenticate_user_from_token!
     token = token_from_request_headers
     return false unless token.present?
-    raise JWT::VerificationError if ENV['JWT_BLACKLISTED'].split(',').includes(token)
+    raise JWT::VerificationError if (ENV["JWT_BLACKLISTED"] || "").split(",").include?(token)
 
     @current_user = User.new(token)
   end
