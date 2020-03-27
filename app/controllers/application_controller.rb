@@ -21,6 +21,7 @@ class ApplicationController < ActionController::API
   def authenticate_user_from_token!
     token = token_from_request_headers
     return false unless token.present?
+    raise JWT::VerificationError if ENV['JWT_BLACKLISTED'].split(',').includes(token)
 
     @current_user = User.new(token)
   end
@@ -61,7 +62,7 @@ class ApplicationController < ActionController::API
   unless Rails.env.development?
     rescue_from *RESCUABLE_EXCEPTIONS do |exception|
       status = case exception.class.to_s
-               when "CanCan::AccessDenied", "JWT::DecodeError" then 401
+               when "CanCan::AccessDenied", "JWT::DecodeError","JWT::VerificationError" then 401
                when "ActiveRecord::RecordNotFound", "AbstractController::ActionNotFound", "ActionController::RoutingError" then 404
                when "ActiveRecord::RecordNotUnique" then 409
                when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters", "NoMethodError", "ActiveRecord::RecordInvalid", "JSON::ParserError" then 422
