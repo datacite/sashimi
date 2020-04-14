@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :index, path: '/', only: [:index]
   # resources :index, only: [:index]
 
-  # resources :reports
+  resources :publishers, constraints: { id: /.+/ }
 
   def add_swagger_route http_method, path, opts = {}
     full_path = path.gsub(/{(.*?)}/, ':\1')
