@@ -11,9 +11,9 @@ Rails.application.routes.draw do
     match full_path, to: "#{opts.fetch(:controller_name)}##{opts[:action_name]}", via: http_method
   end
 
-  add_swagger_route 'GET', '//publishers', controller_name: 'publishers', action_name: 'index'
+  add_swagger_route 'GET', '//reports/publishers', controller_name: 'publishers', action_name: 'index'
   add_swagger_route 'DELETE', '//publishers/{id}', controller_name: 'publishers', action_name: 'destroy'
-  add_swagger_route 'GET', '//publishers/{id}', controller_name: 'publishers', action_name: 'show'
+  add_swagger_route 'GET', '//reports/publishers/{id}', controller_name: 'publishers', action_name: 'show'
   add_swagger_route 'PUT', '//publishers/{id}', controller_name: 'publishers', action_name: 'update'
   add_swagger_route 'POST', '//publishers', controller_name: 'publishers', action_name: 'create'
   add_swagger_route 'GET', '//report-types', controller_name: 'report_types', action_name: 'index'
