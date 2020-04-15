@@ -18,6 +18,8 @@ class Report < ApplicationRecord
   # attr_accessor :month, :year, :compressed
   validates_presence_of :report_id, :created_by, :client_id, :provider_id, :created, :reporting_period
   validates_presence_of :report_datasets, if: :normal_report?
+  validates_format_of :created_by, with: /[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, on: :create
+
   # , :report_datasets
   validates :uid, uniqueness: true
   validates :validate_sushi, sushi: { presence: true }, if: :normal_report?

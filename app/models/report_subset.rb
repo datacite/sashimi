@@ -12,6 +12,7 @@ class ReportSubset < ApplicationRecord
   belongs_to :report, primary_key: "uid", foreign_key: "report_id"
 
   validates_presence_of :report_id
+  validates_format_of :created_by, with: /[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, on: :create
   after_validation :make_checksum
   before_create :set_id
 
