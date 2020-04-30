@@ -13,7 +13,7 @@ Rails.application.routes.draw do
 
   add_swagger_route 'GET', '//reports/publishers', controller_name: 'publishers', action_name: 'index'
   add_swagger_route 'DELETE', '//publishers/{id}', controller_name: 'publishers', action_name: 'destroy'
-  add_swagger_route 'GET', '//reports/publishers/{id}', controller_name: 'publishers', action_name: 'show'
+  add_swagger_route 'GET', '//repositories-usage-reports/{id}', controller_name: 'publishers', action_name: 'show'
   add_swagger_route 'PUT', '//publishers/{id}', controller_name: 'publishers', action_name: 'update'
   add_swagger_route 'POST', '//publishers', controller_name: 'publishers', action_name: 'create'
   add_swagger_route 'GET', '//report-types', controller_name: 'report_types', action_name: 'index'
