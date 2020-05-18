@@ -112,7 +112,6 @@ class ReportsController < ApplicationController
   end
 
   def transfer
-    puts params
     fail JSON::ParserError, "Report Transfer need to include a target_id member or consortium"  if params[:target_id].blank?
 
     reports = Report.where(client_id: params[:client_id])
