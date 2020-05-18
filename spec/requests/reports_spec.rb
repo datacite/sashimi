@@ -251,6 +251,42 @@ describe "Reports", type: :request do
     end
   end
 
+  describe "POST /reports/transfer" do
+    let!(:reports_transfer) { create_list(:report, 3, compressed: nil) }
+    let(:transfer_headers) { { "ACCEPT" => "json", "CONTENT_TYPE" => "json", "Authorization" => "Bearer " + bearer } }
+
+
+    context "when the request is valid" do
+      let(:params) {  { "client-id" => reports_transfer.first.client_id, "target-id" => "BL" } }
+
+      before { post "/reports/transfer", params: params.to_json, headers: transfer_headers }
+
+      it "transfer all reports from a client" do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "when the request is not valid" do
+      let(:params) {  {"client-id" => "fake.fake", "target-id" => "BL" } }
+
+      before { post "/reports/transfer", params: params.to_json, headers: transfer_headers }
+
+      it "transfer all reports from a client" do
+        expect(response).to have_http_status(404)
+      end
+    end
+
+    context "when the request is not valid" do
+      let(:params) {  {"client-id" => reports_transfer.first.client_id } } 
+
+      before { post "/reports/transfer", params: params.to_json, headers: transfer_headers }
+
+      it "transfer all reports from a client" do
+        expect(response).to have_http_status(422)
+      end
+    end
+  end
+
   describe "PUT /reports/:id" do
     let!(:report) { create(:report) }
 
