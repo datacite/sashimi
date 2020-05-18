@@ -10,7 +10,9 @@ ActionDispatch::Request.parameter_parsers[:json] = -> (raw_post) {
   # data.deep_transform_keys! { |key| key.underscore }
 
   data.transform_keys! { |key| key.underscore }
-  header = data.fetch("report_header").deep_transform_keys { |key| key.underscore }
-  data["report_header"] = header
+  unless data.fetch("report_header", nil) == nil
+    header = data.fetch("report_header").deep_transform_keys { |key| key.underscore }
+    data["report_header"] = header
+  end
   data
 }
