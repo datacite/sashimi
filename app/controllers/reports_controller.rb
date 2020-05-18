@@ -111,6 +111,21 @@ class ReportsController < ApplicationController
     end
   end
 
+  def transfer
+    puts params
+    fail JSON::ParserError, "Report Transfer need to include a target_id member or consortium"  if params[:target_id].blank?
+
+    reports = Report.where(client_id: params[:client_id])
+    fail ActiveRecord::RecordNotFound if reports.blank?
+
+    if Report.transfer(params)
+      render json: @report, status: :ok
+    else
+      Rails.logger.warn @report.errors.inspect
+      render json: serialize(@report.errors), status: :unprocessable_entity
+    end
+  end
+
   protected
 
   def set_report

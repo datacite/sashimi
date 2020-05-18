@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   add_swagger_route 'POST', '//reports', controller_name: 'reports', action_name: 'create'
 
   get 'repositories-usage-reports/:id', :to => 'publishers#show', constraints: { :id => /.+/ }
+  post 'reports/transfer', :to => 'reports#transfer', constraints: { :id => /.+/ }
 
 
   resources :publishers, constraints: { :id => /.+/ }, format: false, defaults: { format: false }

@@ -116,6 +116,18 @@ class Report < ApplicationRecord
     end
   end
 
+  def self.transfer(options = {})
+    reports = Report.where(client_id: options[:client_id])
+    raise ActiveRecord::RecordNotFound if reports.blank?
+
+    Rails.logger.info "[TransferReports] Transfering #{reports.length} reports from #{options[:client_id]} to #{options[:target_id]}" 
+
+    reports.each do |report|
+      puts report.inspect
+      report.update_attribute(:provider_id, options[:target_id])
+    end
+  end
+
   private
 
   # random number that fits into MySQL bigint field (8 bytes)
