@@ -253,13 +253,11 @@ describe "Reports", type: :request do
 
   describe "POST /reports/transfer" do
     let!(:reports_transfer) { create_list(:report, 3, compressed: nil) }
-    let(:transfer_headers) { { "ACCEPT" => "json", "CONTENT_TYPE" => "json", "Authorization" => "Bearer " + bearer } }
-
 
     context "when the request is valid" do
       let(:params) {  { "client-id" => reports_transfer.first.client_id, "target-id" => "BL" } }
 
-      before { post "/reports/transfer", params: params.to_json, headers: transfer_headers }
+      before { post "/reports/transfer", params: params.to_json, headers: headers }
 
       it "transfer all reports from a client" do
         expect(response).to have_http_status(200)
@@ -269,7 +267,7 @@ describe "Reports", type: :request do
     context "when the request is not valid" do
       let(:params) {  {"client-id" => "fake.fake", "target-id" => "BL" } }
 
-      before { post "/reports/transfer", params: params.to_json, headers: transfer_headers }
+      before { post "/reports/transfer", params: params.to_json, headers: headers }
 
       it "transfer all reports from a client" do
         expect(response).to have_http_status(404)
@@ -279,7 +277,7 @@ describe "Reports", type: :request do
     context "when the request is not valid" do
       let(:params) {  {"client-id" => reports_transfer.first.client_id } } 
 
-      before { post "/reports/transfer", params: params.to_json, headers: transfer_headers }
+      before { post "/reports/transfer", params: params.to_json, headers: headers }
 
       it "transfer all reports from a client" do
         expect(response).to have_http_status(422)
@@ -421,7 +419,7 @@ describe "Reports", type: :request do
       before { put "/reports/#{report.uid}", params: params.to_json, headers: headers }
 
       it "returns status code 400" do
-        expect(response).to have_http_status(400)
+        expect(response).to have_http_status(422)
         # expect(json["errors"].first).to eq("status"=>"422", "title"=>"You need to provide a payload following the SUSHI specification")
       end
     end
