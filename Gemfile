@@ -18,7 +18,7 @@ gem 'active_model_serializers', '~> 0.10.10'
 gem 'jwt'
 gem 'bcrypt', '~> 3.1.13'
 gem 'simple_command'
-gem 'kaminari', '~> 1.0', '>= 1.0.1'
+gem 'kaminari', '~> 1.2'
 gem 'api-pagination'
 gem 'cancancan', '~> 3.0'
 gem "facets", require: false
