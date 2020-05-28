@@ -1,6 +1,6 @@
 ENV['RAILS_ENV'] = 'test'
-ENV['USAGE_URL'] = "https://api.test.datacite.org"
-ENV['API_URL'] = "https://api.test.datacite.org"
+ENV['USAGE_URL'] = "https://api.stage.datacite.org"
+ENV['API_URL'] = "https://api.stage.datacite.org"
 # set up Code Climate
 require 'simplecov'
 SimpleCov.start
