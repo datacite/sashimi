@@ -51,7 +51,7 @@ http_interactions:
     uri: https://sqs.eu-west-1.amazonaws.com/404017989009/test_usage
     body:
       encoding: UTF-8
-      string: Action=SendMessage&MessageAttribute.1.Name=report-id&MessageAttribute.1.Value.DataType=String&MessageAttribute.1.Value.StringValue=https%3A%2F%2Fmetrics.test.datacite.org%2Freports%2F97f19108-842a-44f6-a012-cf99b8938418&MessageBody=%7B%22report_id%22%3A%22https%3A%2F%2Fmetrics.test.datacite.org%2Freports%2F97f19108-842a-44f6-a012-cf99b8938418%22%7D&QueueUrl=https%3A%2F%2Fsqs.eu-west-1.amazonaws.com%2F404017989009%2Ftest_usage&Version=2012-11-05
+      string: Action=SendMessage&MessageAttribute.1.Name=report-id&MessageAttribute.1.Value.DataType=String&MessageAttribute.1.Value.StringValue=https%3A%2F%2Fmetrics.stage.datacite.org%2Freports%2F97f19108-842a-44f6-a012-cf99b8938418&MessageBody=%7B%22report_id%22%3A%22https%3A%2F%2Fmetrics.stage.datacite.org%2Freports%2F97f19108-842a-44f6-a012-cf99b8938418%22%7D&QueueUrl=https%3A%2F%2Fsqs.eu-west-1.amazonaws.com%2F404017989009%2Ftest_usage&Version=2012-11-05
     headers:
       Content-Type:
       - application/x-www-form-urlencoded; charset=utf-8
@@ -143,7 +143,7 @@ http_interactions:
     uri: https://sqs.eu-west-1.amazonaws.com/404017989009/test_usage
     body:
       encoding: UTF-8
-      string: Action=SendMessage&MessageAttribute.1.Name=report-id&MessageAttribute.1.Value.DataType=String&MessageAttribute.1.Value.StringValue=https%3A%2F%2Fmetrics.test.datacite.org%2Freports%2F97f19108-842a-44f6-a012-cf99b8938418&MessageBody=%7B%22report_id%22%3A%22https%3A%2F%2Fmetrics.test.datacite.org%2Freports%2F97f19108-842a-44f6-a012-cf99b8938418%22%7D&QueueUrl=https%3A%2F%2Fsqs.eu-west-1.amazonaws.com%2F404017989009%2Ftest_usage&Version=2012-11-05
+      string: Action=SendMessage&MessageAttribute.1.Name=report-id&MessageAttribute.1.Value.DataType=String&MessageAttribute.1.Value.StringValue=https%3A%2F%2Fmetrics.stage.datacite.org%2Freports%2F97f19108-842a-44f6-a012-cf99b8938418&MessageBody=%7B%22report_id%22%3A%22https%3A%2F%2Fmetrics.stage.datacite.org%2Freports%2F97f19108-842a-44f6-a012-cf99b8938418%22%7D&QueueUrl=https%3A%2F%2Fsqs.eu-west-1.amazonaws.com%2F404017989009%2Ftest_usage&Version=2012-11-05
     headers:
       Content-Type:
       - application/x-www-form-urlencoded; charset=utf-8

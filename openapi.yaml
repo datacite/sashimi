@@ -7,7 +7,7 @@ info:
   termsOfService: ''
   contact:
     name: DataCite Data Usage API
-    url: 'https://metrics.test.datacite.org'
+    url: 'https://metrics.stage.datacite.org'
     email: support@datacite.org
   license:
     name: MIT
@@ -532,4 +532,4 @@ definitions:
         type: string
         description: The path to use when requesting this report on this service.
         example: /report_types/dsr
-host: metrics.test.datacite.org
+host: metrics.stage.datacite.org
