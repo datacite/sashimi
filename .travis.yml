@@ -99,6 +99,7 @@ after_success:
       
       if [ "${TRAVIS_TAG?}" ]; then
         git add prod-eu-west/services/metrics-api/_sashimi.auto.tfvars;
+        git add test/services/metrics-api/_sashimi.auto.tfvars;
         git commit -m "${AUTHOR_NAME} Adding sashimi git variables for commit tagged ${TRAVIS_TAG?}";
         git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
       elif [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
