@@ -120,7 +120,7 @@ class ReportsController < ApplicationController
   end
 
   def set_user_hash
-    @user_hash = { client_id: current_user.client_id, provider_id: current_user.provider_id }
+    @user_hash = { client_id: current_user.uid }
   end
 
   def validate_monthly_report
