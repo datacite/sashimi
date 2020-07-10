@@ -12,7 +12,7 @@ describe User, type: :model do
 
   describe "User attributes", order: :defined do
     it "is valid with valid attributes" do
-      expect(user.name).to eq("Josiah Carberry")
+      expect(user.name).to eq("staff")
     end
   end
 
@@ -30,7 +30,7 @@ describe User, type: :model do
     end
 
     context "when is a client admin" do
-      let(:token){ User.generate_token(role_id: "client_admin", client_id: "datacite.datacite") }
+      let(:token){ User.generate_token(role_id: "client_admin", uid: "datacite.datacite") }
 
       it { is_expected.not_to be_able_to(:read, user) }
 

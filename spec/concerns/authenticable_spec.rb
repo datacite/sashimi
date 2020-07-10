@@ -7,7 +7,7 @@ describe User, type: :model do
   describe 'decode_token' do
     it "has name" do
       payload = subject.decode_token(token)
-      expect(payload["name"]).to eq("Josiah Carberry")
+      expect(payload["name"]).to eq("staff")
     end
 
     it "empty token" do
@@ -23,7 +23,7 @@ describe User, type: :model do
 
   describe 'encode_token' do
     it "with name" do
-      token = subject.encode_token("name" => "Josiah Carberry")
+      token = subject.encode_token("name" => "staff")
       expect(token).to start_with("eyJhbG")
     end
 

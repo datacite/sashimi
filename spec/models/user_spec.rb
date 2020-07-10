@@ -11,7 +11,7 @@ describe User, type: :model do
       end
 
       it "has name" do
-        expect(user.name).to eq("Josiah Carberry")
+        expect(user.name).to eq("staff")
       end
     end
   end
