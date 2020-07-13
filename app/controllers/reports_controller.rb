@@ -35,7 +35,7 @@ class ReportsController < ApplicationController
                  elsif params[:year].present?
                    Report.where(year: params[:year])
                  elsif params[:client_id].present?
-                   Report.where(client_id: params[:client_id])
+                   Report.where(user_id: params[:client_id])
                  else
                    Report.all
                  end
@@ -93,7 +93,7 @@ class ReportsController < ApplicationController
     @report = Report.where(created_by: params[:report_header].dig(:created_by)).
       where(month: get_month(params[:report_header].dig(:reporting_period, "begin_date"))).
       where(year: get_year(params[:report_header].dig(:reporting_period, "begin_date"))).
-      where(client_id: params.merge(@user_hash)[:client_id]).
+      where(user_id: params.merge(@user_hash)[:user_id]).
       first
     exists = @report.present?
 
@@ -120,7 +120,7 @@ class ReportsController < ApplicationController
   end
 
   def set_user_hash
-    @user_hash = { client_id: current_user.uid }
+    @user_hash = { user_id: current_user.uid }
   end
 
   def validate_monthly_report

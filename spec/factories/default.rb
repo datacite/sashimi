@@ -2,7 +2,7 @@ require "faker"
 FactoryBot.define do
   factory :report do
     sequence(:report_id) { |n| "dsr-12hd-zt#{n}" }
-    client_id { "datacite.datacite" }
+    user_id { "datacite.datacite" }
     sequence(:created_by) { |n| "datacite#{n}" }
     created { "2020-03-02" }
     reporting_period  { { "begin_date": "2018-03-01", "end_date": "2018-03-31" } }
@@ -49,7 +49,7 @@ FactoryBot.define do
 
   factory :resolution_report do
     sequence(:report_id) { |n| "dsr-12hd-zt#{n}" }
-    client_id { "datacite.datacite" }
+    user_id { "datacite.datacite" }
     sequence(:created_by) { |n| "datacite#{n}" }
     created { "2020-03-02" }
     reporting_period  { { "begin_date": "2018-03-01", "end_date": "2018-03-31" } }
