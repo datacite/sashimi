@@ -67,8 +67,6 @@ describe "Reports", type: :request do
       
 
       it "creates a report" do
-        # puts json
-        puts headers
         expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
         expect(response).to have_http_status(201)
       end

@@ -4,10 +4,10 @@ require "cancan/matchers"
 describe User, type: :model do
   let(:token) { User.generate_token }
   let(:user) { User.new(token) }
-  let(:report) { create(:report, client_id: "datacite.datacite") }
+  let(:report) { create(:report, user_id: "datacite.datacite") }
   let(:report_subset) { create(:report_subset, report_id: report.uid) }
 
-  let(:report_cdl) { create(:report, client_id: "cdl.dash") }
+  let(:report_cdl) { create(:report, user_id: "cdl.dash") }
   let(:report_subset_cdl) { create(:report_subset, report_id: report_cdl.uid) }
 
   describe "User attributes", order: :defined do
