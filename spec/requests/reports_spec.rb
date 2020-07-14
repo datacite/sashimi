@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe "Reports", type: :request do
-  let(:bearer) { User.generate_token(exp: Time.now.to_i + 300, client_id: "datacite.datacite", provider_id: "datacite", role_id: "staff_admin") }
+  let(:bearer) { User.generate_token(exp: Time.now.to_i + 300, uid: "datacite.datacite", role_id: "staff_admin") }
   let(:headers) { { "ACCEPT" => "application/json", "CONTENT_TYPE" => "application/json", "Authorization" => "Bearer " + bearer } }
 
   describe "GET /reports" do
@@ -64,9 +64,9 @@ describe "Reports", type: :request do
     let(:params) { file_fixture("report_3.json").read }
     context "when the request is valid" do
       before { post "/reports", params: params, headers: headers }
+      
 
       it "creates a report" do
-        # puts json
         expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
         expect(response).to have_http_status(201)
       end
@@ -98,7 +98,7 @@ describe "Reports", type: :request do
     end
 
     context "index filter by client_id" do
-      let!(:bearer_ext) { User.generate_token(client_id: "datacite.demo", provider_id: "datacite", role_id: "staff_admin") }
+      let!(:bearer_ext) { User.generate_token(uid: "datacite.demo",role_id: "staff_admin") }
       let!(:headers_ext) { { "ACCEPT" => "application/json", "CONTENT_TYPE" => "application/json", "Authorization" => "Bearer " + bearer_ext } }
 
       before { post "/reports", params: params, headers: headers_ext }

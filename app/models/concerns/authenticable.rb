@@ -73,16 +73,20 @@ module Authenticable
         "email" => user.contact_email
       }
 
-      if uid.include? "."
-        payload.merge!({
-          "provider_id" => uid.split(".", 2).first,
-          "client_id" => uid
-        })
-      elsif uid != "admin"
-        payload.merge!({
-          "provider_id" => uid
-        })
-      end
+      # if uid.include? "."
+      #   payload.merge!({
+      #     "provider_id" => uid.split(".", 2).first,
+      #     "client_id" => uid
+      #   })
+      # elsif uid != "admin"
+      #   payload.merge!({
+      #     "provider_id" => uid
+      #   })
+      # end
+
+      # payload.merge!({
+      #   "client_id" => uid
+      # })
 
       payload
     end
@@ -121,8 +125,8 @@ module Authenticable
     # generate JWT token
     def generate_token(attributes={})
       payload = {
-        uid:  attributes.fetch(:uid, "0000-0001-5489-3594"),
-        name: attributes.fetch(:name, "Josiah Carberry"),
+        uid:  attributes.fetch(:uid, "datacite.datacite"),
+        name: attributes.fetch(:name, "staff"),
         email: attributes.fetch(:email, nil),
         provider_id: attributes.fetch(:provider_id, nil),
         client_id: attributes.fetch(:client_id, nil),
@@ -147,16 +151,20 @@ module Authenticable
         "email" => user.contact_email
       }
 
-      if uid.include? "."
-        payload.merge!({
-          "provider_id" => uid.split(".", 2).first,
-          "client_id" => uid
-        })
-      elsif uid != "admin"
-        payload.merge!({
-          "provider_id" => uid
-        })
-      end
+      # # if uid.include? "."
+      # #   payload.merge!({
+      # #     "provider_id" => uid.split(".", 2).first,
+      # #     "client_id" => uid
+      # #   })
+      # # elsif uid != "admin"
+      # #   payload.merge!({
+      # #     "provider_id" => uid
+      # #   })
+      # # end
+
+      # payload.merge!({
+      #   "client_id" => uid
+      # })
 
       payload
     end

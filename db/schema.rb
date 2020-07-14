@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_24_074609) do
+ActiveRecord::Schema.define(version: 2020_07_13_101137) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.string "name", null: false
@@ -73,8 +73,7 @@ ActiveRecord::Schema.define(version: 2019_09_24_074609) do
   create_table "reports", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.string "report_name", default: "Dataset Report"
     t.string "report_id"
-    t.string "client_id", null: false
-    t.string "provider_id", null: false
+    t.string "user_id", null: false
     t.string "release", default: "RD1"
     t.string "created"
     t.string "created_by"
