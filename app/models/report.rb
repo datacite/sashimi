@@ -15,6 +15,22 @@ class Report < ApplicationRecord
   # include validation methods for sushi
   include Queueable
 
+  include AASM
+
+  aasm do
+    state :queued, initial: true
+    state :valid, :invalid
+
+    event :accept do
+      transitions from: [:queued, :invalid], to: :valid
+    end
+
+    event :reject do
+      transitions from: [:queued, :valid], to: :invalid
+    end
+
+  end
+
   # attr_accessor :month, :year, :compressed
   validates_presence_of :report_id, :created_by, :user_id, :created, :reporting_period
   validates_presence_of :report_datasets, if: :normal_report?
