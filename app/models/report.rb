@@ -17,16 +17,16 @@ class Report < ApplicationRecord
 
   include AASM
 
-  aasm do
+  aasm whiny_transitions: false do
     state :queued, initial: true
-    state :valid, :invalid
+    state :correct, :incorrect
 
     event :accept do
-      transitions from: [:queued, :invalid], to: :valid
+      transitions from: [:queued, :incorrect], to: :correct
     end
 
     event :reject do
-      transitions from: [:queued, :valid], to: :invalid
+      transitions from: [:queued, :correct], to: :incorrect
     end
 
   end
@@ -82,6 +82,18 @@ class Report < ApplicationRecord
     body = { report_id: report_url }
 
     send_message(body) if ENV["AWS_REGION"].present?
+  end
+
+  def update_state
+    statuses = report_subsets.map &:aasm
+    if statuses.any?
+      valid_status = statuses.all? { |s| s == "valid" }
+      if valid_status
+        accept
+      else
+        reject
+      end
+    end
   end
 
   def compress
