@@ -252,6 +252,17 @@ POST /reports
 POST /reports
 ```
 
+
+### HTTP Response Codes
+
+| Status Code | Message                                                 |
+|-------------|---------------------------------------------------------|
+| 200         | Report has been updated                                 |
+| 201         | Report has been CREATED and validated correctly         |
+| 202         | Report has been ACCEPTED and its waiting for validation |
+| 404         | Report does not exists                                  |
+| 409         | Report or subreport has failed validation               |
+
 ### Metadata Validation
 
 The validation of the metadata in the reports its a two-step process. The controller takes care of checking presence of fields. Then the Schema validation is performed before saving the report. We use json-schema validation for this.
