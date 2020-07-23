@@ -261,7 +261,7 @@ POST /reports
 | 201         | Report has been CREATED and validated correctly         |
 | 202         | Report has been ACCEPTED and its waiting for validation |
 | 404         | Report does not exists                                  |
-| 409         | Report or subreport has failed validation               |
+| 422         | Report or subreport has failed validation               |
 
 ### Metadata Validation
 
