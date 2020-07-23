@@ -29,6 +29,10 @@ class Report < ApplicationRecord
       transitions from: [:queued, :correct], to: :incorrect
     end
 
+    event :validating do
+      transitions from: [:queued, :correct, :incorrect], to: :queued
+    end
+
   end
 
   # attr_accessor :month, :year, :compressed
@@ -54,6 +58,9 @@ class Report < ApplicationRecord
   # def validate_report_job
   #   ValidationJob.perform_later(self)
   # end
+
+  scope :correct, -> { where aasm_state: "correct" }
+  scope :incorrect, -> { where aasm_state: "incorrect" }
 
   def destroy_report_events
     DestroyEventsJob.perform_later(uid)
@@ -85,14 +92,17 @@ class Report < ApplicationRecord
   end
 
   def update_state
+    return null if report_subsets.empty?
+
     statuses = report_subsets.map &:aasm
-    if statuses.any?
-      valid_status = statuses.all? { |s| s == "valid" }
-      if valid_status
-        accept
-      else
-        reject
-      end
+
+    case true
+    when statuses.all? { |s| s == "valid" }
+      accept
+    when statuses.any? { |s| s == "queued" }
+      validating
+    else
+      reject
     end
   end
 

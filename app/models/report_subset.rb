@@ -8,7 +8,7 @@ class ReportSubset < ApplicationRecord
 
   # include validation methods for sushi
   include Metadatable
-
+  
   belongs_to :report, primary_key: "uid", foreign_key: "report_id"
 
   validates_presence_of :report_id
@@ -106,5 +106,6 @@ class ReportSubset < ApplicationRecord
 
   def set_id
     self.id = SecureRandom.random_number(9223372036854775807)
+    self.aasm = "queued"
   end
 end

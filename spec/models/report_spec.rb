@@ -18,7 +18,7 @@ describe Report, type: :model do
 
     it "it is valid" do
       subject.update_state
-      expect(subject.aasm_state).to eq("correct")
+      expect(subject.aasm_state).to eq("queued")
     end
 
     it "it is compressed" do
