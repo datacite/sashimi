@@ -30,14 +30,16 @@ class ReportsController < ApplicationController
 
     collection = if params[:id].present?
                    Report.correct.where(uid: params[:id].split(","))
+                 elsif params[:incorrect].present?
+                   Report.incorrect.any? ? Report.incorrect.where(user_id: params[:client_id]) : []
+                 elsif params[:queued].present?
+                   Report.queued.any? ? Report.queued.where(user_id: params[:client_id] ) : []
                  elsif params[:created_by].present?
                    Report.correct.where(created_by: params[:created_by])
                  elsif params[:year].present?
                    Report.correct.where(year: params[:year])
                  elsif params[:client_id].present?
                    Report.correct.where(user_id: params[:client_id])
-                 elsif params[:incorrect].present?
-                   Report.incorrect.where(created_by: params[:created_by] || null, user_id: params[:client_id] || null)
                  else
                    Report.correct
                  end

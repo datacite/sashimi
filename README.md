@@ -252,7 +252,6 @@ POST /reports
 POST /reports
 ```
 
-
 ### HTTP Response Codes
 
 | Status Code | Message                                                 |
@@ -262,6 +261,8 @@ POST /reports
 | 202         | Report has been ACCEPTED and its waiting for validation |
 | 404         | Report does not exists                                  |
 | 422         | Report or subreport has failed validation               |
+
+One can use the filter paramaters `?incorrect=true` (422s) and `?queued=true` (202s) to list all the reports with validation errors or queued for validation, respectvely. 
 
 ### Metadata Validation
 

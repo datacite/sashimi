@@ -58,9 +58,10 @@ class Report < ApplicationRecord
   # def validate_report_job
   #   ValidationJob.perform_later(self)
   # end
-
-  scope :correct, -> { where aasm_state: "correct" }
+  
+  scope :queued, -> { where aasm_state: "queued" }
   scope :incorrect, -> { where aasm_state: "incorrect" }
+  scope :correct, -> { where aasm_state: "correct" }
 
   def destroy_report_events
     DestroyEventsJob.perform_later(uid)
