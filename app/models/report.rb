@@ -98,11 +98,11 @@ class Report < ApplicationRecord
 
     case true
     when statuses.all? { |s| s == "valid" }
-      accept
+      accept!
     when statuses.any? { |s| s == "queued" }
-      validating
+      validating!
     else
-      reject
+      reject!
     end
   end
 

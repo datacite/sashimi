@@ -2,7 +2,7 @@ class SushiValidator < ActiveModel::EachValidator
   def validate_each(record, _schema, _value)
     # unless  record.is_valid_sushi?
     valid = record.validate_sushi
-    record.accept if valid.empty?
+    record.accept! if valid.empty?
     return true if valid.empty?
 
     unless valid == true
@@ -18,7 +18,7 @@ class SushiValidator < ActiveModel::EachValidator
       end
       # nice_erros = dig_errors record.validate_sushi
       nice_erros = dig_errors valid
-      record.reject
+      record.reject!
       record.errors["errors"] << (nice_erros || "Your SUSHI is wrong mate!!")
     end
   end
