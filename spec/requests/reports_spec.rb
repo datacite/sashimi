@@ -1,4 +1,5 @@
 require "rails_helper"
+require 'pp'
 
 describe "Reports", type: :request do
   let(:bearer) { User.generate_token(exp: Time.now.to_i + 300, uid: "datacite.datacite", role_id: "staff_admin") }
@@ -515,6 +516,9 @@ describe "Reports", type: :request do
     end
     let(:gzipped) { ActiveSupport::Gzip.compress(bigly) }
 
+    let(:wrong_report) { file_fixture("report_error.json").read }
+    let(:wrong_gzipped) { ActiveSupport::Gzip.compress(wrong_report) }
+
     describe "add subset to report" do
       context "when the report exist" do
         # let(:dataone) {file_fixture('small_dataone.json').read}
@@ -532,12 +536,13 @@ describe "Reports", type: :request do
           expect(datasets.size).to eq(2)
           expect(datasets.dig(1, "gzip")).to be_a(String)
           expect(datasets.dig(1, "checksum")).to be_a(String)
-          expect(response).to have_http_status(201)
+          expect(response).to have_http_status(202)
         end
 
         it "should add subsets" do
           uid = json.dig("report", "id")
           report = Report.where(uid: uid).first
+          expect(report.aasm_state).to eq("queued")
           expect(report.report_subsets.size).to eq(2)
           expect(report.report_subsets.first.report_id).to eq(uid)
         end
@@ -553,17 +558,73 @@ describe "Reports", type: :request do
           expect(datasets).to be_a(Array)
           expect(datasets.size).to eq(1)
           expect(datasets.dig(0, "gzip")).to be_a(String)
-          expect(response).to have_http_status(201)
+          expect(response).to have_http_status(202)
         end
 
         it "should add subsets" do
           uid = json.dig("report", "id")
           report = Report.where(uid: uid).first
+          expect(report.aasm_state).to eq("queued")
           expect(report.report_subsets.size).to eq(1)
           expect(report.report_subsets.first.report_id).to eq(uid)
         end
       end
     end
+
+    describe "add subset to report with errors" do
+      context "when the report exist" do
+        # let(:dataone) {file_fixture('small_dataone.json').read}
+
+        before do
+          post "/reports", params: gzipped, headers: headers
+          sleep 1
+          post "/reports", params: wrong_gzipped, headers: headers
+          sleep 1
+
+        end
+
+        it "should return 202" do
+          datasets = json.dig("report", "report-subsets")
+          expect(response).to have_http_status(202)
+          expect(datasets).to be_a(Array)
+          expect(datasets.size).to eq(2)
+          expect(datasets.dig(1, "gzip")).to be_a(String)
+          expect(datasets.dig(1, "checksum")).to be_a(String)
+        end
+
+        it "should add subsets" do
+          uid = json.dig("report", "id")
+          report = Report.where(uid: uid).first
+          report = Report.where(uid: uid).first
+          expect(report.aasm_state).to eq("queued")
+          expect(report.report_subsets.size).to eq(2)
+          expect(report.report_subsets.first.report_id).to eq(uid)
+        end
+      end
+
+      context "when the report doesnt exist" do
+        # let(:dataone) {file_fixture('small_dataone.json').read}
+
+        before { post "/reports", params: wrong_gzipped, headers: headers }
+
+        it "should return 202" do
+          expect(response).to have_http_status(202)
+          datasets = json.dig("report", "report-subsets")
+          expect(datasets).to be_a(Array)
+          expect(datasets.size).to eq(1)
+          expect(datasets.dig(0, "gzip")).to be_a(String)
+        end
+
+        it "should add subsets" do
+          uid = json.dig("report", "id")
+          report = Report.where(uid: uid).first
+          expect(report.aasm_state).to eq("queued")
+          expect(report.report_subsets.size).to eq(1)
+          expect(report.report_subsets.first.report_id).to eq(uid)
+        end
+      end
+    end
+
 
     describe "update compressed report" do
       context "when the report exist" do
@@ -579,12 +640,13 @@ describe "Reports", type: :request do
           expect(datasets).to be_a(Array)
           expect(datasets.size).to eq(1)
           expect(datasets.dig(0, "gzip")).to be_a(String)
-          expect(response).to have_http_status(200)
+          expect(response).to have_http_status(202)
         end
 
         it "should add subsets" do
           uid = json.dig("report", "id")
           report = Report.where(uid: uid).first
+          expect(report.aasm_state).to eq("queued")
           expect(report.report_subsets.size).to eq(1)
           expect(report.report_subsets.first.report_id).to eq(uid)
         end
@@ -602,13 +664,44 @@ describe "Reports", type: :request do
           expect(datasets).to be_a(Array)
           expect(datasets.size).to eq(1)
           expect(datasets.dig(0, "gzip")).to be_a(String)
-          expect(response).to have_http_status(201)
+          expect(response).to have_http_status(202)
         end
 
         it "should add subsets" do
           uid = json.dig("report", "id")
           report = Report.where(uid: uid).first
+          expect(report.aasm_state).to eq("queued")
           expect(report.report_subsets.size).to eq(1)
+        end
+      end
+
+
+      context "when the report is validated" do
+        before do
+          post "/reports", params: gzipped, headers: headers
+          post "/reports", params: gzipped, headers: headers
+          post "/reports", params: gzipped, headers: headers
+          put "/reports/#{json.dig('report', 'id')}", params: gzipped, headers: headers
+        end
+
+        it "should return 200 and clear all other reports" do
+          datasets = json.dig("report", "report-subsets")
+          expect(datasets).to be_a(Array)
+          expect(datasets.size).to eq(1)
+          expect(datasets.dig(0, "gzip")).to be_a(String)
+          expect(response).to have_http_status(202)
+        end
+
+        it "should add validate state" do
+          uid = json.dig("report", "id")
+          report = Report.where(uid: uid).first
+          expect(report.aasm_state).to eq("queued")
+          expect(report.report_subsets.size).to eq(1)
+          expect(report.report_subsets.first.report_id).to eq(uid)
+
+          report.report_subsets.each { |subset| subset.validate_compressed({validate_only: true}) }
+          report.update_state
+          expect(report.aasm_state).to eq("correct")
         end
       end
     end

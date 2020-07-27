@@ -15,6 +15,26 @@ class Report < ApplicationRecord
   # include validation methods for sushi
   include Queueable
 
+  include AASM
+
+  aasm whiny_transitions: false do
+    state :queued, initial: true
+    state :correct, :incorrect
+
+    event :accept do
+      transitions from: [:queued, :incorrect], to: :correct
+    end
+
+    event :reject do
+      transitions from: [:queued, :correct], to: :incorrect
+    end
+
+    event :validating do
+      transitions from: [:queued, :correct, :incorrect], to: :queued
+    end
+
+  end
+
   # attr_accessor :month, :year, :compressed
   validates_presence_of :report_id, :created_by, :user_id, :created, :reporting_period
   validates_presence_of :report_datasets, if: :normal_report?
@@ -38,6 +58,10 @@ class Report < ApplicationRecord
   # def validate_report_job
   #   ValidationJob.perform_later(self)
   # end
+  
+  scope :queued, -> { where aasm_state: "queued" }
+  scope :incorrect, -> { where aasm_state: "incorrect" }
+  scope :correct, -> { where aasm_state: "correct" }
 
   def destroy_report_events
     DestroyEventsJob.perform_later(uid)
@@ -66,6 +90,21 @@ class Report < ApplicationRecord
     body = { report_id: report_url }
 
     send_message(body) if ENV["AWS_REGION"].present?
+  end
+
+  def update_state
+    return null if report_subsets.empty?
+
+    statuses = report_subsets.map &:aasm
+
+    case true
+    when statuses.all? { |s| s == "valid" }
+      accept!
+    when statuses.any? { |s| s == "queued" }
+      validating!
+    else
+      reject!
+    end
   end
 
   def compress
