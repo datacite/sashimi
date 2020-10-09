@@ -43,9 +43,8 @@ module Metadatable
 
     def is_valid_sushi? 
       schema = load_schema
-      # report = self.attributes.except("compressed").deep_transform_keys { |key| key.tr('_', '-') }
-      report = self.attributes.except("compressed")
-      report.transform_keys! { |key| key.tr('_', '-') }
+      report = attributes.except("compressed", "aasm_state")
+      report.transform_keys! { |key| key.tr("_", "-") }
       JSON::Validator.validate(schema, report.to_json)
     end
 
@@ -53,8 +52,7 @@ module Metadatable
       if self.is_a?(ReportSubset)
         release = self.report.release
       else
-        report = self.attributes.except("compressed")
-        #report.transform_keys! { |key| key.tr('_', '-') }
+        report = attributes.except("compressed", "aasm_state")
         release = report.dig("release")
       end
       

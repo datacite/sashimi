@@ -11,7 +11,13 @@
     },
     "report-filters": [],
     "report-attributes": [],
-    "exceptions": [{"code": 69,"severity": "warning","message": "report is compressed using gzip","help-url": "https://github.com/datacite/sashimi","data": "usage data needs to be uncompressed"}]
+    "exceptions": [{
+      "code": 69,
+      "severity": "warning",
+      "message": "report is compressed using gzip",
+      "help-url": "https://github.com/datacite/sashimi",
+      "data": "usage data needs to be uncompressed"
+    }]
   },
   "report-datasets": [{
     "uri": "https://cn.dataone.org/cn/v2/resolve/doi%3A10.5063%2FF16D5QX4",
