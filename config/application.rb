@@ -1,5 +1,3 @@
-
-
 require_relative 'boot'
 
 require "rails"
@@ -112,5 +110,12 @@ module Sashimi
     config.generators do |g|
       g.fixture_replacement :factory_bot
     end
+
+    # kt-paperclip global defaults
+    config.paperclip_defaults = {
+      storage: :filesystem,
+      url: "/attachments/:filename",
+      path: ":rails_root/public:url",
+    }
   end
 end
