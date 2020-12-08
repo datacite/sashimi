@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_13_101137) do
+ActiveRecord::Schema.define(version: 2020_12_08_172613) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.string "name", null: false
@@ -88,6 +88,10 @@ ActiveRecord::Schema.define(version: 2020_07_13_101137) do
     t.string "uid"
     t.json "reporting_period"
     t.binary "compressed", limit: 16777215
+    t.string "attachment_file_name"
+    t.string "attachment_content_type"
+    t.bigint "attachment_file_size"
+    t.datetime "attachment_updated_at"
     t.index ["created_by", "month", "year"], name: "index_reports_on_multiple_columns", unique: true
   end
 

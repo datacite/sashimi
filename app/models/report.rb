@@ -6,6 +6,9 @@ class Report < ApplicationRecord
 
   has_many :report_subsets, autosave: true, dependent: :destroy
 
+  has_attached_file :attachment
+  validates_attachment :attachment, content_type: { content_type:  ['text/plain']}
+
   # has_one_attached :report
   COMPRESSED_HASH_MESSAGE = { "code" => 69, "severity" => "warning", "message" => "report is compressed using gzip", "help-url" => "https://github.com/datacite/sashimi", "data" => "usage data needs to be uncompressed" }.freeze
 
