@@ -2,7 +2,7 @@ require "rails_helper"
 require 'pp'
 
 describe "Reports", type: :request do
-  let(:bearer) { User.generate_token(exp: Time.now.to_i + 300, uid: "datacite.datacite", role_id: "staff_admin") }
+  let(:bearer) { User.generate_token(exp: Time.now.to_i + 300, uid: "datacite.datacite", role_id: "client_admin") }
   let(:headers) { { "ACCEPT" => "application/json", "CONTENT_TYPE" => "application/json", "Authorization" => "Bearer " + bearer } }
 
   describe "GET /reports" do
@@ -99,7 +99,7 @@ describe "Reports", type: :request do
     end
 
     context "index filter by client_id" do
-      let!(:bearer_ext) { User.generate_token(uid: "datacite.demo",role_id: "staff_admin") }
+      let!(:bearer_ext) { User.generate_token(uid: "datacite.demo",role_id: "client_admin") }
       let!(:headers_ext) { { "ACCEPT" => "application/json", "CONTENT_TYPE" => "application/json", "Authorization" => "Bearer " + bearer_ext } }
 
       before { post "/reports", params: params, headers: headers_ext }
@@ -421,6 +421,8 @@ describe "Reports", type: :request do
   end
   # Test suite for DELETE /reports/:id
   describe "DELETE /reports/:id" do
+    let(:bearer) { User.generate_token(exp: Time.now.to_i + 300, uid: "datacite.datacite", role_id: "staff_admin") }
+    let(:headers) { { "ACCEPT" => "application/json", "CONTENT_TYPE" => "application/json", "Authorization" => "Bearer " + bearer } }
     let!(:report)  { create(:report) }
 
     before { delete "/reports/#{report.uid}", headers: headers }
@@ -435,6 +437,19 @@ describe "Reports", type: :request do
       it "returns status code 404" do
         expect(response).to have_http_status(404)
         expect(json["errors"].first).to eq("status" => "404", "title" => "The resource you are looking for doesn't exist.")
+      end
+    end
+
+    context "when a user wants to delete" do
+      let(:bearer) { User.generate_token(exp: Time.now.to_i + 300, uid: "datacite.client", role_id: "client_admin") }
+      let(:headers) { { "ACCEPT" => "application/json", "CONTENT_TYPE" => "application/json", "Authorization" => "Bearer " + bearer } }  
+      let!(:report)  { create(:report) }
+
+      before { delete "/reports/#{report.uid}", headers: headers }
+
+      it "returns status code 401" do
+        expect(response).to have_http_status(401)
+        expect(json["errors"].first).to eq("status" => "401", "title" => "You are not authorized to access this resource.")
       end
     end
   end
@@ -707,6 +722,15 @@ describe "Reports", type: :request do
     end
 
     describe "delete compressed report" do
+      let(:bearer) { User.generate_token(exp: Time.now.to_i + 300, uid: "datacite.datacite", role_id: "staff_admin") }
+      let(:headers) do
+        {
+          "Content-Type" => "application/gzip",
+          "Content-Encoding" => "gzip",
+          "Authorization" => "Bearer " + bearer,
+        }
+      end
+
       context "when the report exist" do
         before do
           post "/reports", params: gzipped, headers: headers
