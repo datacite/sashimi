@@ -111,11 +111,12 @@ module Sashimi
       g.fixture_replacement :factory_bot
     end
 
-    # kt-paperclip global defaults
+    # kt-paperclip global defaults - DEVELOPMENT
     config.paperclip_defaults = {
       storage: :filesystem,
-      url: "/attachments/:filename",
-      path: ":rails_root/public:url",
+      path: ":rails_root/public/reports/:filename",
+      url: "http://localhost/reports/:filename",
+      use_timestamp: false,
     }
   end
 end

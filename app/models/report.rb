@@ -7,7 +7,7 @@ class Report < ApplicationRecord
   has_many :report_subsets, autosave: true, dependent: :destroy
 
   has_attached_file :attachment
-  validates_attachment :attachment, content_type: { content_type:  ['text/plain']}
+  validates_attachment_file_name :attachment, matches: [/json\z/]
 
   # has_one_attached :report
   COMPRESSED_HASH_MESSAGE = { "code" => 69, "severity" => "warning", "message" => "report is compressed using gzip", "help-url" => "https://github.com/datacite/sashimi", "data" => "usage data needs to be uncompressed" }.freeze
@@ -34,6 +34,8 @@ class Report < ApplicationRecord
   after_validation :clean_datasets
   # before_create :set_id
   after_commit :push_report, if: :normal_report?
+
+  before_destroy :destroy_attachment, on: :delete
   after_destroy_commit :destroy_report_events, on: :delete
 
   # after_commit :validate_report_job, unless: :normal_report?
@@ -48,19 +50,29 @@ class Report < ApplicationRecord
 
   def self.destroy_events(uid, _options = {})
     url = "#{ENV['API_URL']}/events?" + URI.encode_www_form("subj-id" => "#{ENV['API_URL']}/reports/#{uid}")
-    response = Maremma.get url
-    events = response.fetch("data", [])
+
+    # Handle the error so we can have /delete in development.
+    begin
+      response = Maremma.get url
+      events = response.fetch("data", [])
+    rescue StandardError
+      Rails.logger.info "Exception deleting events for this report - no events for report uid: " + uid.to_s + "."
+    end
+
     # TODO add error class
-    fail "there are no events for this report" if events.is_empty?
+    # fail "there are no events for this report" if events.is_empty?
+    if events && !events.is_empty?
+      events.each do |event|
+        id = event.fetch("id", nil)
+        next if id.is_nil?
 
-    events.each do |event|
-      id = event.fetch("id", nil)
-      next if id.is_nil?
-
-      delete_url = "#{ENV['API_URL']}/events/#{id}"
-      r = Maremma.delete(delete_url)
-      message = r.status == 204 ? "[UsageReports] Event #{id} from report #{uid} was deleted" : "[UsageReports] did not delete #{id}"
-      Rails.logger.info message
+        delete_url = "#{ENV['API_URL']}/events/#{id}"
+        r = Maremma.delete(delete_url)
+        message = r.status == 204 ? "[UsageReports] Event #{id} from report #{uid} was deleted" : "[UsageReports] did not delete #{id}"
+        Rails.logger.info message
+      end
+    else
+      Rails.logger.info "there are no events for this report"
     end
   end
 
@@ -116,6 +128,39 @@ class Report < ApplicationRecord
 
     if code == 69
       true
+    end
+  end
+
+  # Builds attachment from (rendered) content and saves it.
+  def save_as_attachment(content)
+    file_name = "#{self.uid}.json"
+
+    # Use Tempfile - so we can handle large amounts of data.
+    tmp = File.new("tmp/" + file_name, "w")
+    tmp << content
+    tmp.flush
+
+    self.attachment_file_name = file_name
+    self.update_attributes(:attachment => tmp)
+
+    # Make sure the tmp file is deleted.
+    File.delete(tmp)
+  end
+
+  # If there is an attachment: loads the file and (will eventually) set the correct fields from it.
+  def load_attachment
+    if self.attachment.present?
+      begin
+        Paperclip.io_adapters.for(self.attachment).read
+      rescue StandardError
+        fail "The attachment for this report cannot be found: " + self.attachment.url.to_s
+      end
+    end
+  end
+
+  def destroy_attachment
+    if self.attachment.present?
+      self.attachment = nil
     end
   end
 

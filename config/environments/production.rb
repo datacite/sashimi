@@ -68,22 +68,19 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-=begin
-  # Need to customize these for reports!
+  # kt-paperclip global defaults
   config.paperclip_defaults = {
     storage: :s3,
     s3_protocol: "https",
-    s3_host_alias: "assets.datacite.org",
-    url: ":s3_alias_url",
-    path: "/images/members/:filename",
-    preserve_files: true,
-    s3_host_name: "s3-eu-west-1.amazonaws.com",
+    # s3_host_name: 'REMOVE_THIS_LINE_IF_UNNECESSARY',
     s3_credentials: {
-      access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-      secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
-      s3_region: ENV['AWS_REGION']
+      access_key_id: ENV["KT_AWS_ACCESS_KEY"].to_s,
+      secret_access_key: ENV["KT_AWS_SECRET_ACCESS_KEY"].to_s,
+      s3_region: ENV["KT_AWS_S3_REGION"].to_s,
     },
-    bucket: ENV['AWS_S3_BUCKET']
+    bucket: ENV["KT_AWS_S3_BUCKET"].to_s,
+    path: "/reports/:filename",
+    url: ":s3_domain_url",
+    use_timestamp: false,
   }
-=end
 end
