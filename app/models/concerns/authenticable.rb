@@ -73,6 +73,21 @@ module Authenticable
         "email" => user.contact_email
       }
 
+      # if uid.include? "."
+      #   payload.merge!({
+      #     "provider_id" => uid.split(".", 2).first,
+      #     "client_id" => uid
+      #   })
+      # elsif uid != "admin"
+      #   payload.merge!({
+      #     "provider_id" => uid
+      #   })
+      # end
+
+      # payload.merge!({
+      #   "client_id" => uid
+      # })
+
       payload
     end
 
@@ -135,6 +150,21 @@ module Authenticable
         "name" => user.name,
         "email" => user.contact_email
       }
+
+      # # if uid.include? "."
+      # #   payload.merge!({
+      # #     "provider_id" => uid.split(".", 2).first,
+      # #     "client_id" => uid
+      # #   })
+      # # elsif uid != "admin"
+      # #   payload.merge!({
+      # #     "provider_id" => uid
+      # #   })
+      # # end
+
+      # payload.merge!({
+      #   "client_id" => uid
+      # })
 
       payload
     end
