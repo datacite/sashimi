@@ -75,11 +75,11 @@ class ReportsController < ApplicationController
     if exists && params[:compressed].present?
       @report.report_subsets.destroy_all
       @report.report_subsets << ReportSubset.new(compressed: safe_params[:compressed])
-      authorize! :delete_all, @report.report_subsets
+      # authorize! :delete_all, @report.report_subsets
     end
     # create report if it doesn't exist already
     @report = Report.new(safe_params.merge(uid: params[:id])) if @report.blank?
-    authorize! :update, @report
+    # authorize! :update, @report
 
     if @report.update(safe_params.merge(@user_hash))
       render json: @report, status: exists ? :ok : :created
@@ -101,7 +101,7 @@ class ReportsController < ApplicationController
     # add_subsets
 
     @report = Report.new(safe_params.merge(@user_hash)) if @report.blank?
-    authorize! :create, @report
+    # authorize! :create, @report
 
     if @report.save
       render json: @report, status: :created
