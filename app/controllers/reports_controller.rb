@@ -29,19 +29,15 @@ class ReportsController < ApplicationController
            end
 
     collection = if params[:id].present?
-                   Report.correct.where(uid: params[:id].split(","))
-                 elsif params[:incorrect].present?
-                   Report.incorrect.any? ? Report.incorrect.where(user_id: params[:client_id]) : []
-                 elsif params[:queued].present?
-                   Report.queued.any? ? Report.queued.where(user_id: params[:client_id] ) : []
+                   Report.where(uid: params[:id].split(","))
                  elsif params[:created_by].present?
-                   Report.correct.where(created_by: params[:created_by])
+                   Report.where(created_by: params[:created_by])
                  elsif params[:year].present?
-                   Report.correct.where(year: params[:year])
+                   Report.where(year: params[:year])
                  elsif params[:client_id].present?
-                   Report.correct.where(user_id: params[:client_id])
+                   Report.where(user_id: params[:client_id])
                  else
-                   Report.correct
+                   Report.all
                  end
 
     total = collection.size
@@ -67,17 +63,7 @@ class ReportsController < ApplicationController
   end
 
   def show
-    case true
-    when @report.correct?
-      render json: @report, status: :ok
-    when @report.queued?
-      render json: @report, status: :accepted
-    when @report.incorrect?
-      render json: @report, status: :unprocessable_entity
-    else
-      Rails.logger.warn @report.errors.inspect
-      render json: serialize(@report.errors), status: :unprocessable_entity
-    end
+    render json: @report
   end
 
   def update
@@ -96,16 +82,7 @@ class ReportsController < ApplicationController
     authorize! :update, @report
 
     if @report.update(safe_params.merge(@user_hash))
-      updated = true
-    end
-
-    case true 
-    when updated && @report.correct?
       render json: @report, status: exists ? :ok : :created
-    when updated && @report.queued?
-      render json: @report, status: :accepted
-    when updated && @report.incorrect?
-      render json: @report, status: :unprocessable_entity
     else
       Rails.logger.warn @report.errors.inspect
       render json: serialize(@report.errors), status: :unprocessable_entity
@@ -127,16 +104,7 @@ class ReportsController < ApplicationController
     authorize! :create, @report
 
     if @report.save
-      saved = true
-    end
- 
-    case true
-    when saved && @report.correct?
       render json: @report, status: :created
-    when saved && @report.queued?
-      render json: @report, status: :accepted
-    when saved && @report.incorrect?
-      render json: @report, status: :unprocessable_entity
     else
       Rails.logger.error @report.errors.inspect
       render json: @report.errors, status: :unprocessable_entity
@@ -147,6 +115,7 @@ class ReportsController < ApplicationController
 
   def set_report
     @report = Report.where(uid: params[:id]).first
+
     fail ActiveRecord::RecordNotFound if @report.blank?
   end
 
