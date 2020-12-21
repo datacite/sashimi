@@ -93,14 +93,14 @@ describe Report, type: :model do
       let(:xx)  {create(:report_subset, report_id: report_xx.uid)}
 
       it "should load drl" do
-        report = report_drl_hsh.attributes.except("compressed","aasm_state")
+        report = report_drl_hsh.attributes.except("compressed")
         report.transform_keys! { |key| key.tr('_', '-') }
         validation = drl.validate_this_sushi report
         expect(validation).to be_empty
       end
 
       it "should load rd1" do
-        report = report_rd1_hsh.attributes.except("compressed","aasm_state")
+        report = report_rd1_hsh.attributes.except("compressed")
         report.transform_keys! { |key| key.tr('_', '-') }
         validation = rd1.validate_this_sushi report
         expect(validation).to be_empty
@@ -112,7 +112,7 @@ describe Report, type: :model do
       # end
 
       it "should send error if mixed" do
-        report = report_rd1_hsh.attributes.except("compressed","aasm_state")
+        report = report_rd1_hsh.attributes.except("compressed")
         report.transform_keys! { |key| key.tr('_', '-') }
         validation = drl.validate_this_sushi(report)
         expect(validation).to be_a(Array)

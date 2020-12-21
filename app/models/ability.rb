@@ -11,6 +11,7 @@ class Ability
       can :manage, :all
     elsif user.role_id == "client_admin" && user.uid.present?
       can [:create, :update, :read], Report, :user_id => user.uid
+      can :manage, ReportSubset
     end
   end
 end
