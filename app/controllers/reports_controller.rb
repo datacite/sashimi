@@ -68,17 +68,7 @@ class ReportsController < ApplicationController
       content = @report.load_attachment
       render json: content, status: :ok
     else
-      case true
-      when @report.correct?
-        render json: @report, status: :ok
-      when @report.queued?
-        render json: @report, status: :accepted
-      when @report.incorrect?
-        render json: @report, status: :unprocessable_entity
-      else
-        Rails.logger.warn @report.errors.inspect
-        render json: serialize(@report.errors), status: :unprocessable_entity
-      end
+      render json: @report
     end
   end
 
@@ -103,20 +93,9 @@ class ReportsController < ApplicationController
     # authorize! :update, @report
 
     if @report.update(safe_params.merge(@user_hash))
-      updated = true
-    end
-
-    case true 
-    when updated && @report.correct?
       content = render json: @report, status: exists ? :ok : :created
       @report.save_as_attachment(content)
       content
-    when updated && @report.queued?
-      content = render json: @report, status: :accepted
-      @report.save_as_attachment(content)
-      content
-    when updated && @report.incorrect?
-      render json: @report, status: :unprocessable_entity
     else
       Rails.logger.warn @report.errors.inspect
       render json: serialize(@report.errors), status: :unprocessable_entity
@@ -135,6 +114,7 @@ class ReportsController < ApplicationController
     if exists
       @report.load_attachment
     end
+
     @report.report_subsets << ReportSubset.new(compressed: safe_params[:compressed]) if @report.present? && params[:compressed].present?
     # add_subsets
 
@@ -142,20 +122,9 @@ class ReportsController < ApplicationController
     # authorize! :create, @report
 
     if @report.save
-      saved = true
-    end
- 
-    case true
-    when saved && @report.correct?
       content = render json: @report, status: :created
       @report.save_as_attachment(content)
       content
-    when saved && @report.queued?
-      content = render json: @report, status: :accepted
-      @report.save_as_attachment(content)
-      content
-    when saved && @report.incorrect?
-      render json: @report, status: :unprocessable_entity
     else
       Rails.logger.error @report.errors.inspect
       render json: @report.errors, status: :unprocessable_entity
