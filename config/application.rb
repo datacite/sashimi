@@ -12,6 +12,21 @@ require "rails/test_unit/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# load ENV variables from .env file if it exists
+env_file = File.expand_path("../../.env", __FILE__)
+if File.exist?(env_file)
+  require 'dotenv'
+  Dotenv.load! env_file
+end
+
+# load ENV variables from container environment if json file exists
+# see https://github.com/phusion/baseimage-docker#envvar_dumps
+env_json_file = "/etc/container_environment.json"
+if File.exist?(env_json_file)
+  env_vars = JSON.parse(File.read(env_json_file))
+  env_vars.each { |k, v| ENV[k] = v }
+end
+
 # default values for some ENV variables
 ENV['APPLICATION'] ||= "metrics-api"
 ENV['HOSTNAME'] ||= "sashimi"
@@ -35,21 +50,6 @@ ENV['LEVRIERO_URL'] ||= "https://api.datacite.org"
 ENV['USAGE_URL'] ||= "https://api.datacite.org"
 ENV['API_URL'] ||= "https://api.datacite.org"
 ENV['RACK_TIMEOUT_SERVICE_TIMEOUT'] ||= "40"
-
-# load ENV variables from .env file if it exists
-env_file = File.expand_path("../../.env", __FILE__)
-if File.exist?(env_file)
-  require 'dotenv'
-  Dotenv.load! env_file
-end
-
-# load ENV variables from container environment if json file exists
-# see https://github.com/phusion/baseimage-docker#envvar_dumps
-env_json_file = "/etc/container_environment.json"
-if File.exist?(env_json_file)
-  env_vars = JSON.parse(File.read(env_json_file))
-  env_vars.each { |k, v| ENV[k] = v }
-end
 
 module Sashimi
   class Application < Rails::Application
