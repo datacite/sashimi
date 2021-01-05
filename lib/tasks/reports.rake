@@ -29,7 +29,7 @@ namespace :reports do
     logger = Logger.new(STDOUT)
 
     if ENV["REPORT_UUID"].nil?
-      logger.error "#{ENV['REPORT_UUID']} is required."
+      logger.error "#{ENV['REPORT_UUID']} is required (REPORT_UUID=UUID)."
       exit
     end
 
@@ -120,5 +120,43 @@ namespace :reports do
         report.report_subsets.each(&:convert_report_job)
       end
     end
+  end
+
+  desc "Export single report to file."
+  task export_report: :environment do
+    logger = Logger.new(STDOUT)
+
+    if ENV["REPORT_UUID"].nil?
+      logger.error "'REPORT_UUID' is required on command line (REPORT_UUID=UUID)."
+      exit
+    end
+
+    report = Report.where(uid: ENV["REPORT_UUID"]).first
+    
+    if report.nil?
+      logger.error "Report #{ENV['REPORT_UUID']} not found."
+      exit
+    end
+
+    if report.attachment.present?
+      logger.info "[UsageReportsRake] REPORT ALREADY EXPORTED: #{report.uid}"
+      exit
+    end
+
+    if report.normal_report?
+      logger.info "[UsageReportsRake] EXPORTING NORMAL REPORT: #{report.uid}"
+    elsif report.compressed_report?
+      logger.info "[UsageReportsRake] EXPORTING COMPRESSED REPORT: #{report.uid}"
+    end
+
+    response = Faraday.get "#{report.report_url}"
+    if response.status == 200
+      output = response.body
+      report.save_as_attachment(output)
+    else
+      logger.error "[UsageReportsRake] error - response status #{response.status}"
+      exit
+    end
+    logger.info output
   end
 end
