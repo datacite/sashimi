@@ -1,3 +1,6 @@
+require 'optparse'
+require 'optparse'
+
 namespace :reports do
   desc "Index all reports"
   task index: :environment do
@@ -124,7 +127,17 @@ namespace :reports do
 
   desc "Export single report to file."
   task export_report: :environment do
+    # Turn off paperclip logging unless we need to debug.
+    Paperclip.options[:log] = false
+
     logger = Logger.new(STDOUT)
+
+    options = {}
+    OptionParser.new do |opts|
+      opts.on("-v", "--verbose", "Run verbosely") do |v|
+        options[:verbose] = v
+      end
+    end.parse!
 
     if ENV["REPORT_UUID"].nil?
       logger.error "'REPORT_UUID' is required on command line (REPORT_UUID=UUID)."
@@ -132,15 +145,24 @@ namespace :reports do
     end
 
     report = Report.where(uid: ENV["REPORT_UUID"]).first
-    
+
     if report.nil?
       logger.error "Report #{ENV['REPORT_UUID']} not found."
       exit
     end
 
-    if report.attachment.present?
-      logger.info "[UsageReportsRake] REPORT ALREADY EXPORTED: #{report.uid}"
-      exit
+    if (report.attachment.present?)
+      status = Faraday.head(report.attachment.url).status
+      if (status == 200)
+        logger.info "[UsageReportsRake] REPORT ALREADY EXPORTED: #{report.uid}"
+        if options[:verbose]
+          logger.info "[UsageReportsRake] PATH: #{report.attachment.path}"
+          logger.info "[UsageReportsRake] URL: #{report.attachment.url}"
+        end
+        exit
+      end
+      report.attachment = nil
+      report.save
     end
 
     if report.normal_report?
@@ -157,6 +179,8 @@ namespace :reports do
       logger.error "[UsageReportsRake] error - response status #{response.status}"
       exit
     end
-    logger.info output
+    if options[:verbose]
+      logger.info output
+    end
   end
 end

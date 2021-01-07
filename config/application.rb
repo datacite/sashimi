@@ -114,8 +114,8 @@ module Sashimi
     # kt-paperclip global defaults - DEVELOPMENT
     config.paperclip_defaults = {
       storage: :filesystem,
-      path: ":rails_root/public/reports/:filename",
-      url: "http://localhost/reports/:filename",
+      path: ":rails_root/public/report_files/:filename",
+      url: "http://localhost/report_files/:filename",
       use_timestamp: false,
     }
   end
