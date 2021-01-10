@@ -171,14 +171,15 @@ namespace :reports do
       logger.info "[UsageReportsRake] EXPORTING COMPRESSED REPORT: #{report.uid}"
     end
 
-    response = Faraday.get "#{report.report_url}"
-    if response.status == 200
-      output = response.body
+    output = ReportsController.render json: report
+
+    unless output.nil?
       report.save_as_attachment(output)
     else
-      logger.error "[UsageReportsRake] error - response status #{response.status}"
+      logger.error "[UsageReportsRake] error - report output is empty!"
       exit
     end
+
     if options[:verbose]
       logger.info output
     end
