@@ -82,7 +82,7 @@ class ReportsController < ApplicationController
 
     # Parts of the report not kept in the DB will be loaded from here.
     if exists
-      @report.load_attachment
+      @report.load_attachment!
     end
 
     if exists && params[:compressed].present?
@@ -114,7 +114,7 @@ class ReportsController < ApplicationController
 
     # Parts of the report not kept in the DB will be loaded from here.
     if exists
-      @report.load_attachment
+      @report.load_attachment!
     end
 
     @report.report_subsets << ReportSubset.new(compressed: safe_params[:compressed]) if @report.present? && params[:compressed].present?

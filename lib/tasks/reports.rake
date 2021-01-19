@@ -184,4 +184,32 @@ namespace :reports do
       logger.info output
     end
   end
+
+  desc "What kind of report is this?"
+  task report_type: :environment do
+    logger = Logger.new(STDOUT)
+
+    if ENV["REPORT_UUID"].nil?
+      logger.error "'REPORT_UUID' is required on command line (REPORT_UUID=UUID)."
+      exit
+    end
+
+    report = Report.where(uid: ENV["REPORT_UUID"]).first
+
+    if report.nil?
+      logger.error "Report #{ENV["REPORT_UUID"]} not found."
+      exit
+    end
+
+    logger.info "[UsageReportsRake] REPORT RELEASE IS: #{report.release}"
+    if report.normal_report?
+      logger.info "[UsageReportsRake] EXPORTING NORMAL REPORT: #{report.uid}"
+    elsif report.compressed_report?
+      logger.info "[UsageReportsRake] EXPORTING COMPRESSED REPORT: #{report.uid}"
+    elsif report.resolution_report?
+      logger.info "[UsageReportsRake] EXPORTING RESOLUTION REPORT: #{report.uid}"
+    else
+      logger.error "[UsageReportsRake] UNKNOWN REPORT TYPE: #{report.uid}"
+    end
+  end
 end

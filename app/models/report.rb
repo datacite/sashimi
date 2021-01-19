@@ -104,18 +104,21 @@ class Report < ApplicationRecord
   end
 
   def self.compressed_report?
+    # check for data sets !empty
     return nil if exceptions.empty? || compressed.nil?
 
-    # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
     code = exceptions.first.fetch("code", "")
 
+    (code == 69) && (release == "rd1")
+=begin
     if code == 69
       true
     end
+=end
   end
 
   def normal_report?
-    return nil if compressed_report? || report_datasets.nil?
+    return nil if compressed_report? || resolution_report? || report_datasets.nil?
 
     true
   end
@@ -123,12 +126,22 @@ class Report < ApplicationRecord
   def compressed_report?
     return nil if exceptions&.empty? || compressed.nil?
 
-    # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
     code = exceptions.first.fetch("code", "")
 
+    (code == 69) && (release == "rd1")
+=begin
     if code == 69
       true
     end
+=end
+  end
+
+  def resolution_report?
+    return nil if exceptions&.empty? || compressed.nil?
+
+    code = exceptions.first.fetch("code", "")
+
+    (code == 69) && (release == "drl")
   end
 
   # Builds attachment from (rendered) content and saves it.
@@ -147,15 +160,41 @@ class Report < ApplicationRecord
     File.delete(tmp)
   end
 
-  # If there is an attachment: loads the file and (will eventually) set the correct fields from it.
+  # If there is an attachment: loads the file and returns the text.
   def load_attachment
     if self.attachment.present?
       begin
-        Paperclip.io_adapters.for(self.attachment).read
+        content = Paperclip.io_adapters.for(self.attachment).read
       rescue StandardError
         fail "The attachment for this report cannot be found: " + self.attachment.url.to_s
       end
     end
+  end
+
+  # If there is a file attachment to this report: loads the report file and sets
+  # the correct fields from the report file instead of the database.
+  def load_attachment!
+    if self.attachment.present?
+
+      content = self.load_attachment
+      attachment = JSON.parse(content)
+
+      uuid = get_attachment_uuid(attachment)
+      if (uuid == self.uid)
+        self.report_datasets = get_attachment_datasets(attachment)
+
+        subsets = get_attachment_subsets(attachment)
+        subsets.each_with_index do | subset, i | 
+          if (report_subset = self.report_subsets.where(report_id: id, checksum: get_attachment_subset_checksum(subset)).first)
+            report_subset.compressed = ::Base64.strict_decode64(get_attachment_subset_gzip(subset))
+            if  (i == 0) && (self.report_datasets.empty?)
+              self.compressed = report_subset.compressed
+            end
+          end 
+        end
+      end
+    end
+    content
   end
 
   def destroy_attachment
@@ -165,6 +204,34 @@ class Report < ApplicationRecord
   end
 
   private
+
+# Use https://tiagoamaro.com.br/2016/08/27/ruby-2-3-dig/
+  def get_attachment_uuid(attachment)
+    attachment.dig("report", "id") || ""
+  end
+
+  def get_attachment_datasets(attachment)
+    attachment.dig("report", "report-datasets") || []
+  end
+
+  def get_attachment_compressed(attachment)
+    compressed = attachment.dig("report", "compressed")
+    compressed.present? ? compressed : nil
+  end
+
+  def get_attachment_subsets(attachment)
+    attachment.dig("report", "report-subsets") || []
+  end
+
+  def get_attachment_subset_gzip(attachment_subset)
+    gzip = attachment_subset.dig("gzip")
+    gzip.present? ? gzip : nil
+  end
+
+  def get_attachment_subset_checksum(attachment_subset)
+    checksum = attachment_subset.dig("checksum")
+    checksum.present? ? checksum : nil
+  end
 
   # random number that fits into MySQL bigint field (8 bytes)
   def set_id
