@@ -13,6 +13,17 @@ class ValidationJob < ActiveJob::Base
 
     bm = Benchmark.ms {
       subset = ReportSubset.where(id: id).first
+      report = Report.where(uid: subset.report_id).first
+      if report.attachment.present?
+        content = report.load_attachment
+        attachment = AttachmentParser.new(content)
+        attachment_subset = attachment.search_subsets(checksum: subset.checksum)
+        subset.compressed = attachment.subset_compressed(subset: attachment_subset)
+      else 
+        # Rails.logger.info "VALIDATION - NO ATTACHMENT FOUND FOR THIS REPORT!"
+      end
+      Rails.logger.info report
+
       full_report = ActiveSupport::Gzip.decompress(subset.compressed)
     }
     Rails.logger.warn message: "[ValidationJob] Decompress", duration: bm

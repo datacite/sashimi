@@ -16,6 +16,8 @@ class ReportsController < ApplicationController
   before_action :validate_monthly_report, only: %i[create update]
   authorize_resource except: %i[index show]
 
+  after_action :clean_data, only: %i[create update]
+
   def index
     page = (params.dig(:page, :number) || 1).to_i
     size = (params.dig(:page, :size) || 25).to_i
@@ -66,7 +68,7 @@ class ReportsController < ApplicationController
     # If we have an attachment file, just retrieve it, otherwise do the usual rendering.
     # We need to use the report header from the db with the report_subsets from the attachment.
     if @report.attachment.present?
-      content = @report.load_attachment
+      content = @report.load_attachment!
       content = JSON.parse(content)
       render json: @report, status: :ok, serializer: ReportAttachmentSerializer, report_attachment: content
     else
@@ -82,7 +84,8 @@ class ReportsController < ApplicationController
 
     # Parts of the report not kept in the DB will be loaded from here.
     if exists
-      @report.load_attachment!
+      @report.attachment = nil
+      @report.save
     end
 
     if exists && params[:compressed].present?
@@ -148,6 +151,10 @@ class ReportsController < ApplicationController
   def validate_monthly_report
     # period =safe_params.fetch("reporting_period",nil)
     fail JSON::ParserError, "Reports are monthly, reporting dates need to be within the same month" if get_month(params[:report_header].dig(:reporting_period, "begin_date")) != get_month(params[:report_header].dig(:reporting_period, "end_date"))
+  end
+
+  def clean_data
+    @report.set_data
   end
 
   private

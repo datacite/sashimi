@@ -35,6 +35,13 @@ class Report < ApplicationRecord
   # before_create :set_id
   after_commit :push_report, if: :normal_report?
 
+  def set_data
+    update_column("compressed", nil)
+    report_subsets.each do | report_subset |
+      report_subset.set_data
+    end
+  end
+
   before_destroy :destroy_attachment, on: :delete
   after_destroy_commit :destroy_report_events, on: :delete
 
@@ -77,7 +84,6 @@ class Report < ApplicationRecord
   end
 
   def push_report
-    Rails.logger.debug "[UsageReports] calling queue for " + uid
     body = { report_id: report_url }
 
     send_message(body) if ENV["AWS_REGION"].present?
@@ -124,20 +130,16 @@ class Report < ApplicationRecord
   end
 
   def compressed_report?
-    return nil if exceptions&.empty? || compressed.nil?
+    return nil if exceptions&.empty?
 
     code = exceptions.first.fetch("code", "")
 
     (code == 69) && (release == "rd1")
-=begin
-    if code == 69
-      true
-    end
-=end
+
   end
 
   def resolution_report?
-    return nil if exceptions&.empty? || compressed.nil?
+    return nil if exceptions&.empty?
 
     code = exceptions.first.fetch("code", "")
 
@@ -162,7 +164,7 @@ class Report < ApplicationRecord
 
   # If there is an attachment: loads the file and returns the text.
   def load_attachment
-    if self.attachment.present?
+    if attachment.present?
       begin
         content = Paperclip.io_adapters.for(self.attachment).read
       rescue StandardError
@@ -174,26 +176,49 @@ class Report < ApplicationRecord
   # If there is a file attachment to this report: loads the report file and sets
   # the correct fields from the report file instead of the database.
   def load_attachment!
-    if self.attachment.present?
-
-      content = self.load_attachment
-      attachment = JSON.parse(content)
-
-      uuid = get_attachment_uuid(attachment)
-      if (uuid == self.uid)
-        self.report_datasets = get_attachment_datasets(attachment)
-
-        subsets = get_attachment_subsets(attachment)
-        subsets.each_with_index do | subset, i | 
-          if (report_subset = self.report_subsets.where(report_id: id, checksum: get_attachment_subset_checksum(subset)).first)
-            report_subset.compressed = ::Base64.strict_decode64(get_attachment_subset_gzip(subset))
-            if  (i == 0) && (self.report_datasets.empty?)
-              self.compressed = report_subset.compressed
-            end
-          end 
-        end
-      end
+    if !attachment.present?
+      fail "[UsageReports] All reports should have an attachment." 
     end
+
+    content = load_attachment
+    attachment = AttachmentParser.new(content)
+    uuid = attachment.uuid
+
+    if uuid.blank?
+      fail "[UsageReports] Report-uid missing from attachment."
+    end
+    if uuid != uid
+      fail "[UsageReports] Report-uid does not match attachment uid."
+    end
+
+    # set report.compressed from the attachment.
+    if compressed_report? || resolution_report?
+      report_subset = report_subsets.order("created_at ASC").first
+      attachment_subset = attachment.search_subsets(checksum: report_subset.checksum)
+      fail "[UsageReports] cannot find gzip for a report-subset" if attachment_subset.blank?
+
+      self.compressed = ::Base64.strict_decode64(attachment.subset_checksum(subset: attachment_subset))
+    elsif normal_report?
+      Rails.logger.info "SKV - normal report"
+    else
+      fail "[UsageReports] Unrecognizable report type."
+    end
+
+    # Set report datasets from attachment.
+    self.report_datasets = attachment.datasets
+
+    # Loop over report_subsets setting report_subset gzip from the attachment.
+    self.report_subsets.each do | report_subset |
+      attachment_subset = attachment.search_subsets(checksum: report_subset.checksum)
+
+      if attachment_subset.blank?
+        fail "[UsageReports] Cannot find report-subset gzip field."
+      end
+
+      report_subset.compressed = ::Base64.strict_decode64(attachment.subset_gzip(subset: attachment_subset))
+    end
+
+    # Return the same thing as load_attachment, but the report object has been changed.
     content
   end
 
@@ -204,34 +229,8 @@ class Report < ApplicationRecord
   end
 
   private
+  
 
-# Use https://tiagoamaro.com.br/2016/08/27/ruby-2-3-dig/
-  def get_attachment_uuid(attachment)
-    attachment.dig("report", "id") || ""
-  end
-
-  def get_attachment_datasets(attachment)
-    attachment.dig("report", "report-datasets") || []
-  end
-
-  def get_attachment_compressed(attachment)
-    compressed = attachment.dig("report", "compressed")
-    compressed.present? ? compressed : nil
-  end
-
-  def get_attachment_subsets(attachment)
-    attachment.dig("report", "report-subsets") || []
-  end
-
-  def get_attachment_subset_gzip(attachment_subset)
-    gzip = attachment_subset.dig("gzip")
-    gzip.present? ? gzip : nil
-  end
-
-  def get_attachment_subset_checksum(attachment_subset)
-    checksum = attachment_subset.dig("checksum")
-    checksum.present? ? checksum : nil
-  end
 
   # random number that fits into MySQL bigint field (8 bytes)
   def set_id
