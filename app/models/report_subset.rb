@@ -17,7 +17,7 @@ class ReportSubset < ApplicationRecord
 
   after_commit :validate_report_job, on: :create
 
-  def set_data
+	def clean_data
     update_column("compressed", nil)
   end
 

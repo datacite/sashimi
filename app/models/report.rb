@@ -35,10 +35,12 @@ class Report < ApplicationRecord
   # before_create :set_id
   after_commit :push_report, if: :normal_report?
 
-  def set_data
-    update_column("compressed", nil)
+
+	def clean_data
+		update_column("compressed", nil)
+		update_column("report_datasets", [])
     report_subsets.each do | report_subset |
-      report_subset.set_data
+      report_subset.clean_data
     end
   end
 
@@ -166,7 +168,7 @@ class Report < ApplicationRecord
   def load_attachment
     if attachment.present?
       begin
-        content = Paperclip.io_adapters.for(self.attachment).read
+				content = Paperclip.io_adapters.for(self.attachment).read
       rescue StandardError
         fail "The attachment for this report cannot be found: " + self.attachment.url.to_s
       end
@@ -180,9 +182,9 @@ class Report < ApplicationRecord
       fail "[UsageReports] All reports should have an attachment." 
     end
 
-    content = load_attachment
+		content = load_attachment
     attachment = AttachmentParser.new(content)
-    uuid = attachment.uuid
+		uuid = attachment.uuid
 
     if uuid.blank?
       fail "[UsageReports] Report-uid missing from attachment."
@@ -192,8 +194,8 @@ class Report < ApplicationRecord
     end
 
     # set report.compressed from the attachment.
-    if compressed_report? || resolution_report?
-      report_subset = report_subsets.order("created_at ASC").first
+		if compressed_report? || resolution_report?
+			report_subset = report_subsets.order("created_at ASC").first
       attachment_subset = attachment.search_subsets(checksum: report_subset.checksum)
       fail "[UsageReports] cannot find gzip for a report-subset" if attachment_subset.blank?
 
@@ -217,7 +219,7 @@ class Report < ApplicationRecord
 
       report_subset.compressed = ::Base64.strict_decode64(attachment.subset_gzip(subset: attachment_subset))
     end
-
+	
     # Return the same thing as load_attachment, but the report object has been changed.
     content
   end

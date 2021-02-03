@@ -84,16 +84,20 @@ class ReportsController < ApplicationController
 
     # Parts of the report not kept in the DB will be loaded from here.
     if exists
-      @report.attachment = nil
-      @report.save
+      @report.load_attachment!
     end
 
-    if exists && params[:compressed].present?
-      @report.report_subsets.destroy_all
-      @report.report_subsets << ReportSubset.new(compressed: safe_params[:compressed])
+		if exists && params[:compressed].present?
+			@report.attachment = nil
+      @report.save
+			@report.report_subsets.destroy_all
+			@report.report_subsets << ReportSubset.new(compressed: safe_params[:compressed])
       # authorize! :delete_all, @report.report_subsets
     end
-    # create report if it doesn't exist already
+		# create report if it doesn't exist already
+		if @report.blank? 
+			Rails.logger.info "REPORT IS BLANK."
+		end
     @report = Report.new(safe_params.merge(uid: params[:id])) if @report.blank?
     # authorize! :update, @report
 
@@ -154,7 +158,7 @@ class ReportsController < ApplicationController
   end
 
   def clean_data
-    @report.set_data
+    @report.clean_data
   end
 
   private

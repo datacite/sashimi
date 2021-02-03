@@ -36,8 +36,7 @@ class AttachmentParser
     subset.dig("gzip") || ""
   end
 
-  def subset_compressed (subset:)
+	def subset_compressed (subset:)
     ::Base64.strict_decode64(subset.fetch("gzip", nil))
   end
 end
-  
