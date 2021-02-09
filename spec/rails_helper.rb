@@ -36,7 +36,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 
   config.include JobHelper, type: :job
-  
+
   # don't use transactions, use database_clear gem via support file
   config.use_transactional_fixtures = false
 
@@ -44,6 +44,20 @@ RSpec.configure do |config|
   config.include RequestSpecHelper, type: :request
 
   ActiveJob::Base.queue_adapter = :test
+
+  ## To do: configure directory locations for test/dev environments.
+  ## Dev - {Rails.root}/public/reports, test should go to test AWS S3 bucket
+  ## Test/Stage - AWS S3 BUCKET
+  # Cleans up generated reports files after test run.
+  # Make sure we are not doing this in production.
+  config.after(:each) do # :suite or :each or :all
+    # Never delete files in production.
+    if Rails.env.development? || Rails.env.test? || Rails.env.stage?
+      Dir["#{Rails.root}/public/report_files/**"].each do |file|
+          File.delete(file)
+      end
+    end
+  end
 end
 
 VCR.configure do |c|
@@ -54,3 +68,4 @@ VCR.configure do |c|
   c.configure_rspec_metadata!
   c.default_cassette_options = { :match_requests_on => [:method, :path] }
 end
+

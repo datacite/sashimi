@@ -82,12 +82,14 @@ class ReportsController < ApplicationController
     @report = Report.where(uid: params[:id]).first
     exists = @report.present?
 
-    # Parts of the report not kept in the DB will be loaded from here.
-    if exists
+    # Parts of the report not kept in the DB will be loaded from the file system.
+    # If no attachment exists, we assume this is an 'old-style' report.
+    if exists && (@report.attachment.present?) && (@report.attachment.exists?)
       @report.load_attachment!
     end
 
 		if exists && params[:compressed].present?
+      # Deletes report file, we are updating the report
 			@report.attachment = nil
       @report.save
 			@report.report_subsets.destroy_all
@@ -95,7 +97,7 @@ class ReportsController < ApplicationController
       # authorize! :delete_all, @report.report_subsets
     end
 		# create report if it doesn't exist already
-		if @report.blank? 
+		if @report.blank?
 			Rails.logger.info "REPORT IS BLANK."
 		end
     @report = Report.new(safe_params.merge(uid: params[:id])) if @report.blank?
@@ -119,8 +121,9 @@ class ReportsController < ApplicationController
       first
     exists = @report.present?
 
-    # Parts of the report not kept in the DB will be loaded from here.
-    if exists
+    # Parts of the report not kept in the DB will be loaded from the file system.
+    # If no attachment exists, we assume this is an 'old-style' report.
+    if exists && (@report.attachment.present?) && (@report.attachment.exists?)
       @report.load_attachment!
     end
 
