@@ -12,8 +12,6 @@ describe "Reports", type: :request do
       before { get "/reports" }
 
       it "returns reports" do
-        byebug
-
         expect(json).not_to be_empty
         expect(json["reports"].size).to eq(3)
         expect(response).to have_http_status(200)
@@ -640,8 +638,6 @@ describe "Reports", type: :request do
           expect(report.report_subsets.first.report_id).to eq(uid)
           report.report_subsets.each { |subset| expect(subset.compressed).to be_nil }
           expect(report.report_datasets).to be_empty
-
-          # CHECK FILE FOR CORRECT CONTENTS - DATASETS, COMPRESSED FIELDS, CHECKSUM?
 
           # Check for the file (initialized and exists in the filesystem):
           expect(report.attachment_file_name).to eq(uid + '.json')
