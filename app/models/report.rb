@@ -179,7 +179,7 @@ class Report < ApplicationRecord
   # the correct fields from the report file instead of the database.
   def load_attachment!
     if !attachment.present?
-      fail "[UsageReports] All reports should have an attachment." 
+      fail "[UsageReports] All reports should have an attachment."
     end
 
 		content = load_attachment
@@ -201,7 +201,7 @@ class Report < ApplicationRecord
 
       self.compressed = ::Base64.strict_decode64(attachment.subset_checksum(subset: attachment_subset))
     elsif normal_report?
-      Rails.logger.info "SKV - normal report"
+      Rails.logger.info "[UsageReports] normal report"
     else
       fail "[UsageReports] Unrecognizable report type."
     end
@@ -219,7 +219,7 @@ class Report < ApplicationRecord
 
       report_subset.compressed = ::Base64.strict_decode64(attachment.subset_gzip(subset: attachment_subset))
     end
-	
+
     # Return the same thing as load_attachment, but the report object has been changed.
     content
   end
@@ -231,7 +231,7 @@ class Report < ApplicationRecord
   end
 
   private
-  
+
 
 
   # random number that fits into MySQL bigint field (8 bytes)
