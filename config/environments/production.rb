@@ -74,9 +74,9 @@ Rails.application.configure do
     s3_protocol: "https",
     # s3_host_name: 'REMOVE_THIS_LINE_IF_UNNECESSARY',
     s3_credentials: {
-      access_key_id: ENV["AWS_ACCESS_KEY"].to_s,
+      access_key_id: ENV["AWS_ACCESS_KEY_ID"].to_s,
       secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"].to_s,
-      s3_region: ENV["AWS_S3_REGION"].to_s,
+      s3_region: ENV["AWS_REGION"].to_s,
     },
     bucket: ENV["AWS_S3_BUCKET"].to_s,
     path: "/report_files/:filename",
