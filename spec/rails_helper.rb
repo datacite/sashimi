@@ -67,5 +67,7 @@ VCR.configure do |c|
   c.ignore_hosts "codeclimate.com"
   c.configure_rspec_metadata!
   c.default_cassette_options = { :match_requests_on => [:method, :path] }
+  # Allow AWS S3 requests to go through in testing without VCR, for now.
+  c.allow_http_connections_when_no_cassette = true
 end
 
