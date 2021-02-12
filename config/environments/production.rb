@@ -79,7 +79,7 @@ Rails.application.configure do
       s3_region: ENV["KT_AWS_S3_REGION"].to_s,
     },
     bucket: ENV["KT_AWS_S3_BUCKET"].to_s,
-    path: "/reports/:filename",
+    path: "/report_files/:filename",
     url: ":s3_domain_url",
     use_timestamp: false,
   }

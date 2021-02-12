@@ -45,16 +45,16 @@ RSpec.configure do |config|
 
   ActiveJob::Base.queue_adapter = :test
 
-  ## To do: configure directory locations for test/dev environments.
-  ## Dev - {Rails.root}/public/reports, test should go to test AWS S3 bucket
-  ## Test/Stage - AWS S3 BUCKET
+  ## To do: find another way to track and delete test files.
+  ## Dev/Test/Stage- {Rails.root}/public/report_files.
+  ## Production - AWS S3 BUCKET (report_files directory)
   # Cleans up generated reports files after test run.
   # Make sure we are not doing this in production.
   config.after(:each) do # :suite or :each or :all
-    # Never delete files in production.
+    # Never delete files in production. This is dangerous, should find another way to clean up.
     if Rails.env.development? || Rails.env.test? || Rails.env.stage?
       Dir["#{Rails.root}/public/report_files/**"].each do |file|
-          File.delete(file)
+          # File.delete(file)
       end
     end
   end
