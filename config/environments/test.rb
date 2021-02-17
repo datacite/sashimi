@@ -34,7 +34,7 @@ Rails.application.configure do
   config.action_controller.allow_forgery_protection = false
   # config.action_mailer.perform_caching = false
 
-  config.active_job.queue_adapter = :inline
+  # config.active_job.queue_adapter = :inline
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr

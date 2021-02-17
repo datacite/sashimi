@@ -67,7 +67,7 @@ class ReportsController < ApplicationController
   def show
     # If we have an attachment file, just retrieve it, otherwise do the usual rendering.
     # We need to use the report header from the db with the report_subsets from the attachment.
-    if @report.attachment.present?
+    if Report.has_attribute?('attachment_file_name') && @report.attachment.present?
       content = @report.load_attachment!
       content = JSON.parse(content)
       render json: @report, status: :ok, serializer: ReportAttachmentSerializer, report_attachment: content
@@ -84,7 +84,7 @@ class ReportsController < ApplicationController
 
     # Parts of the report not kept in the DB will be loaded from the file system.
     # If no attachment exists, we assume this is an 'old-style' report.
-    if exists && (@report.attachment.present?) && (@report.attachment.exists?)
+    if exists && Report.has_attribute?('attachment_file_name') && (@report.attachment.present?) && (@report.attachment.exists?)
       @report.load_attachment!
     end
 
@@ -123,7 +123,7 @@ class ReportsController < ApplicationController
 
     # Parts of the report not kept in the DB will be loaded from the file system.
     # If no attachment exists, we assume this is an 'old-style' report.
-    if exists && (@report.attachment.present?) && (@report.attachment.exists?)
+    if exists && Report.has_attribute?('attachment_file_name') && (@report.attachment.present?) && (@report.attachment.exists?)
       @report.load_attachment!
     end
 

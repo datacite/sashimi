@@ -48,7 +48,7 @@ Rails.application.configure do
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
 
-  config.active_job.queue_adapter = :inline
+ #config.active_job.queue_adapter = :inline
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
@@ -57,6 +57,16 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   # config.active_storage.service = :local
+
+  # kt-paperclip global defaults - DEVELOPMENT
+=begin
+  config.paperclip_defaults = {
+    storage: :filesystem,
+    path: ":rails_root/public/report_files/:filename",
+    url: "http://localhost/report_files/:filename",
+    use_timestamp: false,
+  }
+=end
 end
 
 BetterErrors::Middleware.allow_ip! ENV['TRUSTED_IP']

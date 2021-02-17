@@ -111,11 +111,19 @@ module Sashimi
       g.fixture_replacement :factory_bot
     end
 
-    # kt-paperclip global defaults - DEVELOPMENT
+    # kt-paperclip global defaults
     config.paperclip_defaults = {
-      storage: :filesystem,
-      path: ":rails_root/public/report_files/:filename",
-      url: "http://localhost/report_files/:filename",
+      storage: :s3,
+      s3_protocol: "https",
+      # s3_host_name: 's3-#{AWS_REGION}.amazonaws.com',
+      s3_credentials: {
+        access_key_id: ENV["AWS_ACCESS_KEY_ID"].to_s,
+        secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"].to_s,
+        s3_region: ENV["AWS_REGION"].to_s,
+      },
+      bucket: ENV["AWS_S3_BUCKET"].to_s,
+      path: "/report_files/:filename",
+      url: ":s3_domain_url",
       use_timestamp: false,
     }
   end
