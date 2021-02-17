@@ -111,7 +111,7 @@ module Sashimi
       g.fixture_replacement :factory_bot
     end
 
-    # kt-paperclip global defaults
+    # kt-paperclip global defaults - note bucket is different per environment.
     config.paperclip_defaults = {
       storage: :s3,
       s3_protocol: "https",
@@ -119,9 +119,9 @@ module Sashimi
       s3_credentials: {
         access_key_id: ENV["AWS_ACCESS_KEY_ID"].to_s,
         secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"].to_s,
-        s3_region: ENV["AWS_REGION"].to_s,
+        s3_region: 'eu-west-1',
       },
-      bucket: ENV["AWS_S3_BUCKET"].to_s,
+      bucket: 'metrics-api.datacite.org',
       path: "/report_files/:filename",
       url: ":s3_domain_url",
       use_timestamp: false,

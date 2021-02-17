@@ -59,14 +59,12 @@ Rails.application.configure do
   # config.active_storage.service = :local
 
   # kt-paperclip global defaults - DEVELOPMENT
-=begin
   config.paperclip_defaults = {
     storage: :filesystem,
     path: ":rails_root/public/report_files/:filename",
     url: "http://localhost/report_files/:filename",
     use_timestamp: false,
   }
-=end
 end
 
 BetterErrors::Middleware.allow_ip! ENV['TRUSTED_IP']
