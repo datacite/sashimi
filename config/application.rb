@@ -100,30 +100,18 @@ module Sashimi
     config.middleware.use Rack::Deflater
 
     # set Active Job queueing backend
-    if ENV["AWS_REGION"]
-      config.active_job.queue_adapter = :shoryuken
-    else
-      config.active_job.queue_adapter = :inline
-    end
+    config.active_job.queue_adapter = ENV["AWS_REGION"] ? :shoryuken : :inline
     config.active_job.queue_name_prefix = Rails.env
 
     config.generators do |g|
       g.fixture_replacement :factory_bot
     end
 
-    # kt-paperclip global defaults - note bucket is different per environment.
+    # kt-paperclip global defaults
     config.paperclip_defaults = {
-      storage: :s3,
-      s3_protocol: "https",
-      # s3_host_name: 's3-#{AWS_REGION}.amazonaws.com',
-      s3_credentials: {
-        access_key_id: ENV["AWS_ACCESS_KEY_ID"].to_s,
-        secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"].to_s,
-        s3_region: 'eu-west-1',
-      },
-      bucket: 'metrics-api.datacite.org',
-      path: "/report_files/:filename",
-      url: ":s3_domain_url",
+      storage: :filesystem,
+      path: ":rails_root/public/report_files/:filename",
+      url: "http://localhost/report_files/:filename",
       use_timestamp: false,
     }
   end
