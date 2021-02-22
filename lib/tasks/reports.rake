@@ -103,52 +103,67 @@ namespace :reports do
     end
   end
 
-  # SYNTAX: bundle exec rake reports:hello['805ad80f-ce16-4cf7-b8fc-93fa7c79655d']
+  # SYNTAX: bundle exec rake reports:export['805ad80f-ce16-4cf7-b8fc-93fa7c79655d']
   desc "Export report(s) to file."
-  task :hello, [:uuid] => [:environment] do |task, args|
+  task :export, [:uuid] => [:environment] do |task, args|
     logger = Logger.new(STDOUT)
-    uuid = args.uuid
+
+    puts args
+    uuid = args
 
     report = Report.where(uid: uuid).first
 
     if report.nil?
       logger.info "[UsageReportsRake] Report not found for export: #{uuid}."
-      exit
-    end
-
-    if (report.attachment.present?)
-      logger.info "[UsageReportsRake] Report already exported: #{uuid}."
-      exit      
-    end
-
-    # Some conversion needed.
-    report.compressed = nil
-    if (report.report_subsets.empty?)
-      report_subset = report.to_compress
+    elsif (report.attachment.present?)
+      logger.info "[UsageReportsRake] Report already exported: #{uuid}."  
     else
-      report_subset = report.report_subsets.first
+      # Some conversion needed.
+      report.compressed = nil
+      if (report.report_subsets.empty?)
+        report_subset = report.to_compress
+      else
+        report_subset = report.report_subsets.first
+      end
+      report.update_column('compressed', report_subset.compressed)
+
+      # Get rendered report
+      @rails_session ||= ActionDispatch::Integration::Session.new(Rails.application)
+      @rails_session.get("/reports/#{uuid}")
+
+      content = @rails_session.response.body
+
+      # Save rendered report and clean up db fields.
+      report.save_as_attachment(content)
+
+      if report.attachment.exists?
+        report.clean_data
+        logger.info "[UsageReportsRake] Report exported successfully: #{uuid}."
+      else
+        logger.error "[UsageReportsRake] Report export UNSUCCESSFUL: #{uuid}."
+      end
     end
-    report.update_column('compressed', report_subset.compressed)
+  end
 
-    # Get rendered report
-    @rails_session ||= ActionDispatch::Integration::Session.new(Rails.application)
-    @rails_session.get("/reports/#{uuid}")
-
-    content = @rails_session.response.body
-
-    # Save rendered report and clean up db fields.
-    report.save_as_attachment(content)
-
-    if report.attachment.exists?
-      report.clean_data
-      logger.info "[UsageReportsRake] Report exported successfully: #{uuid}."
-    else
-      logger.error "[UsageReportsRake] Report export UNSUCCESSFUL: #{uuid}."
+  desc "Export JSON of all reports"
+  task export_all: :environment do
+    Report.all.find_each do |report|
+      Rake::Task['reports:export'].execute report.uid
     end
+  end
+
+  desc "test arguments"
+  task :argtest, [:arg1Name] do |t, args|
+
+    # t = the task name (includes the namespace)
+    # args = all of the arguments passed to the task
+    # args[:arg1Name] = the argument at the key :arg1Name
+    puts "in task 'argtest':  t: #{t} args: #{args}  args[:arg1Name]: #{args[:arg1Name]}"
   end
 
   desc "Convert JSON single report"
   task convert_report: :environment do
+
     logger = Logger.new(STDOUT)
 
     if ENV["REPORT_UUID"].nil?
