@@ -32,6 +32,7 @@ class Report < ApplicationRecord
   before_validation :set_uid, on: :create
   after_save :to_compress
   after_validation :clean_datasets
+  
   # before_create :set_id
   after_commit :push_report, if: :normal_report?
 
@@ -126,26 +127,20 @@ class Report < ApplicationRecord
   end
 
   def normal_report?
-    return nil if compressed_report? || resolution_report? || report_datasets.nil?
-
+    return nil if self.compressed_report? || self.resolution_report? 
     true
   end
 
   def compressed_report?
-    return nil if exceptions&.empty?
-
-    code = exceptions.first.fetch("code", "")
-
-    (code == 69) && (release == "rd1")
-
+    return nil if self.exceptions.nil? || self.exceptions.empty?
+    code = self.exceptions.first.fetch("code", "")
+    (code == 69) && (self.release == "rd1")
   end
 
   def resolution_report?
-    return nil if exceptions&.empty?
-
-    code = exceptions.first.fetch("code", "")
-
-    (code == 69) && (release == "drl")
+    return nil if self.exceptions.nil? || self.exceptions.empty?
+    code = self.exceptions.first.fetch("code", "")
+    (code == 69) && (self.release == "drl")
   end
 
   # Builds attachment from (rendered) content and saves it.
@@ -194,8 +189,8 @@ class Report < ApplicationRecord
     end
 
     # set report.compressed from the attachment.
-		if compressed_report? || resolution_report?
-			report_subset = report_subsets.order("created_at ASC").first
+    if compressed_report? || resolution_report?
+      report_subset = report_subsets.order("created_at ASC").first
       attachment_subset = attachment.search_subsets(checksum: report_subset.checksum)
       fail "[UsageReports] cannot find gzip for a report-subset" if attachment_subset.blank?
 
@@ -230,22 +225,19 @@ class Report < ApplicationRecord
     end
   end
 
-  private
-
-
-
-  # random number that fits into MySQL bigint field (8 bytes)
-  def set_id
-    self.id = SecureRandom.random_number(9223372036854775807)
-  end
-
   def to_compress
     if compressed.nil? && report_subsets.empty?
       ReportSubset.create(compressed: compress, report_id: uid)
     elsif report_subsets.empty?
       ReportSubset.create(compressed: compressed, report_id: uid)
-      # ReportSubset.create(compressed: self.compressed, report_id: self.report_id)
     end
+  end
+
+  private
+
+  # random number that fits into MySQL bigint field (8 bytes)
+  def set_id
+    self.id = SecureRandom.random_number(9223372036854775807)
   end
 
   def clean_datasets

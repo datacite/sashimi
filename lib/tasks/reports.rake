@@ -103,6 +103,50 @@ namespace :reports do
     end
   end
 
+  # SYNTAX: bundle exec rake reports:hello['805ad80f-ce16-4cf7-b8fc-93fa7c79655d']
+  desc "Export report(s) to file."
+  task :hello, [:uuid] => [:environment] do |task, args|
+    logger = Logger.new(STDOUT)
+    uuid = args.uuid
+
+    report = Report.where(uid: uuid).first
+
+    if report.nil?
+      logger.info "[UsageReportsRake] Report not found for export: #{uuid}."
+      exit
+    end
+
+    if (report.attachment.present?)
+      logger.info "[UsageReportsRake] Report already exported: #{uuid}."
+      exit      
+    end
+
+    # Some conversion needed.
+    report.compressed = nil
+    if (report.report_subsets.empty?)
+      report_subset = report.to_compress
+    else
+      report_subset = report.report_subsets.first
+    end
+    report.update_column('compressed', report_subset.compressed)
+
+    # Get rendered report
+    @rails_session ||= ActionDispatch::Integration::Session.new(Rails.application)
+    @rails_session.get("/reports/#{uuid}")
+
+    content = @rails_session.response.body
+
+    # Save rendered report and clean up db fields.
+    report.save_as_attachment(content)
+
+    if report.attachment.exists?
+      report.clean_data
+      logger.info "[UsageReportsRake] Report exported successfully: #{uuid}."
+    else
+      logger.error "[UsageReportsRake] Report export UNSUCCESSFUL: #{uuid}."
+    end
+  end
+
   desc "Convert JSON single report"
   task convert_report: :environment do
     logger = Logger.new(STDOUT)
@@ -122,66 +166,6 @@ namespace :reports do
       if report.compressed_report?
         report.report_subsets.each(&:convert_report_job)
       end
-    end
-  end
-
-  desc "Export single report to file."
-  task export_report: :environment do
-    # Turn off paperclip logging unless we need to debug.
-    Paperclip.options[:log] = false
-
-    logger = Logger.new(STDOUT)
-
-    options = {}
-    OptionParser.new do |opts|
-      opts.on("-v", "--verbose", "Run verbosely") do |v|
-        options[:verbose] = v
-      end
-    end.parse!
-
-    if ENV["REPORT_UUID"].nil?
-      logger.error "'REPORT_UUID' is required on command line (REPORT_UUID=UUID)."
-      exit
-    end
-
-    report = Report.where(uid: ENV["REPORT_UUID"]).first
-
-    if report.nil?
-      logger.error "Report #{ENV['REPORT_UUID']} not found."
-      exit
-    end
-
-    if (report.attachment.present?)
-      status = Faraday.head(report.attachment.url).status
-      if (status == 200)
-        logger.info "[UsageReportsRake] REPORT ALREADY EXPORTED: #{report.uid}"
-        if options[:verbose]
-          logger.info "[UsageReportsRake] PATH: #{report.attachment.path}"
-          logger.info "[UsageReportsRake] URL: #{report.attachment.url}"
-        end
-        exit
-      end
-      report.attachment = nil
-      report.save
-    end
-
-    if report.normal_report?
-      logger.info "[UsageReportsRake] EXPORTING NORMAL REPORT: #{report.uid}"
-    elsif report.compressed_report?
-      logger.info "[UsageReportsRake] EXPORTING COMPRESSED REPORT: #{report.uid}"
-    end
-
-    output = ReportsController.render json: report
-
-    unless output.nil?
-      report.save_as_attachment(output)
-    else
-      logger.error "[UsageReportsRake] error - report output is empty!"
-      exit
-    end
-
-    if options[:verbose]
-      logger.info output
     end
   end
 
