@@ -32,7 +32,7 @@ class Report < ApplicationRecord
   before_validation :set_uid, on: :create
   after_save :to_compress
   after_validation :clean_datasets
-  
+
   # before_create :set_id
   after_commit :push_report, if: :normal_report?
 
@@ -118,7 +118,7 @@ class Report < ApplicationRecord
 
     code = exceptions.first.fetch("code", "")
 
-    (code == 69) && (release == "rd1")
+    (code == 69) && ((release.downcase == "rd1") || (release.downcase == "rd2"))
 =begin
     if code == 69
       true
@@ -127,20 +127,20 @@ class Report < ApplicationRecord
   end
 
   def normal_report?
-    return nil if self.compressed_report? || self.resolution_report? 
+    return nil if self.compressed_report? || self.resolution_report?
     true
   end
 
   def compressed_report?
     return nil if self.exceptions.nil? || self.exceptions.empty?
     code = self.exceptions.first.fetch("code", "")
-    (code == 69) && (self.release == "rd1")
+    (code == 69) && ((release.downcase == "rd1") || (release.downcase == "rd2"))
   end
 
   def resolution_report?
     return nil if self.exceptions.nil? || self.exceptions.empty?
     code = self.exceptions.first.fetch("code", "")
-    (code == 69) && (self.release == "drl")
+    (code == 69) && (self.release.downcase == "drl")
   end
 
   # Builds attachment from (rendered) content and saves it.

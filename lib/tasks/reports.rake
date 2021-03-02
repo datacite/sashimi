@@ -1,5 +1,4 @@
 require 'optparse'
-require 'optparse'
 
 namespace :reports do
   desc "Index all reports"
@@ -104,28 +103,33 @@ namespace :reports do
   end
 
   # SYNTAX: bundle exec rake reports:export['805ad80f-ce16-4cf7-b8fc-93fa7c79655d']
+  # PART 1 of 2 of migration:
+  #   1. Generate report files in first pass.
+  #   2. Clean fields in database that contain large almounts of data:
+  #      - report.compressed
+  #      - report.datasets
+  #      - report_subsets.compressed
   desc "Export report(s) to file."
   task :export, [:uuid] => [:environment] do |task, args|
-    logger = Logger.new(STDOUT)
+    # logger = Logger.new(STDOUT)
+    logger = Logger.new(Rails.root.join("public", "migration.log"))
 
-    puts args
-    uuid = args
-
+    uuid = args[:uuid]
     report = Report.where(uid: uuid).first
 
     if report.nil?
       logger.info "[UsageReportsRake] Report not found for export: #{uuid}."
     elsif (report.attachment.present?)
-      logger.info "[UsageReportsRake] Report already exported: #{uuid}."  
+      logger.info "[UsageReportsRake] Report already exported: #{uuid}."
     else
       # Some conversion needed.
-      report.compressed = nil
+      # report.compressed = nil
       if (report.report_subsets.empty?)
         report_subset = report.to_compress
       else
         report_subset = report.report_subsets.first
       end
-      report.update_column('compressed', report_subset.compressed)
+      # report.update_column('compressed', report_subset.compressed)
 
       # Get rendered report
       @rails_session ||= ActionDispatch::Integration::Session.new(Rails.application)
@@ -137,10 +141,13 @@ namespace :reports do
       report.save_as_attachment(content)
 
       if report.attachment.exists?
-        report.clean_data
-        logger.info "[UsageReportsRake] Report exported successfully: #{uuid}."
+        # MAKING THIS A SEPARATE TASK TO PRESERVE DATA UNTIL WE ARE SURE CORRECT REPORTS HAVE BEEN GENERATED.
+        # Clean data from DB only if export was successful. - Making this a separate task.
+        # report.clean_data
+        report.save
+        logger.info "Report export SUCCESSFUL: #{uuid}, #{report_type(report)}."
       else
-        logger.error "[UsageReportsRake] Report export UNSUCCESSFUL: #{uuid}."
+        logger.error "Report export UNSUCCESSFUL: #{uuid}, #{report_type(report)}."
       end
     end
   end
@@ -152,13 +159,22 @@ namespace :reports do
     end
   end
 
-  desc "test arguments"
-  task :argtest, [:arg1Name] do |t, args|
+  desc "Export JSON of all reports"
+  task :export_paged, [:n_per] => :environment do |task, args|
+    puts args.n_per
 
-    # t = the task name (includes the namespace)
-    # args = all of the arguments passed to the task
-    # args[:arg1Name] = the argument at the key :arg1Name
-    puts "in task 'argtest':  t: #{t} args: #{args}  args[:arg1Name]: #{args[:arg1Name]}"
+    puts "PROCESSING: "
+
+    Report.find_in_batches(batch_size: args.n_per.to_i) do |reports|
+      STDOUT.puts "Got #{reports.count} reports"
+      Rake::Task['reports:confirm'].execute
+      reports.each do |report|
+        puts
+        puts report.uid
+        Rake::Task['reports:export'].execute report.uid
+        # Rake::Task['reports:confirm'].execute
+      end
+    end
   end
 
   desc "Convert JSON single report"
@@ -184,31 +200,123 @@ namespace :reports do
     end
   end
 
+  # SYNTAX: bundle exec rake reports:type['uid']
   desc "What kind of report is this?"
-  task report_type: :environment do
+  task :type, [:uid] => :environment do |task, args|
     logger = Logger.new(STDOUT)
 
-    if ENV["REPORT_UUID"].nil?
-      logger.error "'REPORT_UUID' is required on command line (REPORT_UUID=UUID)."
+    if args.uid.nil?
+      logger.error "'REPORT_UID' is a required argument."
       exit
     end
 
-    report = Report.where(uid: ENV["REPORT_UUID"]).first
+    report = Report.where(uid: args.uid).first
 
     if report.nil?
-      logger.error "Report #{ENV["REPORT_UUID"]} not found."
+      logger.error "Report #{args.uid} not found."
       exit
     end
 
-    logger.info "[UsageReportsRake] REPORT RELEASE IS: #{report.release}"
+    print_type(report)
+  end
+
+  # Find and list reports of given type. Ask every 5 reports if you want to continue.
+  # SYNTAX: bundle exec rake reports:find['type',N]
+  # WHERE: 'type' = 'normal' | 'compressed' | 'resolution'. (Default: 'normal'.)
+  #        N = number of reports listed asked to confirm continuation. (Default: 10.)
+  desc "find reports by type"
+  task :find, [:type, :n_per] => :environment do |task, args|
+    report_types =  ['normal', 'compressed', 'resolution']
+    n = (args.n_per || 10)
+    type = (args.type.downcase || 'normal')
+
+    if (!report_types.include?(type))
+      puts "INVALID ARG: 'type' must be one of #{report_types.join("', '")}"
+      exit
+    elsif !(n !~ /\D/)
+      puts "INVALID ARG: N must be a postive integer"
+      exit
+    end
+
+    puts "***LISTING: #{type} reports, #{n} per page"
+
+    x = 0
+    Report.all.find_each do |report|
+      if (x >= n.to_i)
+        if confirm
+          x = 0
+        else
+          puts "EXITING..."
+          exit
+        end
+      end
+      if report.normal_report?
+        puts report.uid
+        x = x + 1
+      elsif report.compressed_report?
+        puts report.uid
+        x = x + 1
+      elsif report.resolution_report?
+        puts report.uid
+        x = x + 1
+      else
+        puts "SKIPPING... #{report.uid}"
+      end
+    end
+  end
+
+  def confirm
+    $stdout.sync = true
+    ask = true
+    confirm_tokens =  ['y', 'Y', 'n', 'N', 'q', 'Q']
+
+    while ask do
+      STDOUT.puts "***CONTINUE? Enter '#{confirm_tokens.join("|")}|<NL>' to confirm:"
+      input = STDIN.gets.chomp.strip.downcase
+      if (input.to_s.strip == 'y') || input.to_s.strip.empty?
+        # puts 'continuing...'
+        ret = true
+        ask = false
+      elsif (input.to_s == 'n') || (input.to_s == 'q')
+        ret = false
+        ask = false
+      else
+        puts "INVALID ANSWER. Must answer one of '#{confirm_tokens.join("|")}|<NL>'"
+      end
+    end
+    ret
+  end
+
+  def print_type (report = nil)
+    if report.nil?
+      return
+    end
+
+    checksum = nil
+    found_in_subset = false
+    if report.compressed.present?
+      checksum = Digest::SHA256.hexdigest(report.compressed)
+      if (ReportSubset.where(checksum: checksum).count > 0)
+        found_in_subset = true
+      end
+    end
+
+    puts "#{report_type(report)}: #{report.uid}, TITLE: #{report.report_name}, SUBSETS: #{report.report_subsets.count}, COMPRESSED: #{report.compressed.present?}, CHECKSUM: #{checksum}, IN SUBSETS: #{found_in_subset}"
+  end
+
+  def report_type (report = nil)
+    if report.nil?
+      return ""
+    end
+
     if report.normal_report?
-      logger.info "[UsageReportsRake] EXPORTING NORMAL REPORT: #{report.uid}"
+      "NORMAL REPORT"
     elsif report.compressed_report?
-      logger.info "[UsageReportsRake] EXPORTING COMPRESSED REPORT: #{report.uid}"
+      "COMPRSSED REPORT"
     elsif report.resolution_report?
-      logger.info "[UsageReportsRake] EXPORTING RESOLUTION REPORT: #{report.uid}"
+      "RESOLUTION REPORT"
     else
-      logger.error "[UsageReportsRake] UNKNOWN REPORT TYPE: #{report.uid}"
+      "UNKNOWN REPORT TYPE"
     end
   end
 end
