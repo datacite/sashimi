@@ -137,7 +137,7 @@ namespace :reports do
   #      - report.datasets
   #      - report_subsets.compressed
   desc "Export report to file."
-  
+
   #task :export, [:uuid] => [:environment] do |task, args|
   task :export, [:uuid] => [:environment] do |task, args|
     logger = Logger.new(STDOUT)
@@ -200,7 +200,7 @@ namespace :reports do
 
   # SYNTAX: bundle exec rake reports:export['805ad80f-ce16-4cf7-b8fc-93fa7c79655d']
   # MIGRATION INCLUDES:
-  #   1. Generate report files in first pass. 
+  #   1. Generate report files in first pass.
   #   2. Clean fields in database that contain large almounts of data. **(This script)**
   #      - report.compressed
   #      - report.datasets
@@ -287,7 +287,7 @@ namespace :reports do
       else
         puts Rails.application.config.paperclip_defaults.to_yaml
       end
-    end  
+    end
 
   # Find and list reports of given type. Ask every 5 reports if you want to continue.
   # SYNTAX: bundle exec rake reports:find['type',N]
@@ -378,7 +378,6 @@ namespace :reports do
     found_in_subset = false
     if report.compressed.present?
       checksum = Digest::SHA256.hexdigest(report.compressed)
-      byebug
       if (ReportSubset.where(checksum: checksum).count > 0)
         found_in_subset = true
       end
