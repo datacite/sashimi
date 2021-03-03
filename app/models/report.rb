@@ -37,9 +37,14 @@ class Report < ApplicationRecord
   after_commit :push_report, if: :normal_report?
 
 
-	def clean_data
-		update_column("compressed", nil)
-		update_column("report_datasets", [])
+  def clean_data
+    update_column("compressed", nil)
+    if !self.resolution_report?
+      update_column("report_datasets", [])
+    end
+
+    update_column("release", self.release.downcase)
+
     report_subsets.each do | report_subset |
       report_subset.clean_data
     end

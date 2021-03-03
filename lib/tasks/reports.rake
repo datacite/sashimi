@@ -102,19 +102,52 @@ namespace :reports do
     end
   end
 
+  desc "Convert JSON single report"
+  task convert_report: :environment do
+
+    logger = Logger.new(STDOUT)
+
+    if ENV["REPORT_UUID"].nil?
+      logger.error "#{ENV['REPORT_UUID']} is required."
+      exit
+    end
+
+    report = Report.where(uid: ENV["REPORT_UUID"]).first
+    if report.nil?
+      logger.error "Report #{ENV['REPORT_UUID']} not found."
+      exit
+    end
+
+    if report.compressed_report?
+      if report.compressed_report?
+        report.report_subsets.each(&:convert_report_job)
+      end
+    end
+  end
+
+  #
+  # For migration from report db storage to file system storage.
+  #
+
   # SYNTAX: bundle exec rake reports:export['805ad80f-ce16-4cf7-b8fc-93fa7c79655d']
-  # PART 1 of 2 of migration:
-  #   1. Generate report files in first pass.
-  #   2. Clean fields in database that contain large almounts of data:
+  # MIGRATION INCLUDES:
+  #   1. Generate report files in first pass. **(This script)**
+  #   2. Clean fields in database that contain large almounts of data.
   #      - report.compressed
   #      - report.datasets
   #      - report_subsets.compressed
-  desc "Export report(s) to file."
+  desc "Export report to file."
+  
+  #task :export, [:uuid] => [:environment] do |task, args|
   task :export, [:uuid] => [:environment] do |task, args|
-    # logger = Logger.new(STDOUT)
-    logger = Logger.new(Rails.root.join("public", "migration.log"))
+    logger = Logger.new(STDOUT)
 
-    uuid = args[:uuid]
+    if args.class == String
+      uuid = args
+    else
+      uuid = args.uuid
+    end
+
     report = Report.where(uid: uuid).first
 
     if report.nil?
@@ -140,69 +173,94 @@ namespace :reports do
       # Save rendered report and clean up db fields.
       report.save_as_attachment(content)
 
-      if report.attachment.exists?
+      if report.attachment.present? && report.attachment.exists?
         # MAKING THIS A SEPARATE TASK TO PRESERVE DATA UNTIL WE ARE SURE CORRECT REPORTS HAVE BEEN GENERATED.
         # Clean data from DB only if export was successful. - Making this a separate task.
         # report.clean_data
-        report.save
-        logger.info "Report export SUCCESSFUL: #{uuid}, #{report_type(report)}."
+        # logger.info "Report export SUCCESSFUL: #{uuid}, #{report_type(report)}."
+        puts "UsageReportsRake] Report export SUCCESSFUL: #{uuid}. (#{report_type(report)})"
       else
-        logger.error "Report export UNSUCCESSFUL: #{uuid}, #{report_type(report)}."
+        # logger.error "Report export UNSUCCESSFUL: #{uuid}, #{report_type(report)}."
+        puts "UsageReportsRake] Report export UNSUCCESSFUL: #{uuid}. (#{report_type(report)})"
       end
     end
   end
 
+  # SYNTAX: bundle exec rake reports:export_all
   desc "Export JSON of all reports"
   task export_all: :environment do
     Report.all.find_each do |report|
-      Rake::Task['reports:export'].execute report.uid
-    end
-  end
-
-  desc "Export JSON of all reports"
-  task :export_paged, [:n_per] => :environment do |task, args|
-    puts args.n_per
-
-    puts "PROCESSING: "
-
-    Report.find_in_batches(batch_size: args.n_per.to_i) do |reports|
-      STDOUT.puts "Got #{reports.count} reports"
-      Rake::Task['reports:confirm'].execute
-      reports.each do |report|
-        puts
-        puts report.uid
-        Rake::Task['reports:export'].execute report.uid
-        # Rake::Task['reports:confirm'].execute
+      Rake::Task['reports:export'].execute report.uid.to_s
+      # sleep(5)
+      if !confirm
+        exit
       end
     end
   end
 
-  desc "Convert JSON single report"
-  task convert_report: :environment do
-
+  # SYNTAX: bundle exec rake reports:export['805ad80f-ce16-4cf7-b8fc-93fa7c79655d']
+  # MIGRATION INCLUDES:
+  #   1. Generate report files in first pass. 
+  #   2. Clean fields in database that contain large almounts of data. **(This script)**
+  #      - report.compressed
+  #      - report.datasets
+  #      - report_subsets.compressed
+  desc "Clean report data."
+  task :clean, [:uuid] => [:environment] do |task, args|
     logger = Logger.new(STDOUT)
 
-    if ENV["REPORT_UUID"].nil?
-      logger.error "#{ENV['REPORT_UUID']} is required."
-      exit
-    end
+    uuid = args[:uuid]
+    report = Report.where(uid: uuid).first
 
-    report = Report.where(uid: ENV["REPORT_UUID"]).first
     if report.nil?
-      logger.error "Report #{ENV['REPORT_UUID']} not found."
-      exit
-    end
-
-    if report.compressed_report?
-      if report.compressed_report?
-        report.report_subsets.each(&:convert_report_job)
-      end
+      logger.info "[UsageReportsRake] Report not found for cleaning: #{uuid}."
+    elsif (!report.attachment.present? || !report.attachment.exists?)
+      # Make sure attachment has been generated before we clean out report data.
+      logger.info "[UsageReportsRake] Report not yet eligible for cleaning: #{uuid}."
+      logger.info "[UsageReportsRake] Report cleaning UNSUCCESSFUL: #{uuid}. (#{report_type(report)})"
+    else
+      report.clean_data
+      logger.info "[UsageReportsRake] Report cleaning SUCCESSFUL: #{uuid}. (#{report_type(report)})"
     end
   end
 
-  # SYNTAX: bundle exec rake reports:type['uid']
-  desc "What kind of report is this?"
-  task :type, [:uid] => :environment do |task, args|
+  # SYNTAX: bundle exec rake reports:export_all
+  desc "Clean JSON of all reports"
+  task clean_all: :environment do
+    Report.all.find_each do |report|
+      Rake::Task['reports:clean'].execute report.uid
+      sleep(5)
+    end
+  end
+
+  # SYNTAX: bundle exec rake reports:export_all
+  desc "Check whether reports have been exported."
+  task exported: :environment do
+    logger = Logger.new(STDOUT)
+    n_exported = 0
+    n_not_exported = 0
+    total = 0
+
+    Report.all.find_each do |report|
+      total +=1
+      if report.attachment.present?
+        n_exported +=1
+        logger.info "[UsageReportsRake] Report has been **exported**: #{report.uid}."
+      else
+        n_not_exported +=1
+        logger.info "[UsageReportsRake] Report has NOT been exported: #{report.uid}."
+      end
+      # sleep(5)
+    end
+
+    logger.info "Reports exported = #{n_exported}"
+    logger.info "Reports NOT exported = #{n_not_exported}"
+    logger.info "Total reports = #{total}"
+  end
+
+  # SYNTAX: bundle exec rake reports:attrs['uid']
+  desc "Print report attributes - including type."
+  task :attrs, [:uid] => :environment do |task, args|
     logger = Logger.new(STDOUT)
 
     if args.uid.nil?
@@ -220,6 +278,17 @@ namespace :reports do
     print_type(report)
   end
 
+    # SYNTAX: bundle exec rake reports:paperclip
+    desc "Print paperclip config - where are my report files?"
+    task paperclip: :environment do
+      puts "PAPERCLIP REPORT STORAGE PARAMETERS:"
+      if Rails.application.config.paperclip_defaults.key?("s3_credentials")
+        puts Rails.application.config.paperclip_defaults.except(:s3_credentials).to_yaml
+      else
+        puts Rails.application.config.paperclip_defaults.to_yaml
+      end
+    end  
+
   # Find and list reports of given type. Ask every 5 reports if you want to continue.
   # SYNTAX: bundle exec rake reports:find['type',N]
   # WHERE: 'type' = 'normal' | 'compressed' | 'resolution'. (Default: 'normal'.)
@@ -227,8 +296,8 @@ namespace :reports do
   desc "find reports by type"
   task :find, [:type, :n_per] => :environment do |task, args|
     report_types =  ['normal', 'compressed', 'resolution']
-    n = (args.n_per || 10)
-    type = (args.type.downcase || 'normal')
+    n = (args.n_per.strip.downcase || 10)
+    type = (args.type.strip.downcase || 'normal')
 
     if (!report_types.include?(type))
       puts "INVALID ARG: 'type' must be one of #{report_types.join("', '")}"
@@ -265,19 +334,31 @@ namespace :reports do
     end
   end
 
+  # SYNTAX: bundle exec rake reports:paperclip
+  desc "Print paperclip config - where are my report files?"
+  task paperclip: :environment do
+    puts "PAPERCLIP REPORT STORAGE PARAMETERS:"
+    if Rails.application.config.paperclip_defaults.key?("s3_credentials")
+      puts Rails.application.config.paperclip_defaults.except(:s3_credentials).to_yaml
+    else
+      puts Rails.application.config.paperclip_defaults.to_yaml
+    end
+  end
+
   def confirm
     $stdout.sync = true
     ask = true
+    ret = false
     confirm_tokens =  ['y', 'Y', 'n', 'N', 'q', 'Q']
 
     while ask do
       STDOUT.puts "***CONTINUE? Enter '#{confirm_tokens.join("|")}|<NL>' to confirm:"
       input = STDIN.gets.chomp.strip.downcase
-      if (input.to_s.strip == 'y') || input.to_s.strip.empty?
+      if (input == 'y') || input.empty?
         # puts 'continuing...'
         ret = true
         ask = false
-      elsif (input.to_s == 'n') || (input.to_s == 'q')
+      elsif (input == 'n') || (input == 'q')
         ret = false
         ask = false
       else
@@ -287,21 +368,38 @@ namespace :reports do
     ret
   end
 
-  def print_type (report = nil)
+  def print_type (report = nil, csv_file = nil)
     if report.nil?
       return
     end
+    separator = "\t"
 
     checksum = nil
     found_in_subset = false
     if report.compressed.present?
       checksum = Digest::SHA256.hexdigest(report.compressed)
+      byebug
       if (ReportSubset.where(checksum: checksum).count > 0)
         found_in_subset = true
       end
     end
 
-    puts "#{report_type(report)}: #{report.uid}, TITLE: #{report.report_name}, SUBSETS: #{report.report_subsets.count}, COMPRESSED: #{report.compressed.present?}, CHECKSUM: #{checksum}, IN SUBSETS: #{found_in_subset}"
+    if csv_file.nil?
+      puts "#{report_type(report)}: #{report.uid}, " +
+        "TITLE: #{report.report_name}, " +
+        "ATTACHMENT: #{ ( report.attachment.present? ? report.attachment_file_name : "NONE" ) }, " +
+        "SUBSETS: #{report.report_subsets.count}, " +
+        "COMPRESSED: #{report.compressed.present?} " +
+        "#{ ( report.compressed.present? ?  " (CHECKSUM: #{checksum}, IN SUBSETS: #{found_in_subset})" : "") }"
+    else
+      csv_file.puts "#{report_type(report)}: #{report.uid}" + separator +
+        "#{report.report_name}" + separator +
+        "#{ ( report.attachment.present? ? report.attachment_file_name : "NONE" ) } " + separator +
+        "#{report.report_subsets.count}, " + separator +
+        "#{report.compressed.present?} " + separator +
+        "#{checksum}" + separator + separator +
+        "#{found_in_subset})"
+    end
   end
 
   def report_type (report = nil)
@@ -312,7 +410,7 @@ namespace :reports do
     if report.normal_report?
       "NORMAL REPORT"
     elsif report.compressed_report?
-      "COMPRSSED REPORT"
+      "COMPReSSED REPORT"
     elsif report.resolution_report?
       "RESOLUTION REPORT"
     else

@@ -15,9 +15,6 @@ class ValidationJob < ActiveJob::Base
     if (id.nil? || subset.nil?)
       #message = "[ValidationJobError] Subset #{id} of Usage Report #{subset.report.uid} failed validation. There are #{validation_errors.size} errors, starting with \"#{validation_errors.first[:message]}\"."
       #Rails.logger.error message
-      puts "SKV - THIS REPORT HAS NO SUBSET!!! BEGIN"
-      puts id.inspect
-      puts "SKV - THIS REPORT HAS NO SUBSET!!! END"
       true
     else
       bm = Benchmark.ms {
