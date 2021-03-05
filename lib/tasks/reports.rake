@@ -126,63 +126,216 @@ namespace :reports do
   end
 
   #
-  # For migration from report db storage to file system storage.
+  # Tasks for migration from report db storage to file system storage.
   #
-
-  # SYNTAX: bundle exec rake reports:export['805ad80f-ce16-4cf7-b8fc-93fa7c79655d']
+  #
   # MIGRATION INCLUDES:
-  #   1. Generate report files in first pass. **(This script)**
+  #   1. Generate report files in first pass.
   #   2. Clean fields in database that contain large almounts of data.
   #      - report.compressed
   #      - report.datasets
   #      - report_subsets.compressed
-  desc "Export report to file."
+  #
+  # The migration tasks are separate because we want to make sure the reports are fully
+  # generated before we clean the database data.
 
-  #task :export, [:uuid] => [:environment] do |task, args|
-  task :export, [:uuid] => [:environment] do |task, args|
-    logger = Logger.new(STDOUT)
+  namespace :export do
 
-    if args.class == String
-      uuid = args
-    else
+    # SYNTAX: bundle exec rake reports:export['805ad80f-ce16-4cf7-b8fc-93fa7c79655d']
+    desc "Export report to file."
+    task :report, [:uuid] => [:environment] do |task, args|
+      logger = Logger.new(STDOUT)
+
       uuid = args.uuid
+
+      report = Report.where(uid: uuid).first
+
+      if report.nil?
+        logger.info "[UsageReportsRake] Report not found for export: #{uuid}."
+      elsif (report.attachment.present?)
+        logger.info "[UsageReportsRake] Report already exported: #{uuid}."
+      else
+=begin
+        # Some conversion needed.
+        # report.compressed = nil
+        if (report.report_subsets.empty?)
+          report_subset = report.to_compress
+        else
+          report_subset = report.report_subsets.first
+        end
+        # report.update_column('compressed', report_subset.compressed)
+=end
+
+        # Get rendered report
+        @rails_session ||= ActionDispatch::Integration::Session.new(Rails.application)
+        @rails_session.get("/reports/#{uuid}")
+
+        content = @rails_session.response.body
+
+        # Save rendered report and clean up db fields.
+        report.save_as_attachment(content)
+
+        if report.attachment.present? && report.attachment.exists?
+          # MAKING THIS A SEPARATE TASK TO PRESERVE DATA UNTIL WE ARE SURE CORRECT REPORTS HAVE BEEN GENERATED.
+          # Clean data from DB only if export was successful. - Making this a separate task.
+          # report.clean_data
+          # logger.info "Report export SUCCESSFUL: #{uuid}, #{report_type(report)}."
+          puts "UsageReportsRake] Report export SUCCESSFUL: #{uuid}. (#{report_type(report)})"
+        else
+          # logger.error "Report export UNSUCCESSFUL: #{uuid}, #{report_type(report)}."
+          puts "UsageReportsRake] Report export UNSUCCESSFUL: #{uuid}. (#{report_type(report)})"
+        end
+      end
     end
 
-    report = Report.where(uid: uuid).first
+    task :compressed, [:uuid] => [:environment] do |task, args|
+      logger = Logger.new(STDOUT)
 
-    if report.nil?
-      logger.info "[UsageReportsRake] Report not found for export: #{uuid}."
-    elsif (report.attachment.present?)
-      logger.info "[UsageReportsRake] Report already exported: #{uuid}."
-    else
-      # Some conversion needed.
-      # report.compressed = nil
-      if (report.report_subsets.empty?)
-        report_subset = report.to_compress
-      else
-        report_subset = report.report_subsets.first
+      starting = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      n_processed = 0
+      n_errors = 0
+      n_already_done = 0
+      n_retrieved = Report.where(release: ["rd1", "rd2"]).merge(Report.where("exceptions LIKE '%?%'", 69)).count
+      Report.where(release: ["rd1", "rd2"]).merge(Report.where("exceptions LIKE ?", "%: 69,%")).find_each do |report|
+        # logger.info "UID: #{report.uid}, created_at: #{report.created_at}"
+
+        if (report.attachment.present? && report.attachment.exists?)
+          n_already_done += 1
+          logger.info "[UsageReportsRake] Report already exported: #{report.uid}.\n"
+        else
+          # Get rendered report
+          @rails_session ||= ActionDispatch::Integration::Session.new(Rails.application)
+          @rails_session.get("/reports/#{report.uid}")
+
+          content = @rails_session.response.body
+
+          # Save rendered report and clean up db fields.
+          report.save_as_attachment(content)
+
+          if report.attachment.present? && report.attachment.exists?
+            # MAKING THIS A SEPARATE TASK TO PRESERVE DATA UNTIL WE ARE SURE CORRECT REPORTS HAVE BEEN GENERATED.
+            # Clean data from DB only if export was successful. - Making this a separate task.
+            # report.clean_data
+            # logger.info "Report export SUCCESSFUL: #{uuid}, #{report_type(report)}."
+            n_processed += 1
+            logger.info "[UsageReportsRake] Report export SUCCESSFUL: #{report.uid}. (#{report_type(report)})\n"
+          else
+            n_errors += 1
+            # logger.error "Report export UNSUCCESSFUL: #{uuid}, #{report_type(report)}."
+            logger.info "[UsageReportsRake] Report export UNSUCCESSFUL: #{report.uid}. (#{report_type(report)})\n"
+          end
+          logger.info "PROCESSED SO FAR: #{n_processed}, LEFT TO GO: #{n_retrieved - n_processed}, ERRORS: #{n_errors}\n"
+          sleep(5)
+        end
       end
-      # report.update_column('compressed', report_subset.compressed)
 
-      # Get rendered report
-      @rails_session ||= ActionDispatch::Integration::Session.new(Rails.application)
-      @rails_session.get("/reports/#{uuid}")
+      ending = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
-      content = @rails_session.response.body
+      logger.info "**EXPORT FINISHED - ELAPSED TIME: #{(ending - starting)/60} minutes**"
+      logger.info "TOTAL COMPRESSED REPORTS RETRIEVED FROM DB: #{n_retrieved}"
+      logger.info "TOTAL RESOLUTION REPORTS ALREADY DONE: #{n_already_done}"
+      logger.info "TOTAL COMPRESSED REPORTS PROCESSED SUCCESSFULLY: #{n_processed}"
+      logger.info "TOTAL COMPRESSED REPORTS PROCESSED WITH ERRORS: #{n_errors}"
+    end
 
-      # Save rendered report and clean up db fields.
-      report.save_as_attachment(content)
+    task :normal, [:uuid] => [:environment] do |task, args|
+      logger = Logger.new(STDOUT)
 
-      if report.attachment.present? && report.attachment.exists?
-        # MAKING THIS A SEPARATE TASK TO PRESERVE DATA UNTIL WE ARE SURE CORRECT REPORTS HAVE BEEN GENERATED.
-        # Clean data from DB only if export was successful. - Making this a separate task.
-        # report.clean_data
-        # logger.info "Report export SUCCESSFUL: #{uuid}, #{report_type(report)}."
-        puts "UsageReportsRake] Report export SUCCESSFUL: #{uuid}. (#{report_type(report)})"
-      else
-        # logger.error "Report export UNSUCCESSFUL: #{uuid}, #{report_type(report)}."
-        puts "UsageReportsRake] Report export UNSUCCESSFUL: #{uuid}. (#{report_type(report)})"
+      starting = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      n_processed = 0
+      n_errors = 0
+      n_already_done = 0
+      n_retrieved = Report.where(release: ["rd1", "rd2"]).merge(Report.where.not("exceptions LIKE ?", "%: 69,%")).count
+      Report.where(release: ["rd1", "rd2"]).merge(Report.where.not("exceptions LIKE ?", "%: 69,%" )).find_each do | report |
+        # logger.info "UID: #{report.uid}, created_at: #{report.created_at}"
+
+        if (report.attachment.present? && report.attachment.exists?)
+          n_already_done += 1
+          logger.info "[UsageReportsRake] Report already exported: #{report.uid}.\n"
+        else
+          # Get rendered report
+          @rails_session ||= ActionDispatch::Integration::Session.new(Rails.application)
+          @rails_session.get("/reports/#{report.uid}")
+
+          content = @rails_session.response.body
+
+          # Save rendered report and clean up db fields.
+          report.save_as_attachment(content)
+
+          if report.attachment.present? && report.attachment.exists?
+            # MAKING THIS A SEPARATE TASK TO PRESERVE DATA UNTIL WE ARE SURE CORRECT REPORTS HAVE BEEN GENERATED.
+            # Clean data from DB only if export was successful. - Making this a separate task.
+            # report.clean_data
+            # logger.info "Report export SUCCESSFUL: #{uuid}, #{report_type(report)}."
+            n_processed += 1
+            logger.info "[UsageReportsRake] Report export SUCCESSFUL: #{report.uid}. (#{report_type(report)})\n"
+          else
+            n_errors += 1
+            # logger.error "Report export UNSUCCESSFUL: #{uuid}, #{report_type(report)}."
+            logger.info "[UsageReportsRake] Report export UNSUCCESSFUL: #{report.uid}. (#{report_type(report)})\n"
+          end
+          logger.info "PROCESSED SO FAR: #{n_processed}, LEFT TO GO: #{n_retrieved - n_processed}, ERRORS: #{n_errors}\n"
+          sleep(5)
+        end
       end
+
+      ending = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+      logger.info "**EXPORT FINISHED - ELAPSED TIME: #{(ending - starting)/60} minutes**"
+      logger.info "TOTAL NORMAL REPORTS RETRIEVED FROM DB: #{n_retrieved}"
+      logger.info "TOTAL NORMAL REPORTS ALREADY DONE: #{n_already_done}"
+      logger.info "TOTAL NORMAL REPORTS PROCESSED SUCCESSFULLY: #{n_processed}"
+      logger.info "TOTAL NORMAL REPORTS PROCESSED WITH ERRORS: #{n_errors}"
+    end
+
+    task :resolution, [:uuid] => [:environment] do |task, args|
+      logger = Logger.new(STDOUT)
+
+      starting = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      n_processed = 0
+      n_errors = 0
+      n_already_done = 0
+      n_retrieved = Report.where(release: ["drl"]).merge(Report.where("exceptions LIKE ?", "%: 69,%")).count
+      Report.where(release: ["drl"]).merge(Report.where("exceptions LIKE ?", "%: 69,%" )).find_each do | report |
+        # logger.info "UID: #{report.uid}, created_at: #{report.created_at}"
+
+        if (report.attachment.present? && report.attachment.exists?)
+          n_already_done += 1
+          logger.info "[UsageReportsRake] Report already exported: #{report.uid}.\n"
+        else
+          # Get rendered report
+          @rails_session ||= ActionDispatch::Integration::Session.new(Rails.application)
+          @rails_session.get("/reports/#{report.uid}")
+
+          content = @rails_session.response.body
+
+          # Save rendered report and clean up db fields.
+          report.save_as_attachment(content)
+
+          if report.attachment.present? && report.attachment.exists?
+            # MAKING THIS A SEPARATE TASK TO PRESERVE DATA UNTIL WE ARE SURE CORRECT REPORTS HAVE BEEN GENERATED.
+            # Clean data from DB only if export was successful. - Making this a separate task.
+            # report.clean_data
+            # logger.info "Report export SUCCESSFUL: #{uuid}, #{report_type(report)}."
+            n_processed += 1
+            logger.info "[UsageReportsRake] Report export SUCCESSFUL: #{report.uid}. (#{report_type(report)})\n"
+          else
+            n_errors += 1
+            # logger.error "Report export UNSUCCESSFUL: #{uuid}, #{report_type(report)}."
+            logger.info "[UsageReportsRake] Report export UNSUCCESSFUL: #{report.uid}. (#{report_type(report)})\n"
+          end
+          logger.info "PROCESSED SO FAR: #{n_processed}, LEFT TO GO: #{n_retrieved - n_processed}, ERRORS: #{n_errors}\n"
+          sleep(5)
+        end
+      end
+
+      ending = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+      logger.info "**EXPORT FINISHED - ELAPSED TIME: #{(ending - starting)/60} minutes**"
+      logger.info "TOTAL RESOLUTION REPORTS RETRIEVED FROM DB: #{n_retrieved}"
+      logger.info "TOTAL RESOLUTION REPORTS ALREADY DONE: #{n_already_done}"
+      logger.info "TOTAL RESOLUTION REPORTS PROCESSED SUCCESSFULLY: #{n_processed}"
+      logger.info "TOTAL RESOLUTION REPORTS PROCESSED WITH ERRORS: #{n_errors}"
     end
   end
 
@@ -198,18 +351,18 @@ namespace :reports do
     end
   end
 
-  # SYNTAX: bundle exec rake reports:export['805ad80f-ce16-4cf7-b8fc-93fa7c79655d']
-  # MIGRATION INCLUDES:
-  #   1. Generate report files in first pass.
-  #   2. Clean fields in database that contain large almounts of data. **(This script)**
-  #      - report.compressed
-  #      - report.datasets
-  #      - report_subsets.compressed
+  # SYNTAX: bundle exec rake reports:export['uid']
   desc "Clean report data."
   task :clean, [:uuid] => [:environment] do |task, args|
     logger = Logger.new(STDOUT)
 
-    uuid = args[:uuid]
+    if args.class == String
+      uuid = args
+    else
+      uuid = args.uuid
+    end
+
+    # uuid = args[:uuid]
     report = Report.where(uid: uuid).first
 
     if report.nil?
@@ -233,33 +386,82 @@ namespace :reports do
     end
   end
 
-  # SYNTAX: bundle exec rake reports:export_all
-  desc "Check whether reports have been exported."
-  task exported: :environment do
-    logger = Logger.new(STDOUT)
-    n_exported = 0
-    n_not_exported = 0
-    total = 0
+  namespace :status do
 
-    Report.all.find_each do |report|
-      total +=1
-      if report.attachment.present?
-        n_exported +=1
-        logger.info "[UsageReportsRake] Report has been **exported**: #{report.uid}."
-      else
-        n_not_exported +=1
-        logger.info "[UsageReportsRake] Report has NOT been exported: #{report.uid}."
+    # SYNTAX: bundle exec rake reports:exported
+    desc "Check whether reports have been exported."
+    task exported: :environment do
+      logger = Logger.new(STDOUT)
+      n_exported = 0
+      n_not_exported = 0
+      total = 0
+
+      Report.all.find_each do |report|
+        total +=1
+        if report.attachment.present?
+          n_exported +=1
+          logger.info "[UsageReportsRake] Report has been **exported**: #{report.uid}."
+        else
+          n_not_exported +=1
+          logger.info "[UsageReportsRake] Report has NOT been exported: #{report.uid}."
+        end
+        # sleep(5)
       end
-      # sleep(5)
+
+      logger.info "Reports already exported = #{n_exported}"
+      logger.info "Reports NOT yet exported = #{n_not_exported}"
+      logger.info "Total reports = #{total}"
     end
 
-    logger.info "Reports exported = #{n_exported}"
-    logger.info "Reports NOT exported = #{n_not_exported}"
-    logger.info "Total reports = #{total}"
+    # SYNTAX: bundle exec rake reports:exported
+    desc "Check totals of different types of reports."
+    task totals: :environment do
+      logger = Logger.new(STDOUT)
+      n_exported = 0
+      n_not_exported = 0
+      n_compressed = 0
+      n_resolution = 0
+      n_normal = 0
+      n_unknown = 0
+      total = 0;
+
+      Report.all.find_each do |report|
+        total +=1
+        if report.attachment.present?
+          n_exported +=1
+          # logger.info "[UsageReportsRake] Report has been **exported**: #{report.uid}."
+        else
+          n_not_exported +=1
+          # logger.info "[UsageReportsRake] Report has NOT been exported: #{report.uid}."
+        end
+
+        if report.compressed_report?
+          n_compressed += 1
+        elsif report.normal_report?
+          n_normal += 1
+        elsif report.resolution_report?
+          n_resolution += 1
+        else
+          n_unknown += 1
+        end
+
+        # sleep(5)
+      end
+
+      logger.info "Total compressed =  #{n_compressed}"
+      logger.info "Total normal =  #{n_normal}"
+      logger.info "Total resolution =  #{n_resolution}"
+      logger.info "Total unknown =  #{n_unknown}"
+
+      logger.info "Reports already exported = #{n_exported}"
+      logger.info "Reports NOT yet exported = #{n_not_exported}"
+      logger.info "Total reports = #{total}"
+    end
+
   end
 
   # SYNTAX: bundle exec rake reports:attrs['uid']
-  desc "Print report attributes - including type."
+  desc "Print report attributes."
   task :attrs, [:uid] => :environment do |task, args|
     logger = Logger.new(STDOUT)
 
@@ -275,19 +477,39 @@ namespace :reports do
       exit
     end
 
-    print_type(report)
+    print_attrs(report)
   end
 
-    # SYNTAX: bundle exec rake reports:paperclip
-    desc "Print paperclip config - where are my report files?"
-    task paperclip: :environment do
-      puts "PAPERCLIP REPORT STORAGE PARAMETERS:"
-      if Rails.application.config.paperclip_defaults.key?("s3_credentials")
-        puts Rails.application.config.paperclip_defaults.except(:s3_credentials).to_yaml
-      else
-        puts Rails.application.config.paperclip_defaults.to_yaml
-      end
+  # SYNTAX: bundle exec rake reports:attrs['uid']
+  desc "Print report type."
+  task :type, [:uid] => :environment do |task, args|
+    logger = Logger.new(STDOUT)
+
+    if args.uid.nil?
+      logger.error "'REPORT_UID' is a required argument."
+      exit
     end
+
+    report = Report.where(uid: args.uid).first
+
+    if report.nil?
+      logger.error "Report #{args.uid} not found."
+      exit
+    end
+
+    logger.info "REPORT TYPE: #{report_type(report)}"
+  end
+
+  # SYNTAX: bundle exec rake reports:paperclip
+  desc "Print paperclip config - where are my report files?"
+  task paperclip: :environment do
+    puts "PAPERCLIP REPORT STORAGE PARAMETERS:"
+    if Rails.application.config.paperclip_defaults.key?("s3_credentials")
+      puts Rails.application.config.paperclip_defaults.except(:s3_credentials).to_yaml
+    else
+      puts Rails.application.config.paperclip_defaults.to_yaml
+    end
+  end
 
   # Find and list reports of given type. Ask every 5 reports if you want to continue.
   # SYNTAX: bundle exec rake reports:find['type',N]
@@ -334,17 +556,6 @@ namespace :reports do
     end
   end
 
-  # SYNTAX: bundle exec rake reports:paperclip
-  desc "Print paperclip config - where are my report files?"
-  task paperclip: :environment do
-    puts "PAPERCLIP REPORT STORAGE PARAMETERS:"
-    if Rails.application.config.paperclip_defaults.key?("s3_credentials")
-      puts Rails.application.config.paperclip_defaults.except(:s3_credentials).to_yaml
-    else
-      puts Rails.application.config.paperclip_defaults.to_yaml
-    end
-  end
-
   def confirm
     $stdout.sync = true
     ask = true
@@ -368,10 +579,11 @@ namespace :reports do
     ret
   end
 
-  def print_type (report = nil, csv_file = nil)
+  def print_attrs (report = nil, csv_file = nil)
     if report.nil?
       return
     end
+
     separator = "\t"
 
     checksum = nil
@@ -409,7 +621,7 @@ namespace :reports do
     if report.normal_report?
       "NORMAL REPORT"
     elsif report.compressed_report?
-      "COMPReSSED REPORT"
+      "COMPRESSED REPORT"
     elsif report.resolution_report?
       "RESOLUTION REPORT"
     else
