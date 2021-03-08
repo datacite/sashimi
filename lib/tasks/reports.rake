@@ -224,7 +224,7 @@ namespace :reports do
             # logger.error "Report export UNSUCCESSFUL: #{uuid}, #{report_type(report)}."
             logger.info "[UsageReportsRake] Report export UNSUCCESSFUL: #{report.uid}. (#{report_type(report)})\n"
           end
-          logger.info "PROCESSED SO FAR: #{n_processed}, LEFT TO GO: #{n_retrieved - n_processed}, ERRORS: #{n_errors}\n"
+          logger.info "PROCESSED SO FAR: #{n_processed + n_already_done}, LEFT TO GO: #{n_retrieved - (n_processed + n_already_done)}, ERRORS: #{n_errors}\n"
           sleep(5)
         end
       end
@@ -274,7 +274,7 @@ namespace :reports do
             # logger.error "Report export UNSUCCESSFUL: #{uuid}, #{report_type(report)}."
             logger.info "[UsageReportsRake] Report export UNSUCCESSFUL: #{report.uid}. (#{report_type(report)})\n"
           end
-          logger.info "PROCESSED SO FAR: #{n_processed}, LEFT TO GO: #{n_retrieved - n_processed}, ERRORS: #{n_errors}\n"
+          logger.info "PROCESSED SO FAR: #{n_processed + n_already_done}, LEFT TO GO: #{n_retrieved - (n_processed + n_already_done)}, ERRORS: #{n_errors}\n"
           sleep(5)
         end
       end
@@ -324,7 +324,8 @@ namespace :reports do
             # logger.error "Report export UNSUCCESSFUL: #{uuid}, #{report_type(report)}."
             logger.info "[UsageReportsRake] Report export UNSUCCESSFUL: #{report.uid}. (#{report_type(report)})\n"
           end
-          logger.info "PROCESSED SO FAR: #{n_processed}, LEFT TO GO: #{n_retrieved - n_processed}, ERRORS: #{n_errors}\n"
+          logger.info "PROCESSED SO FAR: #{n_processed + n_already_done}, LEFT TO GO: #{n_retrieved - (n_processed + n_already_done)}, ERRORS: #{n_errors}\n"
+
           sleep(5)
         end
       end
@@ -403,7 +404,7 @@ namespace :reports do
           logger.info "[UsageReportsRake] Report has been **exported**: #{report.uid}."
         else
           n_not_exported +=1
-          logger.info "[UsageReportsRake] Report has NOT been exported: #{report.uid}."
+          logger.info "[UsageReportsRake] Report has NOT BEEN EXPORTED: #{report.uid}."
         end
         # sleep(5)
       end
