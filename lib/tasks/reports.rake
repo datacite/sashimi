@@ -141,7 +141,7 @@ namespace :reports do
 
   namespace :export do
 
-    # SYNTAX: bundle exec rake reports:export['805ad80f-ce16-4cf7-b8fc-93fa7c79655d']
+    # SYNTAX: bundle exec rake reports:export[uuid]
     desc "Export report to file."
     task :report, [:uuid] => [:environment] do |task, args|
       logger = Logger.new(STDOUT)
@@ -155,17 +155,6 @@ namespace :reports do
       elsif (report.attachment.present?)
         logger.info "[UsageReportsRake] Report already exported: #{uuid}."
       else
-=begin
-        # Some conversion needed.
-        # report.compressed = nil
-        if (report.report_subsets.empty?)
-          report_subset = report.to_compress
-        else
-          report_subset = report.report_subsets.first
-        end
-        # report.update_column('compressed', report_subset.compressed)
-=end
-
         # Get rendered report
         @rails_session ||= ActionDispatch::Integration::Session.new(Rails.application)
         @rails_session.get("/reports/#{uuid}")
@@ -352,7 +341,7 @@ namespace :reports do
     end
   end
 
-  # SYNTAX: bundle exec rake reports:export['uid']
+  # SYNTAX: bundle exec rake reports:export[uuid]
   desc "Clean report data."
   task :clean, [:uuid] => [:environment] do |task, args|
     logger = Logger.new(STDOUT)
@@ -378,13 +367,31 @@ namespace :reports do
     end
   end
 
-  # SYNTAX: bundle exec rake reports:export_all
-  desc "Clean JSON of all reports"
+  # SYNTAX: bundle exec rake reports:clean_all
+  desc "Clean report data from db, making sure that data is in the file system."
   task clean_all: :environment do
+    logger = Logger.new(STDOUT)
+
+    n_processed = 0
+    n_errors = 0
+    n_retrieved = Report.all.count
+
     Report.all.find_each do |report|
-      Rake::Task['reports:clean'].execute report.uid
-      sleep(5)
+      if (!report.attachment.present? || !report.attachment.exists?)
+        # Make sure attachment has been generated before we clean out report data.
+        n_errors += 1
+        logger.info "[UsageReportsRake] Report not yet eligible for cleaning: #{report.uid}."
+        logger.info "[UsageReportsRake] Report cleaning UNSUCCESSFUL: #{report.uid}. (#{report_type(report)})"
+      else
+        n_processed += 1
+        report.clean_data
+        logger.info "[UsageReportsRake] Report cleaning SUCCESSFUL: #{report.uid}. (#{report_type(report)})"
+      end
     end
+
+    logger.info "Reports cleaned = #{n_processed}"
+    logger.info "Reports with errors cleaning = #{n_errors}"
+    logger.info "Total reports retrieved = #{n_retrieved}"
   end
 
   namespace :status do
