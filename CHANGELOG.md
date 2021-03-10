@@ -1,8 +1,12 @@
 # Changelog
 
-## [Unreleased](https://github.com/datacite/sashimi/tree/HEAD)
+## [0.10.4](https://github.com/datacite/sashimi/tree/0.10.4) (2021-03-10)
 
-[Full Changelog](https://github.com/datacite/sashimi/compare/0.10.3...HEAD)
+[Full Changelog](https://github.com/datacite/sashimi/compare/0.10.3...0.10.4)
+
+**Implemented enhancements:**
+
+- WIP - svogt issue \#133 store reports as files [\#137](https://github.com/datacite/sashimi/pull/137) ([svogt0511](https://github.com/svogt0511))
 
 **Closed issues:**
 
@@ -33,10 +37,6 @@
 ## [0.10.2](https://github.com/datacite/sashimi/tree/0.10.2) (2020-07-14)
 
 [Full Changelog](https://github.com/datacite/sashimi/compare/0.10.1...0.10.2)
-
-**Implemented enhancements:**
-
-- WIP - svogt issue \#133 store reports as files [\#137](https://github.com/datacite/sashimi/pull/137) ([svogt0511](https://github.com/svogt0511))
 
 **Closed issues:**
 
