@@ -4,6 +4,7 @@ describe "Reports", type: :request do
   let(:bearer) { User.generate_token(exp: Time.now.to_i + 300, uid: "datacite.datacite", role_id: "client_admin") }
   let(:headers) { { "ACCEPT" => "application/json", "CONTENT_TYPE" => "application/json", "Authorization" => "Bearer " + bearer } }
 
+  # OK to use factory because we don't go to file system for this request.
   describe "GET /reports" do
     let!(:reports)  { create_list(:report, 3, compressed: nil) }
 
@@ -38,6 +39,7 @@ describe "Reports", type: :request do
     end
   end
 
+  # Old-style report, no attachment.
   describe "GET /reports/:id" do
     let(:report) { create(:report, compressed: nil) }
 
@@ -60,29 +62,84 @@ describe "Reports", type: :request do
     end
   end
 
-  describe "POST /reports" do
+  # New-style report (with attachment).
+  describe "GET /reports/:id" do
     let(:params) { file_fixture("report_3.json").read }
-    context "when the request is valid" do
-      before { post "/reports", params: params, headers: headers }
-      
 
-      it "creates a report" do
-        expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
-        expect(response).to have_http_status(201)
+    context "when the record exists" do
+      before do
+        post "/reports", params: params, headers: headers
+
+        @report_id = json.dig("report", "id")
+        @report_name = json.dig("report", "report-header", "report-name")
+
+        get "/reports/#{@report_id}", headers: headers
+      end
+
+      it "returns the report" do
+        expect(json.dig("report", "report-header", "report-name")).to eq(@report_name)
+        expect(response).to have_http_status(200)
       end
     end
 
-    # # commented because it takes too long
+    context "when the record does not exist" do
+      before { get "/reports/0f8372ff-9bbb-44d0-80ff-a03f308f5889", headers: headers }
+
+      it "returns status code 404" do
+        expect(response).to have_http_status(404)
+        expect(json["errors"].first).to eq("status" => "404", "title" => "The resource you are looking for doesn't exist.")
+      end
+    end
+  end
+
+  # NORMAL REPORTS - CREATE WITH DYNAMIC ID (new-style, with attachment)
+  describe "POST /reports" do
+
+    context "when the request is valid" do
+      let(:params) { file_fixture("report_3.json").read }
+
+      before do
+        post "/reports", params: params, headers: headers
+        @report_id = json.dig("report", "id")
+      end
+
+      it "creates a report" do
+        # Check response for correct values.
+        expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
+        expect(response).to have_http_status(201)
+
+        report = Report.where(uid: @report_id).first
+
+        # Check DB values are as expected.
+        expect(report).not_to be_nil
+        expect(report.report_datasets).to be_empty
+
+        expect(report.report_subsets.count).to eq(1)
+        report.report_subsets.each { |subset| expect(subset.compressed).to be_nil }
+
+        # CHECK FILE FOR CORRECT CONTENTS - DATASETS, COMPRESSED FIELDS, CHECKSUM?
+
+        # Check for the file (initialized and exists in the filesystem):
+        expect(report.attachment_file_name).to eq(@report_id + '.json')
+        expect(report.attachment.present?).to be true
+        expect(report.attachment.exists?).to be true
+      end
+    end
+
+    ##
+    ## Fails with a status of 422 - 'Unprocessable Entity'.
+    ##
+    # commented because it takes too long
     # context 'when the params is large' do
     #   let(:params) {file_fixture('large_file.json').read}
     #   before { post '/reports', params: params, headers: headers }
 
-    #   it 'succed large file to create a report' do
-    #     expect(response).to have_http_status(201)
+    #   it 'succeEd large file to create a report' do
+    #     expect(response).to have_http_status(201)param
     #   end
     # end
 
-    context "when the request is valid but another report from the same month exist" do
+    context "when the request is valid but another report from the same month exists" do
       let(:params) { file_fixture("report_3.json").read }
       let(:params_repeat) { file_fixture("report_repeat.json").read }
 
@@ -90,7 +147,6 @@ describe "Reports", type: :request do
       before { post "/reports", params: params_repeat, headers: headers }
 
       it "fails to create a report" do
-        # puts json
         expect(json.dig("report", "report-header", "created")).to eq("2128-04-09")
         expect(json.dig("report", "report-datasets", 0, "dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
         expect(response).to have_http_status(201)
@@ -98,6 +154,7 @@ describe "Reports", type: :request do
     end
 
     context "index filter by client_id" do
+      let(:params) { file_fixture("report_3.json").read }
       let!(:bearer_ext) { User.generate_token(uid: "datacite.demo",role_id: "client_admin") }
       let!(:headers_ext) { { "ACCEPT" => "application/json", "CONTENT_TYPE" => "application/json", "Authorization" => "Bearer " + bearer_ext } }
 
@@ -190,7 +247,7 @@ describe "Reports", type: :request do
       end
     end
 
-    context "when the params is missing is required attirbutes" do
+    context "when the params is missing is required attributes" do
       let(:params) { file_fixture("report_4.json").read }
       before { post "/reports", params: params, headers: headers }
 
@@ -204,7 +261,7 @@ describe "Reports", type: :request do
       before { post "/reports", params: params, headers: headers }
 
       it "succeds to create a report" do
-        puts json
+        # puts json
         expect(response).to have_http_status(201)
       end
     end
@@ -251,9 +308,11 @@ describe "Reports", type: :request do
     end
   end
 
+  # NORMAL REPORTS - CREATE/UPDATE WITH STATIC ID
   describe "PUT /reports/:id" do
     let!(:report) { create(:report) }
 
+    # Updates a report. Old-style (no attachment) => new-style (with attachment).
     context "when the record exists" do
       let(:params) do
         { "report-header": {
@@ -311,12 +370,129 @@ describe "Reports", type: :request do
             },
           ] }
       end
+
       before { put "/reports/#{report.uid}", params: params.to_json, headers: headers }
 
       it "updates the record" do
         # puts json
         expect(json.dig("report", "report-header", "created-by")).to eq("CDL")
         expect(response).to have_http_status(200)
+
+        # Check the DB structure
+        report_1 = Report.where(uid: report.uid).first
+
+        # Check DB values are as expected.
+        expect(report_1).not_to be_nil
+        expect(report_1.report_datasets).to be_empty
+
+        expect(report_1.report_subsets.count).to eq(1)
+        report.report_subsets.each { |subset| expect(subset.compressed).to be_nil }
+
+        # CHECK FILE FOR CORRECT CONTENTS - DATASETS, COMPRESSED FIELDS, CHECKSUM?
+
+        # Check for the file (initialized and exists in the filesystem):
+        expect(report_1.attachment_file_name).to eq(report.uid + '.json')
+        expect(report_1.attachment.present?).to be true
+        expect(report_1.attachment.exists?).to be true
+      end
+    end
+
+    # Creates/updates a report. New-style (with attachment) => new-style (with attachment).
+    context "when the record exists" do
+      let(:params) { file_fixture("report_3.json").read }
+      let(:params_1) do
+        { "report-header": {
+          "report-name": "Dataset Report",
+          "report-id": "DSR",
+          "release": "rd1",
+          "created": "2018-01-01",
+          "reporting-period": {
+            "begin-date": "2018-01-01",
+            "end-date": "2022-01-01",
+          },
+          "created-by": "CDL",
+          "report-filters": [],
+          "report-attributes": [],
+        },
+          "report-datasets": [
+            {
+              "yop": "2010",
+              "platform": "DataONE",
+              "data-type": "dataset",
+              "publisher": "DataONE",
+              "dataset-title": "This is a dataset",
+              "publisher-id": [
+                {
+                  "type": "orcid",
+                  "value": "0931-865-000-000",
+                },
+              ],
+              "dataset-id": [
+                {
+                  "type": "DOI",
+                  "value": "0931-865",
+                },
+              ],
+              "performance": [
+                {
+                  "period": {
+                    "begin-date": "2018-03-01",
+                    "end-date": "2018-03-31",
+                  },
+                  "instance": [
+                    {
+                      "access-method": "regular",
+                      "metric-type": "total-dataset-investigations",
+                      "count": 3,
+                    },
+                    {
+                      "access-method": "regular",
+                      "metric-type": "unique-dataset-investigations",
+                      "count": 3,
+                    },
+                  ],
+                },
+              ],
+            },
+          ] }
+      end
+
+      before do
+        @static_report_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+        put "/reports/#{@static_report_id}", params: params, headers: headers
+
+        @report_id = json.dig("report", "id")
+        @report_name = json.dig("report", "report-header", "report-name")
+
+        get "/reports/#{@report_id}", headers: headers
+      end
+
+      before { put "/reports/#{@report_id}", params: params_1.to_json, headers: headers }
+
+      it "updates the record" do
+        # Check response for correct values.
+        expect(json.dig("report", "report-header", "created-by")).to eq("CDL")
+        expect(response).to have_http_status(200)
+
+        # Check that we used the static_report_id.
+        expect(@report_id).to eq(@static_report_id)
+
+        # Check the DB structure
+        report_1 = Report.where(uid: @report_id).first
+
+        # Check DB values are as expected.
+        expect(report_1).not_to be_nil
+        expect(report_1.report_datasets).to be_empty
+
+        expect(report_1.report_subsets.count).to eq(1)
+        report_1.report_subsets.each { |subset| expect(subset.compressed).to be_nil }
+
+        # CHECK FILE FOR CORRECT CONTENTS - DATASETS, COMPRESSED FIELDS, CHECKSUM?
+
+        # Check for the file (initialized and exists in the filesystem):
+        expect(report_1.attachment_file_name).to eq(@report_id + '.json')
+        expect(report_1.attachment.present?).to be true
+        expect(report_1.attachment.exists?).to be true
       end
     end
 
@@ -382,6 +558,7 @@ describe "Reports", type: :request do
           ] }
       end
 
+      # Will see 'KeyError - key not found "report_header"' from this.  That is valid.
       before { put "/reports/#{report.uid}", params: params.to_json, headers: headers }
 
       it "returns status code 400" do
@@ -418,106 +595,8 @@ describe "Reports", type: :request do
       end
     end
   end
-  # Test suite for DELETE /reports/:id
-  describe "DELETE /reports/:id" do
-    let(:bearer) { User.generate_token(exp: Time.now.to_i + 300, uid: "datacite.datacite", role_id: "staff_admin") }
-    let(:headers) { { "ACCEPT" => "application/json", "CONTENT_TYPE" => "application/json", "Authorization" => "Bearer " + bearer } }
-    let!(:report)  { create(:report) }
 
-    before { delete "/reports/#{report.uid}", headers: headers }
-
-    it "returns status code 204" do
-      expect(response).to have_http_status(204)
-    end
-
-    context "when the resources doesnt exist" do
-      before { delete "/reports/0f8372ff-9bbb-44d0-80ff-a03f308f5889", headers: headers }
-
-      it "returns status code 404" do
-        expect(response).to have_http_status(404)
-        expect(json["errors"].first).to eq("status" => "404", "title" => "The resource you are looking for doesn't exist.")
-      end
-    end
-
-    context "when a user wants to delete" do
-      let(:bearer) { User.generate_token(exp: Time.now.to_i + 300, uid: "datacite.client", role_id: "client_admin") }
-      let(:headers) { { "ACCEPT" => "application/json", "CONTENT_TYPE" => "application/json", "Authorization" => "Bearer " + bearer } }  
-      let!(:report)  { create(:report) }
-
-      before { delete "/reports/#{report.uid}", headers: headers }
-
-      it "returns status code 401" do
-        expect(response).to have_http_status(401)
-        expect(json["errors"].first).to eq("status" => "401", "title" => "You are not authorized to access this resource.")
-      end
-    end
-  end
-
-  describe "UPSERT /reports/:id" do
-    let!(:uid) { SecureRandom.uuid }
-    let(:uri) { "/reports/#{uid}" }
-    let(:params) { file_fixture("report_7.json").read }
-
-    context "as admin user" do
-      before { put "/reports/#{uid}", params: params, headers: headers }
-
-      it "it should create a report" do
-        # puts json
-        expect(response).to have_http_status(201)
-        expect(json["errors"]).to be_nil
-        expect(json.dig("report", "id")).to eq(uid)
-        expect(json.dig("report", "report-header", "created-by")).to eq("dash")
-      end
-    end
-
-    context "entry already exists with other uuid" do
-      # let!(:report) { create(:report) }
-      let!(:uid) { SecureRandom.uuid }
-      let!(:second_uid) { SecureRandom.uuid }
-      let(:params_update) { file_fixture("report_8.json").read }
-
-      before { put "/reports/#{uid}", params: params_update, headers: headers }
-
-      before { put "/reports/#{second_uid}", params: params_update, headers: headers }
-
-      it "should fail update report" do
-        expect(response).to have_http_status(409)
-        expect(json["report"]).to be_nil
-        expect(json["errors"].first).to eq("status" => "409", "title" => "The resource already exists.")
-      end
-    end
-
-    context "entry already exists" do
-      let!(:uid) { SecureRandom.uuid }
-      let(:params_update) { file_fixture("report_8.json").read }
-
-      before { put "/reports/#{uid}", params: params, headers: headers }
-
-      before { put "/reports/#{uid}", params: params_update, headers: headers }
-
-      it "should update report" do
-        expect(response).to have_http_status(200)
-
-        expect(json["errors"]).to be_nil
-        expect(json.dig("report", "id")).to eq(uid)
-        expect(json.dig("report", "report-header", "release")).to eq("rd1")
-      end
-    end
-  end
-
-  #   describe "IRUS-UK report" do
-  #   let(:params) {file_fixture('irus_uk.json').read}
-
-  #   context 'when the request is valid' do
-  #     before { post '/reports', params: params, headers: headers }
-
-  #     it 'creates a report' do
-  #       expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
-  #       expect(response).to have_http_status(201)
-  #     end
-  #   end
-  # end
-
+  # COMPRESSED REPORTS
   describe "Compressed Reports" do
     let(:bigly) { file_fixture("small_dataone.json").read }
 
@@ -530,6 +609,7 @@ describe "Reports", type: :request do
     end
     let(:gzipped) { ActiveSupport::Gzip.compress(bigly) }
 
+    # Create new-style report (with attachment) - paged.
     describe "add subset to report" do
       context "when the report exist" do
         # let(:dataone) {file_fixture('small_dataone.json').read}
@@ -553,8 +633,16 @@ describe "Reports", type: :request do
         it "should add subsets" do
           uid = json.dig("report", "id")
           report = Report.where(uid: uid).first
+          expect(report).not_to be_nil
           expect(report.report_subsets.size).to eq(2)
           expect(report.report_subsets.first.report_id).to eq(uid)
+          report.report_subsets.each { |subset| expect(subset.compressed).to be_nil }
+          expect(report.report_datasets).to be_empty
+
+          # Check for the file (initialized and exists in the filesystem):
+          expect(report.attachment_file_name).to eq(uid + '.json')
+          expect(report.attachment.present?).to be true
+          expect(report.attachment.exists?).to be true
         end
       end
 
@@ -576,6 +664,11 @@ describe "Reports", type: :request do
           report = Report.where(uid: uid).first
           expect(report.report_subsets.size).to eq(1)
           expect(report.report_subsets.first.report_id).to eq(uid)
+
+          # Check for the file (initialized and exists in the filesystem):
+          expect(report.attachment_file_name).to eq(uid + '.json')
+          expect(report.attachment.present?).to be true
+          expect(report.attachment.exists?).to be true
         end
       end
     end
@@ -663,115 +756,126 @@ describe "Reports", type: :request do
         end
       end
     end
+  end
 
-    # context 'Resolution when the request is valid' do
-    #   let(:resolutions) {file_fixture('report_resolution.json').read}
-    #   let(:headers)  { {
-    #     'Content-Type' => 'application/gzip',
-    #     'Content-Encoding' => 'gzip',
-    #     'ACCEPT'=>'gzip',
-    #     'Authorization' => 'Bearer ' + bearer
-    #   } }
-    #   let(:gzip) do
-    #     ActiveSupport::Gzip.compress(resolutions)
-    #   end
-    #   before { post '/reports', params: gzip, headers: headers }
+  # RESOLUTION REPORTS
+  describe "Resolution reports" do
+    context 'Resolution when the request is valid' do
+      let(:resolutions) {file_fixture('report_resolution.json').read}
+      let(:headers)  { {
+        'Content-Type' => 'application/gzip',
+        'Content-Encoding' => 'gzip',
+        'ACCEPT'=>'gzip',
+        'Authorization' => 'Bearer ' + bearer
+      } }
+      let(:gzip) do
+        ActiveSupport::Gzip.compress(resolutions)
+      end
+      before { post '/reports', params: gzip, headers: headers }
 
-    #   it 'creates a Resolution report' do
-    #     #puts json
-    #     expect(json.dig("report", "report-header", "report-name")).to eq("resolution report")
-    #     expect(json.dig("report", "report-header", "release")).to eq("drl")
-    #     expect(response).to have_http_status(201)
-    #   end
+      it 'creates a Resolution report' do
+        # puts json
+        # puts resolutions
+        expect(json.dig("report", "report-header", "report-name")).to eq("resolution report")
+        expect(json.dig("report", "report-header", "release")).to eq("drl")
+        expect(response).to have_http_status(201)
+      end
 
-    #   it 'decodes correctly' do
-    #     gzip_3 = Base64.decode64(json.dig("report", "gzip"))
-    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-    #     expect(gzip_3).to eq(report.compressed)
-    #   end
+      it 'decodes correctly' do
+        gzip = Base64.decode64(json.dig("report", "report-subsets", 0, "gzip"))
+        unzip = Zlib::GzipReader.new(StringIO.new(gzip)).read
+        unzip_hash = JSON.parse(unzip)
+        resolutions_hash = JSON.parse(resolutions)
 
-    #   it 'decrompress correctly' do
-    #     # puts resolutions
-    #     parser = Yajl::Parser.new
-    #     gzip_2 = Base64.decode64(json.dig("report", "gzip"))
-    #     fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip_2))
-    #     expect(fjson.dig("report-datasets",0,"yop")).to eq("2017")
-    #     expect(fjson.dig("report-datasets",0,"platform")).to eq("datacite")
-    #     expect(fjson.dig("report-datasets").length).to eq(34)
-    #   end
+        # Check a couple things rendered report vs the input file.
+        expect(unzip_hash.dig("report-header", "report-name")).to eq(resolutions_hash.dig("report-header", "report-name"))
+        expect(unzip_hash.dig("report-header", "report-id")).to eq(resolutions_hash.dig("report-header", "report-id"))
+        expect(unzip_hash.dig("report-header", "release")).to eq(resolutions_hash.dig("report-header", "release"))
+        expect(unzip_hash.dig("report-datasets").count).to eq(resolutions_hash.dig("report-datasets").count)
+        # expect(fjson.dig("report-datasets",0,"yop")).to eq("2017")
+        # expect(fjson.dig("report-datasets",0,"platform")).to eq("datacite")
+        # expect(fjson.dig("report-datasets").length).to eq(34)
+      end
 
-    #   it 'checksum doesnt fail' do
-    #     report_checksum = json.dig("report", "checkum")
-    #     gzip_2 = Base64.decode64(json.dig("report", "gzip"))
-    #     decode_checksum = Digest::SHA256.hexdigest(gzip_2)
-    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-    #     original_checksum = report.checksum
-    #     expect(report_checksum).eql?(original_checksum)
-    #     expect(original_checksum).eql?(decode_checksum)
-    #     expect(report_checksum).eql?(decode_checksum)
-    #   end
-    # end
+      it 'checksum doesnt fail' do
+        # puts json
+        report_checksum = json.dig("report", "report-subsets", 0, "checksum")
+        gzip_2 = Base64.decode64(json.dig("report", "report-subsets", 0, "gzip"))
+        decode_checksum = Digest::SHA256.hexdigest(gzip_2)
+        report = Report.where(uid:json.dig("report", "id")).first
+        original_checksum = ReportSubset.where(checksum:report_checksum).first.checksum
 
-    # context 'when acces_method not in the insatnce' do
-    #   let(:dataone) {file_fixture('DSR-D1-2012-07-10.json').read}
-    #   before { post '/reports', params: dataone, headers: headers }
+        expect(report_checksum).eql?(original_checksum)
+        expect(original_checksum).eql?(decode_checksum)
+        expect(report_checksum).eql?(decode_checksum)
+      end
+    end
+  end
 
-    #   it 'fail to create' do
-    #     #puts json
-    #     expect(json.dig("errors",0, "title")).to eq("found unpermitted parameter: :access-method")
-    #     expect(response).to have_http_status(422)
-    #   end
-    # end
+  # MISC TESTS REPORTS - these were originally commented out. Leaving them for now.
+=begin
+  describe "Misc Reports" do
+    context 'when access_method not in the instance' do
+      let(:dataone) {file_fixture('DSR-D1-2012-07-10.json').read}
+      before { post '/reports', params: dataone, headers: headers }
 
-    # context 'when the request is valid and compressed with small file without message' do
-    #   let(:bigly) {file_fixture('report_compressed.json').read}
+      it 'fail to create' do
+        #puts json
+        expect(json.dig("errors",0, "title")).to eq("found unpermitted parameter: :access-method")
+        expect(response).to have_http_status(422)
+      end
+    end
 
-    #   let(:headers)  { {
-    #     'Content-Type' => 'json',
-    #     'Content-Encoding' => 'gzip',
-    #     'ACCEPT'=>'json',
-    #     'Authorization' => 'Bearer ' + bearer
-    #   } }
-    #   let(:gzip) do
-    #     ActiveSupport::Gzip.compress(bigly)
-    #   end
+    context 'when the request is valid and compressed with small file without message' do
+      let(:bigly) {file_fixture('report_compressed.json').read}
 
-    #   before { post '/reports', params: gzip, headers: headers }
+      let(:headers)  { {
+        'Content-Type' => 'json',
+        'Content-Encoding' => 'gzip',
+        'ACCEPT'=>'json',
+        'Authorization' => 'Bearer ' + bearer
+      } }
+      let(:gzip) do
+        ActiveSupport::Gzip.compress(bigly)
+      end
 
-    #   it 'creates a report' do
-    #     expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
-    #     expect(json.dig("report","report-datasets",0,"empty")).to eq("too large")
-    #     expect(json.dig("report","report-datasets",0,"checksum")).not_to be_nil
-    #   end
+      before { post '/reports', params: gzip, headers: headers }
 
-    #   it 'decodes correctly' do
-    #     gzip = Base64.decode64(json.dig("report", "gzip"))
-    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-    #     expect(gzip).to eq(report.compressed)
-    #   end
+      it 'creates a report' do
+        puts json
+        expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
+        expect(json.dig("report","report-datasets",0,"empty")).to eq("too large")
+        expect(json.dig("report","report-datasets",0,"checksum")).not_to be_nil
+      end
 
-    #   it 'decrompress correctly' do
-    #     parser = Yajl::Parser.new
-    #     gzip_2 = Base64.decode64(json.dig("report", "gzip"))
-    #     puts ActiveSupport::Gzip.decompress(gzip_2)
-    #     fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip_2))
-    #     expect(fjson.dig("report-header", "report-name")).to eq("dataset report")
-    #     expect(fjson.dig("report-datasets",0,"yop")).to eq("2018")
-    #     expect(fjson.dig("report-datasets").length).to eq(1)
-    #     expect(fjson.dig("report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
-    #   end
+      it 'decodes correctly' do
+        gzip = Base64.decode64(json.dig("report", "gzip"))
+        report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+        expect(gzip).to eq(report.compressed)
+      end
 
-    #   it 'checksum doesnt fail' do
-    #     report_checksum = json.dig("report", "checkum")
-    #     gzip_2 = Base64.decode64(json.dig("report", "gzip"))
-    #     decode_checksum = Digest::SHA256.hexdigest(gzip_2)
-    #     report = Report.where(uid:json.dig("report", "report-header","report-id")).first
-    #     original_checksum = report.checksum
-    #     expect(report_checksum).eql?(original_checksum)
-    #     expect(original_checksum).eql?(decode_checksum)
-    #     expect(report_checksum).eql?(decode_checksum)
-    #   end
-    # end
+      it 'decrompress correctly' do
+        parser = Yajl::Parser.new
+        gzip_2 = Base64.decode64(json.dig("report", "gzip"))
+        puts ActiveSupport::Gzip.decompress(gzip_2)
+        fjson = parser.parse(ActiveSupport::Gzip.decompress(gzip_2))
+        expect(fjson.dig("report-header", "report-name")).to eq("dataset report")
+        expect(fjson.dig("report-datasets",0,"yop")).to eq("2018")
+        expect(fjson.dig("report-datasets").length).to eq(1)
+        expect(fjson.dig("report-datasets",0,"dataset-title")).to eq("chemical shift-based methods in nmr structure determination")
+      end
+
+      it 'checksum doesnt fail' do
+        report_checksum = json.dig("report", "checkum")
+        gzip_2 = Base64.decode64(json.dig("report", "gzip"))
+        decode_checksum = Digest::SHA256.hexdigest(gzip_2)
+        report = Report.where(uid:json.dig("report", "report-header","report-id")).first
+        original_checksum = report.checksum
+        expect(report_checksum).eql?(original_checksum)
+        expect(original_checksum).eql?(decode_checksum)
+        expect(report_checksum).eql?(decode_checksum)
+      end
+    end
 
     # context 'when the request is valid and compressed but not very large file' do
     #   let(:bigly) {file_fixture('large_file_lc_2.json').read}
@@ -905,4 +1009,5 @@ describe "Reports", type: :request do
     #   end
     # end
   end
+=end
 end

@@ -36,7 +36,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 
   config.include JobHelper, type: :job
-  
+
   # don't use transactions, use database_clear gem via support file
   config.use_transactional_fixtures = false
 
@@ -44,6 +44,20 @@ RSpec.configure do |config|
   config.include RequestSpecHelper, type: :request
 
   ActiveJob::Base.queue_adapter = :test
+
+  ## To do: find another way to track and delete test files.
+  ## Dev/Test/Stage- {Rails.root}/public/report_files.
+  ## Production - AWS S3 BUCKET (report_files directory)
+  # Cleans up generated reports files after test run.
+  # Make sure we are not doing this in production.
+  config.after(:each) do # :suite or :each or :all
+    # Never delete files in production. This is dangerous, should find another way to clean up.
+    if Rails.env.development? || Rails.env.test? || Rails.env.stage?
+      Dir["#{Rails.root}/public/report_files/**"].each do |file|
+          # File.delete(file)
+      end
+    end
+  end
 end
 
 VCR.configure do |c|
@@ -53,4 +67,7 @@ VCR.configure do |c|
   c.ignore_hosts "codeclimate.com"
   c.configure_rspec_metadata!
   c.default_cassette_options = { :match_requests_on => [:method, :path] }
+  # Allow AWS S3 requests to go through in testing without VCR, for now.
+  c.allow_http_connections_when_no_cassette = true
 end
+

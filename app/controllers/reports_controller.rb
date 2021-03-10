@@ -16,6 +16,8 @@ class ReportsController < ApplicationController
   before_action :validate_monthly_report, only: %i[create update]
   authorize_resource except: %i[index show]
 
+  after_action :clean_data, only: %i[create update]
+
   def index
     page = (params.dig(:page, :number) || 1).to_i
     size = (params.dig(:page, :size) || 25).to_i
@@ -63,7 +65,15 @@ class ReportsController < ApplicationController
   end
 
   def show
-    render json: @report
+    # If we have an attachment file, just retrieve it, otherwise do the usual rendering.
+    # We need to use the report header from the db with the report_subsets from the attachment.
+    if Report.has_attribute?('attachment_file_name') && @report.attachment.present?
+      content = @report.load_attachment!
+      content = JSON.parse(content)
+      render json: @report, status: :ok, serializer: ReportAttachmentSerializer, report_attachment: content
+    else
+      render json: @report
+    end
   end
 
   def update
@@ -72,17 +82,31 @@ class ReportsController < ApplicationController
     @report = Report.where(uid: params[:id]).first
     exists = @report.present?
 
-    if exists && params[:compressed].present?
-      @report.report_subsets.destroy_all
-      @report.report_subsets << ReportSubset.new(compressed: safe_params[:compressed])
+    # Parts of the report not kept in the DB will be loaded from the file system.
+    # If no attachment exists, we assume this is an 'old-style' report.
+    if exists && Report.has_attribute?('attachment_file_name') && (@report.attachment.present?) && (@report.attachment.exists?)
+      @report.load_attachment!
+    end
+
+		if exists && params[:compressed].present?
+      # Deletes report file, we are updating the report
+			@report.attachment = nil
+      @report.save
+			@report.report_subsets.destroy_all
+			@report.report_subsets << ReportSubset.new(compressed: safe_params[:compressed])
       # authorize! :delete_all, @report.report_subsets
     end
-    # create report if it doesn't exist already
+		# create report if it doesn't exist already
+		if @report.blank?
+			Rails.logger.info "REPORT IS BLANK."
+		end
     @report = Report.new(safe_params.merge(uid: params[:id])) if @report.blank?
     # authorize! :update, @report
 
     if @report.update(safe_params.merge(@user_hash))
-      render json: @report, status: exists ? :ok : :created
+      content = render json: @report, status: exists ? :ok : :created
+      @report.save_as_attachment(content)
+      content
     else
       Rails.logger.warn @report.errors.inspect
       render json: serialize(@report.errors), status: :unprocessable_entity
@@ -97,6 +121,12 @@ class ReportsController < ApplicationController
       first
     exists = @report.present?
 
+    # Parts of the report not kept in the DB will be loaded from the file system.
+    # If no attachment exists, we assume this is an 'old-style' report.
+    if exists && Report.has_attribute?('attachment_file_name') && (@report.attachment.present?) && (@report.attachment.exists?)
+      @report.load_attachment!
+    end
+
     @report.report_subsets << ReportSubset.new(compressed: safe_params[:compressed]) if @report.present? && params[:compressed].present?
     # add_subsets
 
@@ -104,7 +134,9 @@ class ReportsController < ApplicationController
     # authorize! :create, @report
 
     if @report.save
-      render json: @report, status: :created
+      content = render json: @report, status: :created
+      @report.save_as_attachment(content)
+      content
     else
       Rails.logger.error @report.errors.inspect
       render json: @report.errors, status: :unprocessable_entity
@@ -126,6 +158,10 @@ class ReportsController < ApplicationController
   def validate_monthly_report
     # period =safe_params.fetch("reporting_period",nil)
     fail JSON::ParserError, "Reports are monthly, reporting dates need to be within the same month" if get_month(params[:report_header].dig(:reporting_period, "begin_date")) != get_month(params[:report_header].dig(:reporting_period, "end_date"))
+  end
+
+  def clean_data
+    @report.clean_data
   end
 
   private

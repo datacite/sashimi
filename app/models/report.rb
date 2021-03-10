@@ -6,6 +6,9 @@ class Report < ApplicationRecord
 
   has_many :report_subsets, autosave: true, dependent: :destroy
 
+  has_attached_file :attachment
+  validates_attachment_file_name :attachment, matches: [/json\z/]
+
   # has_one_attached :report
   COMPRESSED_HASH_MESSAGE = { "code" => 69, "severity" => "warning", "message" => "report is compressed using gzip", "help-url" => "https://github.com/datacite/sashimi", "data" => "usage data needs to be uncompressed" }.freeze
 
@@ -29,8 +32,25 @@ class Report < ApplicationRecord
   before_validation :set_uid, on: :create
   after_save :to_compress
   after_validation :clean_datasets
+
   # before_create :set_id
   after_commit :push_report, if: :normal_report?
+
+
+  def clean_data
+    update_column("compressed", nil)
+    if !self.resolution_report?
+      update_column("report_datasets", [])
+    end
+
+    update_column("release", self.release.downcase)
+
+    report_subsets.each do | report_subset |
+      report_subset.clean_data
+    end
+  end
+
+  before_destroy :destroy_attachment, on: :delete
   after_destroy_commit :destroy_report_events, on: :delete
 
   # after_commit :validate_report_job, unless: :normal_report?
@@ -45,24 +65,33 @@ class Report < ApplicationRecord
 
   def self.destroy_events(uid, _options = {})
     url = "#{ENV['API_URL']}/events?" + URI.encode_www_form("subj-id" => "#{ENV['API_URL']}/reports/#{uid}")
-    response = Maremma.get url
-    events = response.fetch("data", [])
+
+    # Handle the error so we can have /delete in development.
+    begin
+      response = Maremma.get url
+      events = response.fetch("data", [])
+    rescue StandardError
+      Rails.logger.info "Exception deleting events for this report - no events for report uid: " + uid.to_s + "."
+    end
+
     # TODO add error class
-    fail "there are no events for this report" if events.is_empty?
+    # fail "there are no events for this report" if events.is_empty?
+    if events && !events.is_empty?
+      events.each do |event|
+        id = event.fetch("id", nil)
+        next if id.is_nil?
 
-    events.each do |event|
-      id = event.fetch("id", nil)
-      next if id.is_nil?
-
-      delete_url = "#{ENV['API_URL']}/events/#{id}"
-      r = Maremma.delete(delete_url)
-      message = r.status == 204 ? "[UsageReports] Event #{id} from report #{uid} was deleted" : "[UsageReports] did not delete #{id}"
-      Rails.logger.info message
+        delete_url = "#{ENV['API_URL']}/events/#{id}"
+        r = Maremma.delete(delete_url)
+        message = r.status == 204 ? "[UsageReports] Event #{id} from report #{uid} was deleted" : "[UsageReports] did not delete #{id}"
+        Rails.logger.info message
+      end
+    else
+      Rails.logger.info "there are no events for this report"
     end
   end
 
   def push_report
-    Rails.logger.debug "[UsageReports] calling queue for " + uid
     body = { report_id: report_url }
 
     send_message(body) if ENV["AWS_REGION"].present?
@@ -89,30 +118,123 @@ class Report < ApplicationRecord
   end
 
   def self.compressed_report?
+    # check for data sets !empty
     return nil if exceptions.empty? || compressed.nil?
 
-    # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
     code = exceptions.first.fetch("code", "")
 
+    (code == 69) && ((release.downcase == "rd1") || (release.downcase == "rd2"))
+=begin
     if code == 69
       true
     end
+=end
   end
 
   def normal_report?
-    return nil if compressed_report? || report_datasets.nil?
-
+    return nil if self.compressed_report? || self.resolution_report?
     true
   end
 
   def compressed_report?
-    return nil if exceptions&.empty? || compressed.nil?
+    return nil if self.exceptions.nil? || self.exceptions.empty?
+    code = self.exceptions.first.fetch("code", "")
+    (code == 69) && ((release.downcase == "rd1") || (release.downcase == "rd2"))
+  end
 
-    # self.exceptions.include?(COMPRESSED_HASH_MESSAGE)
-    code = exceptions.first.fetch("code", "")
+  def resolution_report?
+    return nil if self.exceptions.nil? || self.exceptions.empty?
+    code = self.exceptions.first.fetch("code", "")
+    (code == 69) && (self.release.downcase == "drl")
+  end
 
-    if code == 69
-      true
+  # Builds attachment from (rendered) content and saves it.
+  def save_as_attachment(content)
+    file_name = "#{self.uid}.json"
+
+    # Use Tempfile - so we can handle large amounts of data.
+    tmp = File.new("tmp/" + file_name, "w")
+    tmp << content
+    tmp.flush
+
+    self.attachment_file_name = file_name
+    self.update_attributes(:attachment => tmp)
+
+    # Make sure the tmp file is deleted.
+    File.delete(tmp)
+  end
+
+  # If there is an attachment: loads the file and returns the text.
+  def load_attachment
+    if attachment.present?
+      begin
+				content = Paperclip.io_adapters.for(self.attachment).read
+      rescue StandardError
+        fail "The attachment for this report cannot be found: " + self.attachment.url.to_s
+      end
+    end
+  end
+
+  # If there is a file attachment to this report: loads the report file and sets
+  # the correct fields from the report file instead of the database.
+  def load_attachment!
+    if !attachment.present?
+      fail "[UsageReports] All reports should have an attachment."
+    end
+
+		content = load_attachment
+    attachment = AttachmentParser.new(content)
+		uuid = attachment.uuid
+
+    if uuid.blank?
+      fail "[UsageReports] Report-uid missing from attachment."
+    end
+    if uuid != uid
+      fail "[UsageReports] Report-uid does not match attachment uid."
+    end
+
+    # set report.compressed from the attachment.
+    if compressed_report? || resolution_report?
+      report_subset = report_subsets.order("created_at ASC").first
+      attachment_subset = attachment.search_subsets(checksum: report_subset.checksum)
+      fail "[UsageReports] cannot find gzip for a report-subset" if attachment_subset.blank?
+
+      self.compressed = ::Base64.strict_decode64(attachment.subset_checksum(subset: attachment_subset))
+    elsif normal_report?
+      Rails.logger.info "[UsageReports] normal report"
+    else
+      fail "[UsageReports] Unrecognizable report type."
+    end
+
+    # Set report datasets from attachment.
+    self.report_datasets = attachment.datasets
+
+    # Loop over report_subsets setting report_subset gzip from the attachment.
+    self.report_subsets.each do | report_subset |
+      attachment_subset = attachment.search_subsets(checksum: report_subset.checksum)
+
+      if attachment_subset.blank?
+        fail "[UsageReports] Cannot find report-subset gzip field."
+      end
+
+      report_subset.compressed = ::Base64.strict_decode64(attachment.subset_gzip(subset: attachment_subset))
+    end
+
+    # Return the same thing as load_attachment, but the report object has been changed.
+    content
+  end
+
+  def destroy_attachment
+    if self.attachment.present?
+      self.attachment = nil
+    end
+  end
+
+  def to_compress
+    if compressed.nil? && report_subsets.empty?
+      ReportSubset.create(compressed: compress, report_id: uid)
+    elsif report_subsets.empty?
+      ReportSubset.create(compressed: compressed, report_id: uid)
     end
   end
 
@@ -121,15 +243,6 @@ class Report < ApplicationRecord
   # random number that fits into MySQL bigint field (8 bytes)
   def set_id
     self.id = SecureRandom.random_number(9223372036854775807)
-  end
-
-  def to_compress
-    if compressed.nil? && report_subsets.empty?
-      ReportSubset.create(compressed: compress, report_id: uid)
-    elsif report_subsets.empty?
-      ReportSubset.create(compressed: compressed, report_id: uid)
-      # ReportSubset.create(compressed: self.compressed, report_id: self.report_id)
-    end
   end
 
   def clean_datasets

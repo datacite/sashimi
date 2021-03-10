@@ -1,5 +1,3 @@
-
-
 require_relative 'boot'
 
 require "rails"
@@ -102,15 +100,19 @@ module Sashimi
     config.middleware.use Rack::Deflater
 
     # set Active Job queueing backend
-    if ENV["AWS_REGION"]
-      config.active_job.queue_adapter = :shoryuken
-    else
-      config.active_job.queue_adapter = :inline
-    end
+    config.active_job.queue_adapter = ENV["AWS_REGION"] ? :shoryuken : :inline
     config.active_job.queue_name_prefix = Rails.env
 
     config.generators do |g|
       g.fixture_replacement :factory_bot
     end
+
+    # kt-paperclip global defaults
+    config.paperclip_defaults = {
+      storage: :filesystem,
+      path: ":rails_root/public/report_files/:filename",
+      url: "http://localhost/report_files/:filename",
+      use_timestamp: false,
+    }
   end
 end

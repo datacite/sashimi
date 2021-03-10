@@ -17,6 +17,10 @@ class ReportSubset < ApplicationRecord
 
   after_commit :validate_report_job, on: :create
 
+	def clean_data
+    update_column("compressed", nil)
+  end
+
   def validate_report_job(options = {})
     ValidationJob.perform_later(id, options)
   end
@@ -27,8 +31,6 @@ class ReportSubset < ApplicationRecord
 
   def push_report
     return false if aasm != "valid"
-
-    Rails.logger.info "[UsageReports] calling queue for #{id}"
     body = { report_id: report_subset_url }
 
     send_message(body) if ENV["AWS_REGION"].present?
