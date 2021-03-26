@@ -34,7 +34,7 @@ gem 'iso_country_codes'
 gem 'sentry-raven', '~> 2.9'
 gem 'git', '~> 1.5'
 gem "sprockets", "~> 3.7", ">= 3.7.2"
-gem "kt-paperclip", "~> 6.3"
+gem "kt-paperclip", "~> 6.4.1"
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.8'
