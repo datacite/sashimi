@@ -4,6 +4,10 @@
 
 [Full Changelog](https://github.com/datacite/sashimi/compare/0.10.5...HEAD)
 
+**Implemented enhancements:**
+
+- Store uploaded files in Amazon S3 instead of the database. [\#133](https://github.com/datacite/sashimi/issues/133)
+
 **Closed issues:**
 
 - .env.example file needs minor edit [\#134](https://github.com/datacite/sashimi/issues/134)
