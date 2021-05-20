@@ -24,24 +24,35 @@ class AttachmentParser
     subsets.nil? || subsets.empty? ? 0 : subsets.count
   end
 
-  def search_subsets (checksum:)
+  def search_subsets(checksum:)
     subsets = @attachment.dig("report", "report-subsets")
     return nil if subsets.nil? || subsets.empty?
+
     subsets.select { | subset | subset["checksum"] == checksum }.first
   end
 
-  def subset_checksum (subset:)
+  def find_subset(checksum)
+    subsets = @attachment.dig("report", "report-subsets")
+    return nil if subsets.nil? || subsets.empty?
+
+    subsets.find { | subset | subset["checksum"] == checksum }
+  end
+
+  def subset_checksum(subset:)
     return nil if subset.nil? || subset.empty?
+
     subset.dig("checksum") || ""
   end
 
-  def subset_gzip (subset:)
+  def subset_gzip(subset:)
     return nil if subset.nil? || subset.empty?
+
     subset.dig("gzip") || ""
   end
 
-	def subset_compressed (subset:)
+  def subset_compressed(subset:)
     return nil if subset.nil? || subset.empty?
+
     ::Base64.strict_decode64(subset.fetch("gzip", nil))
   end
 end
