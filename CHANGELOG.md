@@ -12,6 +12,10 @@
 
 - .env.example file needs minor edit [\#134](https://github.com/datacite/sashimi/issues/134)
 
+**Merged pull requests:**
+
+- Issue-140 - Sashimi is not signalling events to levriero for compress… [\#141](https://github.com/datacite/sashimi/pull/141) ([svogt0511](https://github.com/svogt0511))
+
 ## [0.10.5](https://github.com/datacite/sashimi/tree/0.10.5) (2021-03-26)
 
 [Full Changelog](https://github.com/datacite/sashimi/compare/0.10.4...0.10.5)
