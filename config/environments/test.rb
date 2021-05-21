@@ -49,7 +49,7 @@ Rails.application.configure do
   config.paperclip_defaults = {
     storage: :filesystem,
     path: ":rails_root/public/report_files/:filename",
-    url: "http://localhost/report_files/:filename",
+    url: "/report_files/:filename",
     use_timestamp: false,
   }
 end
