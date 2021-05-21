@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased](https://github.com/datacite/sashimi/tree/HEAD)
+
+[Full Changelog](https://github.com/datacite/sashimi/compare/0.10.6...HEAD)
+
+**Closed issues:**
+
+- Sashimi is not signalling events to levriero for compressed report submission. [\#140](https://github.com/datacite/sashimi/issues/140)
+
 ## [0.10.6](https://github.com/datacite/sashimi/tree/0.10.6) (2021-05-21)
 
 [Full Changelog](https://github.com/datacite/sashimi/compare/0.10.5...0.10.6)
@@ -291,7 +299,6 @@
 
 - Feature parametrise compressed reports [\#51](https://github.com/datacite/sashimi/pull/51) ([kjgarza](https://github.com/kjgarza))
 - Feature accept compressed reports [\#50](https://github.com/datacite/sashimi/pull/50) ([kjgarza](https://github.com/kjgarza))
-- Feature send reports sqs [\#18](https://github.com/datacite/sashimi/pull/18) ([kjgarza](https://github.com/kjgarza))
 
 ## [0.8.5](https://github.com/datacite/sashimi/tree/0.8.5) (2018-10-29)
 
@@ -401,6 +408,7 @@
 
 **Merged pull requests:**
 
+- Feature send reports sqs [\#18](https://github.com/datacite/sashimi/pull/18) ([kjgarza](https://github.com/kjgarza))
 - Basic filtering [\#16](https://github.com/datacite/sashimi/pull/16) ([kjgarza](https://github.com/kjgarza))
 - Feature kebab case normalisation [\#13](https://github.com/datacite/sashimi/pull/13) ([kjgarza](https://github.com/kjgarza))
 - Feature sushi validation [\#12](https://github.com/datacite/sashimi/pull/12) ([kjgarza](https://github.com/kjgarza))
