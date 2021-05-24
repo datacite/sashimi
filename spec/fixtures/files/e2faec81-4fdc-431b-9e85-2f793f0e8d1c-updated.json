@@ -1,0 +1,104 @@
+{
+  "report": {
+    "id": "e2faec81-4fdc-431b-9e85-2f793f0e8d1c",
+    "report-header": {
+      "report-name": "dataset report",
+      "report-id": "DSR",
+      "client-id": "admin",
+      "year": "2021",
+      "month": "3",
+      "release": "rd1",
+      "created-by": "Dryad",
+      "created": "2021-01-02",
+      "reporting-period": {
+        "end-date": "2021-03-31",
+        "begin-date": "2021-03-01"
+      },
+      "report-filters": [],
+      "report-attributes": [],
+      "exceptions": []
+    },
+    "report-datasets": [
+      {
+        "dataset-title": "PowerShell Verbs and Parameters",
+        "yop": "2013",
+        "uri": "https://datadryad.org/stash/dataset/doi:10.15146/5pps-c762",
+        "platform": "Dryad",
+        "data-type": "dataset",
+        "publisher": "Dryad",
+        "publisher-id": [
+          {
+            "type": "isni",
+            "value": "0000000404085195"
+          }
+        ],
+        "dataset-dates": [
+          {
+            "type": "pub-date",
+            "value": "2013-03-26"
+          }
+        ],
+        "performance": [
+          {
+            "period": {
+              "end-date": "2021-03-31",
+              "begin-date": "2021-03-01"
+            },
+            "instance": [
+              {
+                "access-method": "regular",
+                "metric-type": "total-dataset-requests",
+                "count": 10,
+                "country-counts": {
+                  "in": 10
+                }
+              },
+              {
+                "access-method": "regular",
+                "metric-type": "unique-dataset-requests",
+                "count": 10,
+                "country-counts": {
+                  "in": 10
+                }
+              },
+              {
+                "access-method": "regular",
+                "metric-type": "total-dataset-investigations",
+                "count": 11,
+                "country-counts": {
+                  "in": 11
+                }
+              },
+              {
+                "access-method": "regular",
+                "metric-type": "unique-dataset-investigations",
+                "count": 11,
+                "country-counts": {
+                  "in": 11
+                }
+              }
+            ]
+          }
+        ],
+        "dataset-contributors": [
+          {
+            "type": "name",
+            "value": "Patrick Gallucci"
+          }
+        ],
+        "dataset-id": [
+          {
+            "type": "doi",
+            "value": "10.15146/5pps-c762"
+          }
+        ]
+      }
+    ],
+    "report-subsets": [
+      {
+        "gzip": "H4sIAFDSpmAAA7VU227bMAz9lcDPUW3nts3PA/YarMBehmCQJdYWqkqeJHczAv/7SPkSu2iBYUPjADFJ8RySh8o1cdBYF1gNXIJLiuvkMPwJkiKRPHAPYTN4k+0UVhKDn++/Ro8GPIO2kznawgEPQPFdtstZht/dzc3KjjJdx+WMpkzFGnDKSioAjPyBtDAD7NmecEuolHkZyfKkn4t6UDqA80nx/TL7eAhOlW2A0Q2/BTRBWRPtW+7YKHmvU9csqKCJ7Wx/gbuvQevNN3Cl33AjN2fucEaRcJt0tolV5Xs0WqfQqENofJGmBCap3zvrqtQjcp2OBKm0qsizu/yYH07psWk8Ex9ONK1G8/Bg3dNiVpTDQtcsZKGDbamVr0m7+eTsizJhP2OW8kZh+Jnrlsxs+Bzw+XjMPx2T/rKdW6c5+2UygkbnAoDaJRF2p5iKElLJ3AiIiStJ2ZuSvowMkiqDk5qQuBDgPcNp1wSImlWt5g4R0OWUmMYSbOB6kpI5+NmCDySPsK0JSbEf31zH4q+n4pTBQN9v/56mNQqR359n3Y4yz8iiKj5s70x2eIvs8D9N/QvbZblAwprh5lm32qP4x3LboTOnIh43X7jWrRBqtYTr9cXLskh85dpQAf0f/TQSItMEAAA=",
+        "checksum": "92aa1113a933333297cd2aa10d69c1429bacde5b7f700607a9ed37b80b6891d0"
+      }
+    ]
+  }
+}
