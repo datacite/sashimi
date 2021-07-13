@@ -8,6 +8,10 @@
 
 - Sashimi is not signalling events to levriero for compressed report submission. [\#140](https://github.com/datacite/sashimi/issues/140)
 
+**Merged pull requests:**
+
+- Issue-140 - modify rake tasks to allow push of report files to levriero. [\#142](https://github.com/datacite/sashimi/pull/142) ([svogt0511](https://github.com/svogt0511))
+
 ## [0.10.6](https://github.com/datacite/sashimi/tree/0.10.6) (2021-05-21)
 
 [Full Changelog](https://github.com/datacite/sashimi/compare/0.10.5...0.10.6)
@@ -231,6 +235,7 @@
 - Bump byebug from 10.0.2 to 11.0.1 [\#64](https://github.com/datacite/sashimi/pull/64) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump better\_errors from 2.5.0 to 2.5.1 [\#63](https://github.com/datacite/sashimi/pull/63) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump factory\_bot\_rails from 4.11.1 to 5.0.2 [\#62](https://github.com/datacite/sashimi/pull/62) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Basic filtering [\#16](https://github.com/datacite/sashimi/pull/16) ([kjgarza](https://github.com/kjgarza))
 
 ## [0.9.7](https://github.com/datacite/sashimi/tree/0.9.7) (2019-05-17)
 
@@ -388,7 +393,6 @@
 **Merged pull requests:**
 
 - Bug variousfixes [\#28](https://github.com/datacite/sashimi/pull/28) ([kjgarza](https://github.com/kjgarza))
-- Feature UPSERT for Sashimi report [\#27](https://github.com/datacite/sashimi/pull/27) ([kjgarza](https://github.com/kjgarza))
 
 ## [v0.0.1](https://github.com/datacite/sashimi/tree/v0.0.1) (2018-05-15)
 
@@ -408,8 +412,8 @@
 
 **Merged pull requests:**
 
+- Feature UPSERT for Sashimi report [\#27](https://github.com/datacite/sashimi/pull/27) ([kjgarza](https://github.com/kjgarza))
 - Feature send reports sqs [\#18](https://github.com/datacite/sashimi/pull/18) ([kjgarza](https://github.com/kjgarza))
-- Basic filtering [\#16](https://github.com/datacite/sashimi/pull/16) ([kjgarza](https://github.com/kjgarza))
 - Feature kebab case normalisation [\#13](https://github.com/datacite/sashimi/pull/13) ([kjgarza](https://github.com/kjgarza))
 - Feature sushi validation [\#12](https://github.com/datacite/sashimi/pull/12) ([kjgarza](https://github.com/kjgarza))
 - Authentication [\#8](https://github.com/datacite/sashimi/pull/8) ([mfenner](https://github.com/mfenner))
