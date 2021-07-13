@@ -8,6 +8,7 @@ namespace :reports do
     logger.info "indexing reports of type #{release}" if release
 
     Report.where(release: release).find_each do |report|
+      report.load_attachment!
       if report.normal_report?
         body = { report_id: report.report_url }
         report.send_message(body)
@@ -41,6 +42,8 @@ namespace :reports do
       exit
     end
 
+    report.load_attachment!
+
     if report.normal_report?
       body = { report_id: report.report_url }
       report.send_message(body)
@@ -61,6 +64,7 @@ namespace :reports do
   desc "Validate all reports"
   task validate: :environment do
     Report.all.find_each do |report|
+      report.load_attchment!
       if report.compressed_report?
         report.report_subsets.each do |subset|
           subset.validate_report_job(validate_only: true)
@@ -83,6 +87,8 @@ namespace :reports do
       logger.error "Report #{ENV['REPORT_UUID']} not found."
       exit
     end
+
+    report.load_attachment!
 
     if report.compressed_report?
       report.report_subsets.each do |subset|
@@ -117,6 +123,8 @@ namespace :reports do
       logger.error "Report #{ENV['REPORT_UUID']} not found."
       exit
     end
+
+    report.load_attachment!
 
     if report.compressed_report?
       if report.compressed_report?
