@@ -45,11 +45,20 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  # kt-paperclip global defaults
+  # kt-paperclip global defaults - note bucket is different per environment.
   config.paperclip_defaults = {
-    storage: :filesystem,
-    path: ":rails_root/public/report_files/:filename",
-    url: "/report_files/:filename",
+    storage: :s3,
+    s3_protocol: "https",
+    # s3_host_alias: 's3-eu-west-1.amazonaws.com',
+    s3_credentials: {
+      access_key_id: ENV["AWS_ACCESS_KEY_ID"].to_s,
+      secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"].to_s,
+      s3_region: ENV["AWS_REGION"],
+    },
+    bucket: ENV["AWS_S3_BUCKET"],
+    path: "/report_files/:filename",
+    url: ":s3_domain_url",
     use_timestamp: false,
   }
+
 end
