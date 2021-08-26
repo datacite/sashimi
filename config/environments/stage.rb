@@ -64,19 +64,19 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   # config.active_record.dump_schema_after_migration = false
 
- # kt-paperclip global defaults - note bucket is different per environment.
- config.paperclip_defaults = {
-  storage: :s3,
-  s3_protocol: "https",
-  # s3_host_alias: 's3-eu-west-1.amazonaws.com',
-  s3_credentials: {
-    access_key_id: ENV["AWS_ACCESS_KEY_ID"].to_s,
-    secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"].to_s,
-    s3_region: ENV["AWS_REGION"],
-  },
-  bucket: ENV["AWS_S3_BUCKET"],
-  path: "/report_files/:filename",
-  url: ":s3_domain_url",
-  use_timestamp: false,
-}
+  # kt-paperclip global defaults - note bucket is different per environment.
+  config.paperclip_defaults = {
+    storage: :s3,
+    s3_protocol: "https",
+    # s3_host_alias: 's3-eu-west-1.amazonaws.com',
+    s3_credentials: {
+      access_key_id: ENV["AWS_ACCESS_KEY_ID"].to_s,
+      secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"].to_s,
+      s3_region: ENV["AWS_REGION"] || "eu-west-1",
+    },
+    bucket: ENV["AWS_S3_BUCKET"] || "metrics-api.stage.datacite.org",
+    path: "/report_files/:filename",
+    url: ":s3_domain_url",
+    use_timestamp: false,
+  }
 end

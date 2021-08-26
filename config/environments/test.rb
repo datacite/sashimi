@@ -53,9 +53,9 @@ Rails.application.configure do
     s3_credentials: {
       access_key_id: ENV["AWS_ACCESS_KEY_ID"].to_s,
       secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"].to_s,
-      s3_region: ENV["AWS_REGION"],
+      s3_region: ENV["AWS_REGION"] || "eu-west-1",
     },
-    bucket: ENV["AWS_S3_BUCKET"],
+    bucket: ENV["AWS_S3_BUCKET"] || "metrics-api.test.datacite.org",
     path: "/report_files/:filename",
     url: ":s3_domain_url",
     use_timestamp: false,
