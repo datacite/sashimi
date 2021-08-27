@@ -66,6 +66,7 @@ after_success:
       docker build -f Dockerfile -t $REPO:$TRAVIS_BRANCH .;
       docker push $REPO:$TRAVIS_BRANCH;
       echo "Pushed to" $REPO:$TRAVIS_BRANCH;
+      AUTO_DEPLOY=true;
     fi
 
   - if [ "$AUTO_DEPLOY" == "true" ]; then
@@ -77,20 +78,20 @@ after_success:
       git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
       ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:mastino/stage/services/metrics-api/_sashimi.auto.tfvars;
 
-      if [ "${TRAVIS_TAG?}" ]; then
-        ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:mastino/prod-eu-west/services/metrics-api/_sashimi.auto.tfvars;
-      fi
+      # if [ "${TRAVIS_TAG?}" ]; then
+      #   ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:mastino/prod-eu-west/services/metrics-api/_sashimi.auto.tfvars;
+      # fi
 
-      sentry-cli releases new sashimi:${GIT_TAG} --finalize --project sashimi;
+      # sentry-cli releases new sashimi:${GIT_TAG} --finalize --project sashimi;
 
-      if [ "${TRAVIS_TAG?}" ]; then
-        ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:mastino/prod-eu-west/services/client-api/_sashimi.auto.tfvars;
-        sentry-cli releases deploys sashimi:${GIT_TAG} new -e production;
-      else
-        sentry-cli releases deploys sashimi:${GIT_TAG} new -e stage;
-      fi
+      # if [ "${TRAVIS_TAG?}" ]; then
+      #   ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:mastino/prod-eu-west/services/client-api/_sashimi.auto.tfvars;
+      #   sentry-cli releases deploys sashimi:${GIT_TAG} new -e production;
+      # else
+      #   sentry-cli releases deploys sashimi:${GIT_TAG} new -e stage;
+      # fi
 
-      sentry-cli releases set-commits --auto sashimi:${GIT_TAG};
+      # sentry-cli releases set-commits --auto sashimi:${GIT_TAG};
       
       cd mastino;
       git remote;
