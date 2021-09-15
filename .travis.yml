@@ -27,7 +27,7 @@ before_install:
   - mysql -e 'CREATE DATABASE sashimi_test;'
 
 install:
-  - travis_retry bundle install  
+  - travis_retry bundle install
   - curl -sL https://sentry.io/get-cli/ | bash
   - sentry-cli --version
 
@@ -74,42 +74,40 @@ after_success:
       rm dockerize-linux-amd64-v0.6.0.tar.gz;
       export GIT_SHA=$(git rev-parse --short HEAD);
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
-      git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
+    
+      git clone "https://${TRAVIS_SECURE_TOKEN_1}@github.com/datacite/mastino.git";
       ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:mastino/stage/services/metrics-api/_sashimi.auto.tfvars;
-
-      if [ "${TRAVIS_TAG?}" ]; then
-        ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:mastino/prod-eu-west/services/metrics-api/_sashimi.auto.tfvars;
-      fi
 
       sentry-cli releases new sashimi:${GIT_TAG} --finalize --project sashimi;
 
       if [ "${TRAVIS_TAG?}" ]; then
-        ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:mastino/prod-eu-west/services/client-api/_sashimi.auto.tfvars;
-        sentry-cli releases deploys sashimi:${GIT_TAG} new -e production;
+        ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:mastino/prod-eu-west/services/metrics-api/_sashimi.auto.tfvars;
+        ./dockerize -template vendor/docker/_sashimi.auto.tfvars.tmpl:mastino/test/services/metrics-api/_sashimi.auto.tfvars;
+        sentry-cli releases new sashimi:${GIT_TAG} --finalize --project sashimi;
       else
         sentry-cli releases deploys sashimi:${GIT_TAG} new -e stage;
       fi
 
       sentry-cli releases set-commits --auto sashimi:${GIT_TAG};
-      
+
       cd mastino;
       git remote;
       git config user.email ${DOCKER_EMAIL};
       git config user.name ${DOCKER_USERNAME};
-      
+
       if [ "${TRAVIS_TAG?}" ]; then
         git add prod-eu-west/services/metrics-api/_sashimi.auto.tfvars;
         git add test/services/metrics-api/_sashimi.auto.tfvars;
         git commit -m "${AUTHOR_NAME} Adding sashimi git variables for commit tagged ${TRAVIS_TAG?}";
-        git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
+        git push "https://${TRAVIS_SECURE_TOKEN_1}@github.com/datacite/mastino.git" master;
       elif [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
         git add stage/services/metrics-api/_sashimi.auto.tfvars;
         git commit -m "Adding sashimi git variables for pull request ${TRAVIS_PULL_REQUEST}";
-        git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" ${TRAVIS_PULL_REQUEST_BRANCH};
+        git push "https://${TRAVIS_SECURE_TOKEN_1}@github.com/datacite/mastino.git" ${TRAVIS_PULL_REQUEST_BRANCH};
       else
         git add stage/services/metrics-api/_sashimi.auto.tfvars;
         git commit -m "Adding sashimi git variables for latest commit";
-        git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
+        git push "https://${TRAVIS_SECURE_TOKEN_1}@github.com/datacite/mastino.git" master;
       fi
     fi
 
