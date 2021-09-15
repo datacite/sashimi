@@ -1,4 +1,4 @@
-# DataCite Usage Reports API 
+# DataCite Usage Reports API
 
 [![Build Status](https://travis-ci.org/datacite/sashimi.svg?branch=master)](https://travis-ci.org/datacite/sashimi) [![Docker Build Status](https://img.shields.io/docker/build/datacite/sashimi.svg)](https://hub.docker.com/r/datacite/sashimi/) [![Maintainability](https://api.codeclimate.com/v1/badges/a0d15834af2cdc24e22f/maintainability)](https://codeclimate.com/github/datacite/sashimi/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/a0d15834af2cdc24e22f/test_coverage)](https://codeclimate.com/github/datacite/sashimi/test_coverage)
 
@@ -59,7 +59,7 @@ Resource components can be used in conjunction with identifiers to retrieve the 
 
 | resource                    | description                       |
 |:----------------------------|:----------------------------------|
-| `/reports/{report-uid}`           | returns metadata for the specified Report. The report UID is a UUID according to RFC 4122. |
+| `/reports/{report-uid}`           |   returns metadata for the specified Report. The report UID is a UUID according to RFC 4122. |
 
 ## Depositing Reports
 
@@ -77,7 +77,7 @@ curl --header "Content-Type: application/json; Accept: application/json" -H "X-A
     "release": "rd1",
     "created": "2016-09-08t22:47:31z",
     "created-by": "dataone",
-		"reporting-period": 
+		"reporting-period":
     {
         "begin-date": "2018-05-01",
         "end-date": "2018-05-30"
@@ -173,7 +173,7 @@ The allowed and recommended characters for an URL safe naming of parameters are 
 
 ## Report Storage
 
-Reports are stored in a S3 bucket using ActiveStorage. We are storing them rather than in MySQL because report can get rather big as mentioned in the [COUNTER documentation](https://groups.niso.org/workrooms/sushi/start/clients). 
+Reports are stored in a S3 bucket using ActiveStorage. We are storing them rather than in MySQL because report can get rather big as mentioned in the [COUNTER documentation](https://groups.niso.org/workrooms/sushi/start/clients).
 
 ## Register a large Usage Report
 
@@ -212,13 +212,13 @@ When sending the compressed reports you need to send them using application/gzip
 URI = 'https://api.datacite.org/reports'
 
 def post_file file
-  
+
   headers = {
     content_type: "application/gzip",
     content_encoding: 'gzip',
     accept: 'gzip'
   }
-  
+
   body = compress(file)
 
   request = Maremma.post(URI, data: body,
@@ -244,7 +244,7 @@ POST /reports
 POST /reports
 ```
 
-To update an existing compressed report make a PUT request followed with as many POST requests with the same report-header as you need. For example: 
+To update an existing compressed report make a PUT request followed with as many POST requests with the same report-header as you need. For example:
 
 ```shell
 PUT /reports/{report-id}
@@ -262,7 +262,7 @@ Very basic querying is supported and just for fields in the header of the report
 
 ## Pagination
 
-Pagination follows the JSOANPI specification. 
+Pagination follows the JSOANPI specification.
 
 Follow along via [Github Issues](https://github.com/datacite/sashimi/issues).
 
