@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/datacite/sashimi/tree/HEAD)
+## [0.10.7](https://github.com/datacite/sashimi/tree/0.10.7) (2021-09-15)
 
-[Full Changelog](https://github.com/datacite/sashimi/compare/0.10.6...HEAD)
+[Full Changelog](https://github.com/datacite/sashimi/compare/0.10.6...0.10.7)
 
 **Closed issues:**
 
