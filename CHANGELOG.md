@@ -10,6 +10,7 @@
 
 **Merged pull requests:**
 
+- Update test [\#147](https://github.com/datacite/sashimi/pull/147) ([svogt0511](https://github.com/svogt0511))
 - update-test: force update of test env, make sure test env uses AWS S3. [\#145](https://github.com/datacite/sashimi/pull/145) ([svogt0511](https://github.com/svogt0511))
 - update-test: force update of test env, make sure test env uses AWS S3. [\#144](https://github.com/datacite/sashimi/pull/144) ([svogt0511](https://github.com/svogt0511))
 - Issue-140 - modify rake tasks to allow push of report files to levriero. [\#142](https://github.com/datacite/sashimi/pull/142) ([svogt0511](https://github.com/svogt0511))
@@ -236,7 +237,7 @@
 - Bump iso8601 from 0.9.1 to 0.12.1 [\#70](https://github.com/datacite/sashimi/pull/70) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump byebug from 10.0.2 to 11.0.1 [\#64](https://github.com/datacite/sashimi/pull/64) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump better\_errors from 2.5.0 to 2.5.1 [\#63](https://github.com/datacite/sashimi/pull/63) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Feature subsetted reports [\#54](https://github.com/datacite/sashimi/pull/54) ([kjgarza](https://github.com/kjgarza))
+- Bump factory\_bot\_rails from 4.11.1 to 5.0.2 [\#62](https://github.com/datacite/sashimi/pull/62) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 
 ## [0.9.7](https://github.com/datacite/sashimi/tree/0.9.7) (2019-05-17)
 
@@ -284,6 +285,10 @@
 - Store report with a limit of 50K datasets [\#53](https://github.com/datacite/sashimi/issues/53)
 - Enable compression on display [\#47](https://github.com/datacite/sashimi/issues/47)
 
+**Merged pull requests:**
+
+- Feature subsetted reports [\#54](https://github.com/datacite/sashimi/pull/54) ([kjgarza](https://github.com/kjgarza))
+
 ## [0.9.1](https://github.com/datacite/sashimi/tree/0.9.1) (2018-11-22)
 
 [Full Changelog](https://github.com/datacite/sashimi/compare/0.9.0...0.9.1)
@@ -299,7 +304,6 @@
 
 **Merged pull requests:**
 
-- Bump factory\_bot\_rails from 4.11.1 to 5.0.2 [\#62](https://github.com/datacite/sashimi/pull/62) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Feature parametrise compressed reports [\#51](https://github.com/datacite/sashimi/pull/51) ([kjgarza](https://github.com/kjgarza))
 - Feature accept compressed reports [\#50](https://github.com/datacite/sashimi/pull/50) ([kjgarza](https://github.com/kjgarza))
 
