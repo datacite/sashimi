@@ -1,7 +1,6 @@
 name: Workflow Dispatch - test any branch
 
 on:
-
   workflow_dispatch:
 
 jobs:
@@ -34,12 +33,14 @@ jobs:
       JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
       JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
+      USAGE_URL: "http://localhost"
+      API_URL: "http://localhost"
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Ruby 2.4.4
+      - name: Set up Ruby 2.6
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: 2.4
+          ruby-version: '2.6.x'
       - uses: actions/cache@v2
         with:
           path: vendor/bundle
@@ -62,7 +63,7 @@ jobs:
           MEMCACHE_SERVERS: "localhost:11211"
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_S3_BUCKET: 'metrics-api.stage.datacite.org'
+          # AWS_S3_BUCKET: 'metrics-api.stage.datacite.org'
         run: |
           # bundle exec rubocop
           bundle exec rspec

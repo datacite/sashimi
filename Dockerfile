@@ -1,4 +1,4 @@
-FROM phusion/passenger-full:0.9.30
+FROM phusion/passenger-full:2.0.0
 LABEL maintainer="kgarza@datacite.org"
 LABEL maintainer_name="Kristian Garza"
 
@@ -12,8 +12,8 @@ RUN usermod -a -G docker_env app
 # Use baseimage-docker's init process.
 CMD ["/sbin/my_init"]
 
-# Install Ruby 2.4.4
-RUN bash -lc 'rvm --default use ruby-2.4.4'
+# Install Ruby 2.6.8
+RUN bash -lc 'rvm --default use ruby-2.6.8'
 
 # Update installed APT packages
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
@@ -35,7 +35,7 @@ COPY vendor/docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
 COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
 
 # enable SSH
-RUN rm -f /etc/service/sshd/down 
+RUN rm -f /etc/service/sshd/down
 
 # Use Amazon NTP servers
 COPY vendor/docker/ntp.conf /etc/ntp.conf
