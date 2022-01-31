@@ -1,8 +1,8 @@
-name: Workflow Dispatch - test branch
-
+name: Pull request
 on:
-  workflow_dispatch:
-
+  pull_request:
+    branches:
+      - master
 jobs:
   test:
     runs-on: ubuntu-latest
