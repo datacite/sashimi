@@ -1,0 +1,180 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - "master"
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      memcached:
+        image: memcached:1.4.31
+        ports:
+          - 11211/udp
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: metrics_stage
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        ports:
+          - 3306
+      redis:
+        image: redis:6
+        ports:
+          - 6379:6379
+    env:
+      MEMCACHE_SERVERS: "localhost:11211"
+      MYSQL_HOST: "127.0.0.1"
+      MYSQL_DATABASE: metrics_stage
+      MYSQL_USER: root
+      SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+      SESSION_ENCRYPTED_COOKIE_SALT: ${{ secrets.SESSION_ENCRYPTED_COOKIE_SALT }}
+      JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
+      JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby 2.6
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.6.x'
+      - uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      - name: Install
+        env:
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+        run: |
+          cp .env.build .env
+          gem install bundler
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+          sudo /etc/init.d/mysql start
+          bundle exec rails db:setup RAILS_ENV=test
+      - name: Lint and Test
+        env:
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+          MEMCACHE_SERVERS: "localhost:11211"
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET: 'metrics-api.stage.datacite.org'
+        run: |
+          # bundle exec rubocop
+          # Run the tests in subsets instead of all at once.
+          bundle exec rspec
+          echo $?
+      # - name: Publish code coverage
+      #   uses: paambaati/codeclimate-action@v2.7.5
+      #   env:
+      #     CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ github.repository }}:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Push to GitHub Packages
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+  deploy:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Extract variables
+        shell: bash
+        run: |
+          echo "::set-output name=BRANCH::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
+          echo "::set-output name=TAG::$(git tag --points-at HEAD)"
+          echo "::set-output name=GIT_SHA::$(git rev-parse HEAD)"
+          echo "::set-output name=GIT_SHA_SHORT::$(git rev-parse --short HEAD)"
+          echo "::set-output name=MESSAGE::$(git log --format=%B -n 1 ${{ github.event.after }})"
+        id: extract_variables
+
+      - name: Checkout terraform config repo
+        uses: actions/checkout@v2
+        with:
+          # public repo with terraform configuration
+          repository: 'datacite/mastino'
+          persist-credentials: false
+      - name: Commit changes to terraform config repository
+        # use go template in terraform config repository to update git sha and tag
+        # commit and push changes to trigger terraform workflow
+        run: |
+          export GIT_SHA=${{ steps.extract_variables.outputs.GIT_SHA_SHORT }}
+          export GIT_TAG=${{ steps.extract_variables.outputs.GIT_TAG }}
+          wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
+          tar -xzvf dockerize-linux-amd64-v0.6.0.tar.gz
+          rm dockerize-linux-amd64-v0.6.0.tar.gz
+          ./dockerize -template stage/services/metrics-api/_sashimi.auto.tfvars.tmpl:stage/services/metrics-api/_sashimi.auto.tfvars
+
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add stage/services/metrics-api/_sashimi.auto.tfvars
+          git commit -m "Adding sashimi git variables for commit ${{ steps.extract_variables.outputs.GIT_SHA }}"
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          repository: 'datacite/mastino'
+          branch: 'refs/heads/master'
+          tags: false
+
+      - name: Notify Slack
+        uses: edge/simple-slack-notify@master
+        with:
+          channel: '#ops'
+          color: 'good'
+          text: 'A new version of the <https://api.stage.datacite.org|METRICS API> is been deployed to stage.'
+          failure_text: '${env.GITHUB_WORKFLOW} (${env.GITHUB_RUN_NUMBER}) build failed'
+          fields: |
+            [{ "title": "Commit message", "value": "${{ steps.extract_variables.outputs.MESSAGE }}" },
+             { "title": "Committed by", "value": "<https://github.com/${{ github.repository }}/commits?author=${{ github.actor }}|${{ github.actor }}>", "short": true },
+             { "title": "Commit SHA", "value": "<https://github.com/${{ github.repository }}/commit/${{ steps.extract_variables.outputs.GIT_SHA }}|${{ steps.extract_variables.outputs.GIT_SHA_SHORT }}>", "short": true },
+             { "title": "Repository", "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>", "short": true },
+             { "title": "Branch", "value": "<https://github.com/${{ github.repository }}/tree/${{ steps.extract_variables.outputs.BRANCH }}|${{ steps.extract_variables.outputs.BRANCH }}>", "short": true }]
