@@ -277,3 +277,5 @@ Follow along via [Github Issues](https://github.com/datacite/sashimi/issues).
 ## License
 
 **Sashimi** is released under the [MIT License](https://github.com/datacite/sashimi/blob/master/LICENSE).
+
+Turned off builds temporarily.
