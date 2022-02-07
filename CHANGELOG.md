@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased](https://github.com/datacite/sashimi/tree/HEAD)
+
+[Full Changelog](https://github.com/datacite/sashimi/compare/0.10.9...HEAD)
+
+**Closed issues:**
+
+- Add github actions - for sashimi [\#148](https://github.com/datacite/sashimi/issues/148)
+
+## [0.10.9](https://github.com/datacite/sashimi/tree/0.10.9) (2022-02-03)
+
+[Full Changelog](https://github.com/datacite/sashimi/compare/0.10.8...0.10.9)
+
+**Merged pull requests:**
+
+- Issue \#148 - add a basic github release workflow. [\#149](https://github.com/datacite/sashimi/pull/149) ([svogt0511](https://github.com/svogt0511))
+
 ## [0.10.8](https://github.com/datacite/sashimi/tree/0.10.8) (2021-09-15)
 
 [Full Changelog](https://github.com/datacite/sashimi/compare/0.10.7...0.10.8)
@@ -75,7 +91,6 @@
 **Merged pull requests:**
 
 - Revert PR\#129 then fix issue \#135 [\#138](https://github.com/datacite/sashimi/pull/138) ([svogt0511](https://github.com/svogt0511))
-- Change the API to send different status codes depending of the status of the validation [\#129](https://github.com/datacite/sashimi/pull/129) ([kjgarza](https://github.com/kjgarza))
 
 ## [0.10.2](https://github.com/datacite/sashimi/tree/0.10.2) (2020-07-14)
 
@@ -87,6 +102,7 @@
 
 **Merged pull requests:**
 
+- Change the API to send different status codes depending of the status of the validation [\#129](https://github.com/datacite/sashimi/pull/129) ([kjgarza](https://github.com/kjgarza))
 - Feature remove provider\_id references  [\#128](https://github.com/datacite/sashimi/pull/128) ([kjgarza](https://github.com/kjgarza))
 
 ## [0.10.1](https://github.com/datacite/sashimi/tree/0.10.1) (2020-07-10)
@@ -241,6 +257,7 @@
 - Bump iso8601 from 0.9.1 to 0.12.1 [\#70](https://github.com/datacite/sashimi/pull/70) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump byebug from 10.0.2 to 11.0.1 [\#64](https://github.com/datacite/sashimi/pull/64) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump better\_errors from 2.5.0 to 2.5.1 [\#63](https://github.com/datacite/sashimi/pull/63) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump factory\_bot\_rails from 4.11.1 to 5.0.2 [\#62](https://github.com/datacite/sashimi/pull/62) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 
 ## [0.9.7](https://github.com/datacite/sashimi/tree/0.9.7) (2019-05-17)
 
@@ -290,8 +307,8 @@
 
 **Merged pull requests:**
 
-- Bump factory\_bot\_rails from 4.11.1 to 5.0.2 [\#62](https://github.com/datacite/sashimi/pull/62) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Feature subsetted reports [\#54](https://github.com/datacite/sashimi/pull/54) ([kjgarza](https://github.com/kjgarza))
+- Feature accept compressed reports [\#50](https://github.com/datacite/sashimi/pull/50) ([kjgarza](https://github.com/kjgarza))
 
 ## [0.9.1](https://github.com/datacite/sashimi/tree/0.9.1) (2018-11-22)
 
@@ -309,7 +326,6 @@
 **Merged pull requests:**
 
 - Feature parametrise compressed reports [\#51](https://github.com/datacite/sashimi/pull/51) ([kjgarza](https://github.com/kjgarza))
-- Feature accept compressed reports [\#50](https://github.com/datacite/sashimi/pull/50) ([kjgarza](https://github.com/kjgarza))
 
 ## [0.8.5](https://github.com/datacite/sashimi/tree/0.8.5) (2018-10-29)
 
