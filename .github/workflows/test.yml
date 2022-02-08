@@ -1,4 +1,4 @@
-name: Release
+name: Test
 # on:
 #   release:
 #     types: [published]
@@ -58,7 +58,7 @@ jobs:
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
           sudo /etc/init.d/mysql start
-          # bundle exec rails db:setup RAILS_ENV=test
+          bundle exec rails db:setup RAILS_ENV=test
       - name: Lint and Test
         env:
           MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
@@ -157,12 +157,10 @@ jobs:
           wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
           tar -xzvf dockerize-linux-amd64-v0.6.0.tar.gz
           rm dockerize-linux-amd64-v0.6.0.tar.gz
-          # ./dockerize -template prod-eu-west/services/metrics-api/_sashimi.auto.tfvars.tmpl:prod-eu-west/services/metrics-api/_sashimi.auto.tfvars
           ./dockerize -template test/services/metrics-api/_sashimi.auto.tfvars.tmpl:test/services/metrics-api/_sashimi.auto.tfvars
 
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          # git add prod-eu-west/services/metrics-api/_sashimi.auto.tfvars
           git add test/services/metrics-api/_sashimi.auto.tfvars
           git commit -m "Adding sashimi git variables for tag ${{ steps.extract_variables.outputs.GIT_TAG }}"
       - name: Push changes
