@@ -106,7 +106,7 @@ jobs:
           echo "::set-output name=GIT_TAG::$(git tag --points-at HEAD)"
         id: set_git_vars
       - name: Print git tag
-        run: echo "${{ set_git_vars.outputs.GIT_TAG }}"
+        run: echo "${{ steps.set_git_vars.outputs.GIT_TAG }}"
 
      # - name: Push to Docker Hub
      #   uses: docker/build-push-action@v2
