@@ -1,7 +1,9 @@
 name: Release
+
 on:
   release:
     types: [published]
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -13,7 +15,7 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_DATABASE: datacite
+          MYSQL_DATABASE: metrics
           MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         ports:
@@ -62,6 +64,7 @@ jobs:
           MEMCACHE_SERVERS: "localhost:11211"
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET: 'metrics-api.stage.datacite.org'
         run: |
           # bundle exec rubocop
           # bundle exec rspec
