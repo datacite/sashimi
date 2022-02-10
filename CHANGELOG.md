@@ -1,8 +1,16 @@
 # Changelog
 
-## [Unreleased](https://github.com/datacite/sashimi/tree/HEAD)
+## [0.10.12](https://github.com/datacite/sashimi/tree/0.10.12) (2022-02-10)
 
-[Full Changelog](https://github.com/datacite/sashimi/compare/0.10.9...HEAD)
+[Full Changelog](https://github.com/datacite/sashimi/compare/v.10.11...0.10.12)
+
+## [v.10.11](https://github.com/datacite/sashimi/tree/v.10.11) (2022-02-10)
+
+[Full Changelog](https://github.com/datacite/sashimi/compare/0.10.10...v.10.11)
+
+## [0.10.10](https://github.com/datacite/sashimi/tree/0.10.10) (2022-02-10)
+
+[Full Changelog](https://github.com/datacite/sashimi/compare/0.10.9...0.10.10)
 
 **Closed issues:**
 
@@ -91,6 +99,7 @@
 **Merged pull requests:**
 
 - Revert PR\#129 then fix issue \#135 [\#138](https://github.com/datacite/sashimi/pull/138) ([svogt0511](https://github.com/svogt0511))
+- Change the API to send different status codes depending of the status of the validation [\#129](https://github.com/datacite/sashimi/pull/129) ([kjgarza](https://github.com/kjgarza))
 
 ## [0.10.2](https://github.com/datacite/sashimi/tree/0.10.2) (2020-07-14)
 
@@ -102,7 +111,6 @@
 
 **Merged pull requests:**
 
-- Change the API to send different status codes depending of the status of the validation [\#129](https://github.com/datacite/sashimi/pull/129) ([kjgarza](https://github.com/kjgarza))
 - Feature remove provider\_id references  [\#128](https://github.com/datacite/sashimi/pull/128) ([kjgarza](https://github.com/kjgarza))
 
 ## [0.10.1](https://github.com/datacite/sashimi/tree/0.10.1) (2020-07-10)
@@ -308,7 +316,6 @@
 **Merged pull requests:**
 
 - Feature subsetted reports [\#54](https://github.com/datacite/sashimi/pull/54) ([kjgarza](https://github.com/kjgarza))
-- Feature accept compressed reports [\#50](https://github.com/datacite/sashimi/pull/50) ([kjgarza](https://github.com/kjgarza))
 
 ## [0.9.1](https://github.com/datacite/sashimi/tree/0.9.1) (2018-11-22)
 
@@ -326,6 +333,7 @@
 **Merged pull requests:**
 
 - Feature parametrise compressed reports [\#51](https://github.com/datacite/sashimi/pull/51) ([kjgarza](https://github.com/kjgarza))
+- Feature accept compressed reports [\#50](https://github.com/datacite/sashimi/pull/50) ([kjgarza](https://github.com/kjgarza))
 
 ## [0.8.5](https://github.com/datacite/sashimi/tree/0.8.5) (2018-10-29)
 
