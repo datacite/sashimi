@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.10.14](https://github.com/datacite/sashimi/tree/0.10.14) (2022-02-10)
+
+[Full Changelog](https://github.com/datacite/sashimi/compare/0.10.12...0.10.14)
+
 ## [0.10.12](https://github.com/datacite/sashimi/tree/0.10.12) (2022-02-10)
 
 [Full Changelog](https://github.com/datacite/sashimi/compare/v.10.11...0.10.12)
@@ -100,6 +104,7 @@
 
 - Revert PR\#129 then fix issue \#135 [\#138](https://github.com/datacite/sashimi/pull/138) ([svogt0511](https://github.com/svogt0511))
 - Change the API to send different status codes depending of the status of the validation [\#129](https://github.com/datacite/sashimi/pull/129) ([kjgarza](https://github.com/kjgarza))
+- Feature remove provider\_id references  [\#128](https://github.com/datacite/sashimi/pull/128) ([kjgarza](https://github.com/kjgarza))
 
 ## [0.10.2](https://github.com/datacite/sashimi/tree/0.10.2) (2020-07-14)
 
@@ -108,10 +113,6 @@
 **Closed issues:**
 
 - Change reliance on client\_id to identify the Provider and Client [\#123](https://github.com/datacite/sashimi/issues/123)
-
-**Merged pull requests:**
-
-- Feature remove provider\_id references  [\#128](https://github.com/datacite/sashimi/pull/128) ([kjgarza](https://github.com/kjgarza))
 
 ## [0.10.1](https://github.com/datacite/sashimi/tree/0.10.1) (2020-07-10)
 
@@ -185,6 +186,7 @@
 - Standardize logging [\#87](https://github.com/datacite/sashimi/issues/87)
 - to document  usage report generation \(implementation agnostic\) [\#60](https://github.com/datacite/sashimi/issues/60)
 - improve performance on report consumption [\#59](https://github.com/datacite/sashimi/issues/59)
+- Switch to Sentry [\#58](https://github.com/datacite/sashimi/issues/58)
 
 **Merged pull requests:**
 
@@ -282,10 +284,6 @@
 ## [0.9.4](https://github.com/datacite/sashimi/tree/0.9.4) (2019-05-17)
 
 [Full Changelog](https://github.com/datacite/sashimi/compare/0.9.3...0.9.4)
-
-**Closed issues:**
-
-- Switch to Sentry [\#58](https://github.com/datacite/sashimi/issues/58)
 
 ## [0.9.3](https://github.com/datacite/sashimi/tree/0.9.3) (2019-04-24)
 
