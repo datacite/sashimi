@@ -1,9 +1,8 @@
 name: Test
-# on:
-#   release:
-#     types: [published]
 
-on: workflow_dispatch
+on:
+  release:
+    types: [published]
 
 jobs:
   test:
@@ -29,7 +28,6 @@ jobs:
       MEMCACHE_SERVERS: "localhost:11211"
       MYSQL_HOST: "127.0.0.1"
       MYSQL_DATABASE: metrics
-      MYSQL_USER: root
       SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
       SESSION_ENCRYPTED_COOKIE_SALT: ${{ secrets.SESSION_ENCRYPTED_COOKIE_SALT }}
       JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
@@ -108,24 +106,24 @@ jobs:
       - name: Print git tag
         run: echo "${{ steps.set_git_vars.outputs.GIT_TAG }}"
 
-     # - name: Push to Docker Hub
-     #   uses: docker/build-push-action@v2
-     #   with:
-     #     context: .
-     #     file: ./Dockerfile
-     #     push: true
-     #     tags: ${{ github.repository }}:${{ steps.set_git_vars.outputs.GIT_TAG }}
-     #     cache-from: type=local,src=/tmp/.buildx-cache
-     #     cache-to: type=local,dest=/tmp/.buildx-cache
-     # - name: Push to GitHub Packages
-     #   uses: docker/build-push-action@v2
-     #   with:
-     #     context: .
-     #     file: ./Dockerfile
-     #     push: true
-     #     tags: ghcr.io/${{ github.repository }}:${{ steps.set_git_vars.outputs.GIT_TAG }}
-     #     cache-from: type=local,src=/tmp/.buildx-cache
-     #     cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ github.repository }}:${{ steps.set_git_vars.outputs.GIT_TAG }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Push to GitHub Packages
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ steps.set_git_vars.outputs.GIT_TAG }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
 
   #deploy:
   #  needs: [test, build]
