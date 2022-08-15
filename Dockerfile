@@ -1,10 +1,11 @@
-FROM phusion/passenger-full:2.0.0
+FROM phusion/passenger-full:2.1.0
 LABEL maintainer="kgarza@datacite.org"
 LABEL maintainer_name="Kristian Garza"
 
 # Set correct environment variables.
 ENV HOME /home/app
-ENV DOCKERIZE_VERSION v0.6.0
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
 
 # Allow app user to read /etc/container_environment
 RUN usermod -a -G docker_env app
@@ -12,17 +13,13 @@ RUN usermod -a -G docker_env app
 # Use baseimage-docker's init process.
 CMD ["/sbin/my_init"]
 
-# Install Ruby 2.6.8
-RUN bash -lc 'rvm --default use ruby-2.6.8'
+# Install Ruby 2.6.9
+RUN bash -lc 'rvm --default use ruby-2.6.9'
 
 # Update installed APT packages
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
     apt-get install ntp wget tzdata nano imagemagick shared-mime-info emacs -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# install dockerize
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
-    tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 # Remove unused SSH service
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
@@ -50,7 +47,7 @@ RUN mkdir -p /home/app/webapp/tmp/pids && \
 # Install Ruby gems
 WORKDIR /home/app/webapp
 RUN gem update --system && \
-    gem install bundler && \
+    gem install bundler:2.3.10 && \
     /sbin/setuser app bundle install --path vendor/bundle
 
 # Add Runit script for shoryuken workers

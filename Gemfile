@@ -7,9 +7,9 @@ gem 'dotenv'
 gem "oj", ">= 2.8.3"
 gem "oj_mimic_json", "~> 1.0", ">= 1.0.1"
 gem 'equivalent-xml', '~> 0.6.0'
-gem 'nokogiri', '~> 1.10.8'
+gem 'nokogiri', '~> 1.13.6'
 gem 'iso8601', '~> 0.12.1'
-gem 'maremma', '~> 4.4'
+gem 'maremma', '~> 4.9.6'
 gem "dalli", "~> 2.7.6"
 gem "lograge", "~> 0.11.2"
 gem "logstash-event", "~> 1.2", ">= 1.2.02"
