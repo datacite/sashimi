@@ -1,9 +1,8 @@
 class SushiValidator < ActiveModel::EachValidator
 
   def validate_each(record, _schema, _value)
-    # unless  record.is_valid_sushi?
     valid = record.validate_sushi
-    unless valid == true
+    unless valid == true or valid == []
 
       def dig_errors(errors)
         return [] if errors.nil?
@@ -14,11 +13,9 @@ class SushiValidator < ActiveModel::EachValidator
           errors.map { |error| {error.dig(:fragment) => error.dig(:message)}  }
         end
       end
-      # nice_erros = dig_errors record.validate_sushi
-      nice_erros = dig_errors valid
 
-      record.errors
-#      record.errors.add(nice_erros )#|| "Your SUSHI is wrong mate!!")
+      nice_errors = dig_errors(valid)
+      record.errors["errors"] << (nice_errors || "Your SUSHI is wrong mate!!")
     end
   end
 end
