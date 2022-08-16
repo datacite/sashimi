@@ -765,7 +765,7 @@ describe "Reports", type: :request do
       let(:headers)  { {
         'Content-Type' => 'application/gzip',
         'Content-Encoding' => 'gzip',
-        'ACCEPT'=>'gzip',
+        'ACCEPT'=>'application/vnd.api+json',
         'Authorization' => 'Bearer ' + bearer
       } }
       let(:gzip) do
