@@ -36,8 +36,6 @@ class Report < ApplicationRecord
   # before_create :set_id
   after_commit :push_report, if: :normal_report?
 
-  before_destroy :destroy_attachment
-  after_destroy_commit :destroy_report_events, on: :delete
 
   def clean_data
     update_column("compressed", nil)
@@ -52,12 +50,8 @@ class Report < ApplicationRecord
     end
   end
 
-
-  # after_commit :validate_report_job, unless: :normal_report?
-
-  # def validate_report_job
-  #   ValidationJob.perform_later(self)
-  # end
+  before_destroy :destroy_attachment
+  after_destroy_commit :destroy_report_events, on: :delete
 
   def destroy_report_events
     DestroyEventsJob.perform_later(uid)
@@ -124,11 +118,6 @@ class Report < ApplicationRecord
     code = exceptions.first.fetch("code", "")
 
     (code == 69) && ((release.downcase == "rd1") || (release.downcase == "rd2"))
-=begin
-    if code == 69
-      true
-    end
-=end
   end
 
   def normal_report?
