@@ -16,7 +16,7 @@ describe User, type: :model do
     end
   end
 
-  describe "abilities", vcr: true do
+  describe "abilities" do
     subject { Ability.new(user) }
 
     context "when is a staff_admin" do

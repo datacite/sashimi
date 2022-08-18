@@ -50,14 +50,8 @@ class Report < ApplicationRecord
     end
   end
 
-  before_destroy :destroy_attachment, on: :delete
+  before_destroy :destroy_attachment
   after_destroy_commit :destroy_report_events, on: :delete
-
-  # after_commit :validate_report_job, unless: :normal_report?
-
-  # def validate_report_job
-  #   ValidationJob.perform_later(self)
-  # end
 
   def destroy_report_events
     DestroyEventsJob.perform_later(uid)
@@ -124,11 +118,6 @@ class Report < ApplicationRecord
     code = exceptions.first.fetch("code", "")
 
     (code == 69) && ((release.downcase == "rd1") || (release.downcase == "rd2"))
-=begin
-    if code == 69
-      true
-    end
-=end
   end
 
   def normal_report?
@@ -158,7 +147,7 @@ class Report < ApplicationRecord
     tmp.flush
 
     self.attachment_file_name = file_name
-    self.update_attributes(:attachment => tmp)
+    self.update(:attachment => tmp)
 
     # Make sure the tmp file is deleted.
     File.delete(tmp)

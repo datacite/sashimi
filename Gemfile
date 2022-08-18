@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 5.2.2'
+gem "rails", "~> 6.1.6"
 gem 'bootsnap', '~> 1.4'
-gem 'mysql2', "~> 0.4.4"
+gem 'mysql2', "~> 0.5.3"
 gem 'dotenv'
 gem "oj", ">= 2.8.3"
 gem "oj_mimic_json", "~> 1.0", ">= 1.0.1"
@@ -22,7 +22,6 @@ gem 'kaminari', '~> 1.2'
 gem 'api-pagination'
 gem 'cancancan', '~> 3.0'
 gem "facets", require: false
-gem 'bergamasco', '~> 0.3.10'
 gem 'base32-url', '~> 0.3'
 gem 'rack-cors', '~> 1.0', :require => 'rack/cors'
 gem 'json-schema', '~> 2.8', '>= 2.8.1'
@@ -42,7 +41,7 @@ group :development, :test do
   gem 'rubocop', '~> 0.77.0'
   gem 'rubocop-performance', '~> 1.5', '>= 1.5.1'
   gem 'rubocop-rails', '~> 2.4'
-  gem "better_errors"
+  #gem "better_errors"
   gem "binding_of_caller"
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end

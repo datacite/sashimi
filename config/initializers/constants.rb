@@ -9,6 +9,7 @@ RESCUABLE_EXCEPTIONS = [CanCan::AccessDenied,
                         ActionController::RoutingError,
                         ActionController::ParameterMissing,
                         ActionController::UnpermittedParameters,
+                        ActionDispatch::Http::Parameters::ParseError,
                         ActiveRecord::RecordInvalid,
                         NoMethodError]
 
