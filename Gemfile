@@ -7,7 +7,7 @@ gem 'dotenv'
 gem "oj", ">= 2.8.3"
 gem "oj_mimic_json", "~> 1.0", ">= 1.0.1"
 gem 'equivalent-xml', '~> 0.6.0'
-gem 'nokogiri', '~> 1.13.6'
+gem 'nokogiri', '~> 1.13.10'
 gem 'iso8601', '~> 0.12.1'
 gem 'maremma', '~> 4.9.6'
 gem "dalli", "~> 2.7.6"
