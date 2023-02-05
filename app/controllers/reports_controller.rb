@@ -161,7 +161,9 @@ class ReportsController < ApplicationController
   end
 
   def clean_data
-    @report.clean_data
+    if @report.valid?
+      @report.clean_data
+    end
   end
 
   private
