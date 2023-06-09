@@ -147,7 +147,7 @@ GEM
     ffi (1.15.5)
     git (1.11.0)
       rchardet (~> 1.8)
-    globalid (1.0.0)
+    globalid (1.0.1)
       activesupport (>= 5.0)
     hashdiff (1.0.1)
     httplog (1.5.0)
@@ -221,7 +221,7 @@ GEM
       rake
     mini_mime (1.1.2)
     mini_portile2 (2.8.0)
-    minitest (5.16.2)
+    minitest (5.17.0)
     msgpack (1.5.4)
     multipart-post (2.2.3)
     mysql2 (0.5.4)
@@ -352,7 +352,7 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zeitwerk (2.6.0)
+    zeitwerk (2.6.6)
 
 PLATFORMS
   ruby
