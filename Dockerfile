@@ -46,8 +46,8 @@ RUN mkdir -p /home/app/webapp/tmp/pids && \
 
 # Install Ruby gems
 WORKDIR /home/app/webapp
-RUN gem update --system && \
-    gem install bundler:2.3.10 && \
+RUN gem update --system 3.4.22 && \
+    gem install bundler -v 2.4.22 && \
     /sbin/setuser app bundle install --path vendor/bundle
 
 # Add Runit script for shoryuken workers
