@@ -13,7 +13,7 @@ jobs:
     needs: test
     uses: ./.github/workflows/build_docker.yml
     with:
-      image: ghcr.io/${{ github.repository }}web
+      image: ghcr.io/${{ github.repository }}
       dockerfile: ./Dockerfile
 
   deploy:
