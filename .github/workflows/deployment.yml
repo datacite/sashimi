@@ -1,0 +1,64 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      versionvar_filename:
+        required: true
+        type: string
+      service_name:
+        required: true
+        type: string
+      env_name:
+        required: true
+        type: string
+    secrets:
+      PERSONAL_ACCESS_TOKEN:
+        required: true
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Extract variables
+        shell: bash
+        run: |
+          echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')" >> $GITHUB_OUTPUT
+          echo "TAG=$(git tag --points-at HEAD)" >> $GITHUB_OUTPUT
+          echo "GIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "GIT_SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        id: extract_variables
+
+      - name: Checkout terraform config repo
+        uses: actions/checkout@v3
+        with:
+          repository: 'datacite/mastino'
+          persist-credentials: false
+
+      - name: Commit changes to terraform config repository
+        run: |
+          export GIT_SHA=${{ steps.extract_variables.outputs.GIT_SHA_SHORT }}
+          export GIT_TAG=${{ steps.extract_variables.outputs.TAG }}
+
+          export VERSION_FILENAME=${{ inputs.env_name }}/services/${{ inputs.service_name }}/${{ inputs.versionvar_filename }}.auto.tfvars
+
+          sed -e "s/{{ .Env.GIT_SHA }}/$GIT_SHA/g" -e "s/{{ .Env.GIT_TAG }}/$GIT_TAG/g" $VERSION_FILENAME.tmpl > $VERSION_FILENAME
+
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add $VERSION_FILENAME
+          git commit -m "Adding ${{ inputs.versionvar_filename }} git variables for commit ${{ steps.extract_variables.outputs.GIT_TAG }}"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          repository: 'datacite/mastino'
+          branch: 'refs/heads/master'
+          tags: false

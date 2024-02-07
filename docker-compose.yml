@@ -3,7 +3,7 @@ version: '2'
 services:
   web:
     env_file: .env
-    image: datacite/sashimi
+    image: ghcr.io/datacite/sashimi
     ports:
       - "8075:80"
       - "2266:22"

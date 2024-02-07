@@ -1,6 +1,6 @@
 name: Test workflow
 
-on: workflow_dispatch
+on: workflow_call
 
 jobs:
   test:
@@ -13,7 +13,7 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_DATABASE: metrics
+          MYSQL_DATABASE: metrics_test
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         ports:
           - 3306
@@ -24,7 +24,7 @@ jobs:
     env:
       MEMCACHE_SERVERS: "localhost:11211"
       MYSQL_HOST: "127.0.0.1"
-      MYSQL_DATABASE: metrics
+      MYSQL_DATABASE: metrics_test
       MYSQL_USER: root
       SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
       SESSION_ENCRYPTED_COOKIE_SALT: ${{ secrets.SESSION_ENCRYPTED_COOKIE_SALT }}
@@ -55,3 +55,13 @@ jobs:
           bundle install --jobs 4 --retry 3
           sudo /etc/init.d/mysql start
           bundle exec rails db:setup RAILS_ENV=test
+      - name: Test
+        env:
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+          MEMCACHE_SERVERS: "localhost:11211"
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET: 'metrics-api.stage.datacite.org'
+        run: |
+          bundle exec rspec
+          echo $?
