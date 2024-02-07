@@ -1,6 +1,22 @@
 name: Test workflow
 
-on: workflow_call
+on:
+  workflow_call:
+    secrets:
+      SECRET_KEY_BASE:
+        required: true
+      SESSION_ENCRYPTED_COOKIE_SALT:
+        required: true
+      JWT_PRIVATE_KEY:
+        required: true
+      JWT_PUBLIC_KEY:
+        required: true
+      MDS_USERNAME:
+        required: true
+      MDS_PASSWORD:
+        required: true
+      AWS_REGION:
+        required: true
 
 jobs:
   test:
