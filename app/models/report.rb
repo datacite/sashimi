@@ -115,9 +115,9 @@ class Report < ApplicationRecord
     # check for data sets !empty
     return nil if exceptions.empty? || compressed.nil?
 
-    code = exceptions.first.fetch("code", "")
+    codes = exceptions.map { |exception| exception.fetch("code", "") }
 
-    (code == 69) && ((release.downcase == "rd1") || (release.downcase == "rd2"))
+    codes.include?(69) && ((release.downcase == "rd1") || (release.downcase == "rd2"))
   end
 
   def normal_report?
@@ -127,8 +127,9 @@ class Report < ApplicationRecord
 
   def compressed_report?
     return nil if self.exceptions.nil? || self.exceptions.empty?
-    code = self.exceptions.first.fetch("code", "")
-    (code == 69) && ((release.downcase == "rd1") || (release.downcase == "rd2"))
+    codes = exceptions.map { |exception| exception.fetch("code", "") }
+
+    codes.include?(69) && ((release.downcase == "rd1") || (release.downcase == "rd2"))
   end
 
   def resolution_report?
