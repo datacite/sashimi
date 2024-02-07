@@ -20,7 +20,7 @@ jobs:
     needs: [test, build]
     uses: ./.github/workflows/deployment.yml
     with:
-      versionvar_filename: sashimi
+      versionvar_filename: _sashimi
       service_name: metrics-api
       env_name: stage
     secrets:
