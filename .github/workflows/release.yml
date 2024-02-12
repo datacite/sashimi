@@ -25,3 +25,13 @@ jobs:
       env_name: prod-eu-west
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  deploy-test:
+    needs: [test, build]
+    uses: ./.github/workflows/deployment.yml
+    with:
+      versionvar_filename: _sashimi
+      service_name: metrics-api
+      env_name: test
+    secrets:
+      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
