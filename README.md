@@ -216,7 +216,7 @@ def post_file file
   headers = {
     content_type: "application/gzip",
     content_encoding: 'gzip',
-    accept: 'gzip'
+    accept: 'application/json'
   }
 
   body = compress(file)
