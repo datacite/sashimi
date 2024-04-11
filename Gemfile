@@ -1,15 +1,15 @@
 source 'https://rubygems.org'
 
-gem "rails", "~> 6.1.6"
+gem "rails", "~> 7.1", ">= 7.1.3"
 gem 'bootsnap', '~> 1.4'
 gem 'mysql2', "~> 0.5.3"
 gem 'dotenv'
 gem "oj", ">= 2.8.3"
 gem "oj_mimic_json", "~> 1.0", ">= 1.0.1"
 gem 'equivalent-xml', '~> 0.6.0'
-gem 'nokogiri', '~> 1.13.6'
+gem "nokogiri", "~> 1.16", ">= 1.16.4"
 gem 'iso8601', '~> 0.12.1'
-gem 'maremma', '~> 4.9.6'
+gem "maremma", "~> 5.0"
 gem "dalli", "~> 3.2", ">= 3.2.8"
 gem "lograge", "~> 0.11.2"
 gem "logstash-event", "~> 1.2", ">= 1.2.02"
@@ -29,7 +29,7 @@ gem 'shoryuken', '~> 3.2', '>= 3.2.2'
 gem "aws-sdk-s3", require: false
 gem 'aws-sdk-sqs', '~> 1.22'
 gem 'iso_country_codes'
-gem 'sentry-raven', '~> 2.9'
+gem "sentry-raven", "~> 3.1", ">= 3.1.2"
 gem 'git', '~> 1.5'
 gem "sprockets", "~> 3.7", ">= 3.7.2"
 gem "kt-paperclip", "~> 6.4.1"
