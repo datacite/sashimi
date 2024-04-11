@@ -10,7 +10,7 @@ gem 'equivalent-xml', '~> 0.6.0'
 gem 'nokogiri', '~> 1.13.6'
 gem 'iso8601', '~> 0.12.1'
 gem 'maremma', '~> 4.9.6'
-gem "dalli", "~> 2.7.6"
+gem "dalli", "~> 3.2", ">= 3.2.8"
 gem "lograge", "~> 0.11.2"
 gem "logstash-event", "~> 1.2", ">= 1.2.02"
 gem "logstash-logger", "~> 0.26.1"
@@ -29,7 +29,6 @@ gem 'shoryuken', '~> 3.2', '>= 3.2.2'
 gem "aws-sdk-s3", require: false
 gem 'aws-sdk-sqs', '~> 1.22'
 gem 'iso_country_codes'
-# gem "rack-timeout"
 gem 'sentry-raven', '~> 2.9'
 gem 'git', '~> 1.5'
 gem "sprockets", "~> 3.7", ">= 3.7.2"
@@ -41,7 +40,6 @@ group :development, :test do
   gem 'rubocop', '~> 0.77.0'
   gem 'rubocop-performance', '~> 1.5', '>= 1.5.1'
   gem 'rubocop-rails', '~> 2.4'
-  #gem "better_errors"
   gem "binding_of_caller"
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end
