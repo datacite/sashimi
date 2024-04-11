@@ -15,7 +15,7 @@ chdir APP_ROOT do
   # Add necessary setup steps to this file.
 
   puts '== Installing dependencies =='
-  system! 'gem install bundle -v 2.5.6 r --conservative'
+  system! 'gem install bundler -v 2.5.6 --conservative'
   system('bundle check') || system!('bundle install')
 
 
