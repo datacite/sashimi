@@ -135,9 +135,9 @@ GEM
       rexml
     crass (1.0.6)
     dalli (3.2.8)
-    database_cleaner (2.0.1)
-      database_cleaner-active_record (~> 2.0.0)
-    database_cleaner-active_record (2.0.1)
+    database_cleaner (2.0.2)
+      database_cleaner-active_record (>= 2, < 3)
+    database_cleaner-active_record (2.1.0)
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0.0)
     database_cleaner-core (2.0.1)
@@ -438,6 +438,7 @@ DEPENDENCIES
   codeclimate-test-reporter (~> 1.0.0)
   dalli (~> 3.2, >= 3.2.8)
   database_cleaner
+  database_cleaner-active_record (~> 2.1)
   dotenv
   equivalent-xml (~> 0.6.0)
   facets
@@ -480,4 +481,4 @@ DEPENDENCIES
   webmock (~> 3.1)
 
 BUNDLED WITH
-   2.5.6
+  2.5.6

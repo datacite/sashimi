@@ -117,5 +117,8 @@ module Sashimi
       url: "/report_files/:filename",
       use_timestamp: false,
     }
+
+    # https://blog.kiprosh.com/rails-7-1-raises-on-assignment-to-readonly-attributes
+    config.active_record.raise_on_assign_to_attr_readonly = false
   end
 end
