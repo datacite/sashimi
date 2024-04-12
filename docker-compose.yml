@@ -25,7 +25,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     image: mysql:5.7
     ports:
-      - "3309:3306"
+      "3314:3306"
     networks:
       - public
 networks:
