@@ -1,4 +1,4 @@
-FROM phusion/passenger-full:2.1.0
+FROM phusion/passenger-full:2.5.1
 LABEL maintainer="kgarza@datacite.org"
 LABEL maintainer_name="Kristian Garza"
 
@@ -13,8 +13,8 @@ RUN usermod -a -G docker_env app
 # Use baseimage-docker's init process.
 CMD ["/sbin/my_init"]
 
-# Install Ruby 2.6.9
-RUN bash -lc 'rvm --default use ruby-2.6.9'
+# Install Ruby 3.1.4
+RUN bash -lc 'rvm --default use ruby-3.1.4'
 
 # Update installed APT packages
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
@@ -46,8 +46,8 @@ RUN mkdir -p /home/app/webapp/tmp/pids && \
 
 # Install Ruby gems
 WORKDIR /home/app/webapp
-RUN gem install rubygems-update -v 3.4.22 && \
-    gem install bundler:2.4.20 && \
+RUN gem install rubygems-update -v 3.5.6 && \
+    gem install bundler:2.5.6 && \
     /sbin/setuser app bundle config set --local path 'vendor/bundle' && \
     /sbin/setuser app bundle install
 

@@ -28,7 +28,7 @@ Rails.application.configure do
 
   # config.action_controller.perform_caching = true
   config.action_controller.perform_caching = true
-  config.cache_store = :dalli_store
+  config.cache_store = :mem_cache_store, ENV["MEMCACHE_SERVERS"], { namespace: ENV["APPLICATION"] }
 
   HttpLog.configure do |config|
     config.enabled = false
