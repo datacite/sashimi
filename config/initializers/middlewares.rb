@@ -1,5 +1,5 @@
-require 'compressed_requests'
+require "./lib/middleware/compressed_requests"
 
 Rails.application.configure do
-  config.middleware.insert_before Rack::Head, CompressedRequests
+  config.middleware.insert_before Rack::Head, Middleware::CompressedRequests
 end
