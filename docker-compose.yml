@@ -15,12 +15,10 @@ services:
       - ./spec:/home/app/webapp/spec
     networks:
       - public
-    platform: linux/amd64
   memcached:
     image: memcached:1.4.31
     networks:
       - public
-    platform: linux/amd64
   mysql:
     environment:
       MYSQL_DATABASE: metrics
@@ -30,7 +28,6 @@ services:
       - "3309:3306"
     networks:
       - public
-    platform: linux/amd64
 networks:
   public:
     driver: bridge
