@@ -54,10 +54,13 @@ ENV['RACK_TIMEOUT_SERVICE_TIMEOUT'] ||= "40"
 module Sashimi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.1
+    config.load_defaults 7.1
     config.autoload_paths << Rails.root.join('lib')
     config.autoload_paths << Rails.root.join("app", "models", "concerns")
     config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
+
+    # Allow middleware to be loaded. (compressed_requests)
+    config.autoload_lib(ignore: nil)
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -114,5 +117,8 @@ module Sashimi
       url: "/report_files/:filename",
       use_timestamp: false,
     }
+
+    # https://blog.kiprosh.com/rails-7-1-raises-on-assignment-to-readonly-attributes
+    config.active_record.raise_on_assign_to_attr_readonly = false
   end
 end
