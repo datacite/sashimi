@@ -23,7 +23,7 @@ services:
     environment:
       MYSQL_DATABASE: metrics
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    image: mysql:5.7
+    image: mysql:8.0
     ports:
       - "3314:3306"
     networks:
