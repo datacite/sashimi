@@ -152,9 +152,6 @@ class ReportsController < ApplicationController
   end
 
   def set_user_hash
-    if current_user&.uid.blank?
-      raise CanCan::AccessDenied.new("Not authorized")
-    end
     @user_hash = { user_id: current_user.uid }
   end
 
