@@ -59,30 +59,28 @@ class ApplicationController < ActionController::API
     params.transform_keys! { |key| key.tr('-', '_') }
   end
 
-  unless Rails.env.development?
-    rescue_from *RESCUABLE_EXCEPTIONS do |exception|
-      status = case exception.class.to_s
-               when "CanCan::AccessDenied", "JWT::DecodeError","JWT::VerificationError" then 401
-               when "ActiveRecord::RecordNotFound", "AbstractController::ActionNotFound", "ActionController::RoutingError" then 404
-               when "ActiveRecord::RecordNotUnique" then 409
-               when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters", "NoMethodError", "ActiveRecord::RecordInvalid", "JSON::ParserError" then 422
-               else 400
-               end
+  rescue_from *RESCUABLE_EXCEPTIONS do |exception|
+    status = case exception.class.to_s
+              when "CanCan::AccessDenied", "JWT::DecodeError","JWT::VerificationError" then 401
+              when "ActiveRecord::RecordNotFound", "AbstractController::ActionNotFound", "ActionController::RoutingError" then 404
+              when "ActiveRecord::RecordNotUnique" then 409
+              when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters", "NoMethodError", "ActiveRecord::RecordInvalid", "JSON::ParserError" then 422
+              else 400
+              end
 
-        if status == 404
-          message = "The resource you are looking for doesn't exist."
-        elsif status == 401
-          message = "You are not authorized to access this resource."
-        elsif status == 406
-          message = "The content type is not recognized."
-        elsif status == 409
-          message = "The resource already exists."
-        else
-          message = exception.message
-        end
+      if status == 404
+        message = "The resource you are looking for doesn't exist."
+      elsif status == 401
+        message = "You are not authorized to access this resource."
+      elsif status == 406
+        message = "The content type is not recognized."
+      elsif status == 409
+        message = "The resource already exists."
+      else
+        message = exception.message
+      end
 
-      render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
-    end
+    render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
   end
 
   def set_raven_context
@@ -95,7 +93,7 @@ class ApplicationController < ActionController::API
     else
       Raven.user_context(
         ip_address: request.ip
-      ) 
+      )
     end
   end
 end
