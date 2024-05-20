@@ -79,6 +79,7 @@ class ApplicationController < ActionController::API
     elsif status == 409
       message = "The resource already exists."
     else
+      Raven.capture_exception(exception)
       message = exception.message
     end
 

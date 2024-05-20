@@ -55,12 +55,11 @@ module Sashimi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
-    config.autoload_paths << Rails.root.join('lib')
+    config.autoload_once_paths << Rails.root.join('lib')
     config.autoload_paths << Rails.root.join("app", "models", "concerns")
-    config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
 
-    # Allow middleware to be loaded. (compressed_requests)
-    config.autoload_lib(ignore: nil)
+    config.eager_load_paths << Rails.root.join("lib")
+    config.eager_load_paths << Rails.root.join("app", "models", "concerns")
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -76,8 +75,8 @@ module Sashimi
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
     config.lograge.logger = LogStashLogger.new(type: :stdout)
-    config.logger = config.lograge.logger        ## LogStashLogger needs to be pass to rails logger, see roidrage/lograge#26
-    config.log_level = ENV["LOG_LEVEL"].to_sym   ## Log level in a config level configuration
+    config.logger = config.lograge.logger
+    config.log_level = ENV["LOG_LEVEL"].to_sym
 
     config.lograge.ignore_actions = ["HeartbeatController#index", "IndexController#index"]
     config.lograge.ignore_custom = lambda do |event|
@@ -92,6 +91,9 @@ module Sashimi
         uid: event.payload[:uid],
       }
     end
+
+    config.action_dispatch.show_exceptions = :all
+    config.action_dispatch.debug_exception_log_level = :error
 
     # configure caching
     config.cache_store = :mem_cache_store, ENV["MEMCACHE_SERVERS"], { namespace: ENV["APPLICATION"] }

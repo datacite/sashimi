@@ -37,6 +37,12 @@ We use Rspec for unit and acceptance testing:
 bundle exec rspec
 ```
 
+To run the Rails console:
+
+```
+DISABLE_SPRING=true bundle exec rails console
+```
+
 ## Technical Description
 
 ### Resource components
