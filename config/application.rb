@@ -92,7 +92,6 @@ module Sashimi
       }
     end
 
-    config.action_dispatch.show_exceptions = :all
     config.action_dispatch.debug_exception_log_level = :error
 
     # configure caching
