@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "./lib/middleware/compressed_requests"
 
 Rails.application.configure do

@@ -66,6 +66,8 @@ Rails.application.configure do
     url: "/report_files/:filename",
     use_timestamp: false,
   }
+
+  config.action_dispatch.show_exceptions = false
 end
 
 #BetterErrors::Middleware.allow_ip! ENV['TRUSTED_IP']

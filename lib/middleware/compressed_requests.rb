@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Middleware
   class CompressedRequests
     def initialize(app)
