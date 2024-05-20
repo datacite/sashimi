@@ -20,7 +20,7 @@ gem "bcrypt", "~> 3.1.13"
 gem "simple_command"
 gem "kaminari", "~> 1.2"
 gem "api-pagination"
-gem "cancancan", "~> 3.0"
+gem "cancancan", "~> 3.5"
 gem "facets", require: false
 gem "base32-url", "~> 0.3"
 gem "rack-cors", "~> 1.0", :require => "rack/cors"
