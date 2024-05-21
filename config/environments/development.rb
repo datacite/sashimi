@@ -30,13 +30,6 @@ Rails.application.configure do
   config.action_controller.perform_caching = true
   config.cache_store = :mem_cache_store, ENV["MEMCACHE_SERVERS"], { namespace: ENV["APPLICATION"] }
 
-  HttpLog.configure do |config|
-    config.enabled = false
-    config.logger = LogStashLogger.new(type: :stdout)
-    config.url_blacklist_pattern = /sqs\.eu-west-1\.amazonaws\.com/
-    config.filter_parameters = %w(client_id access_token orcid_token)
-  end
-
   # Don't care if the mailer can't send.
   # config.action_mailer.raise_delivery_errors = false
 

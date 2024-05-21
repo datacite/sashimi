@@ -2,14 +2,12 @@ Rails.application.routes.draw do
   root :to => 'index#index'
   resources :heartbeat, only: [:index]
   resources :index, path: '/', only: [:index]
-  # resources :index, only: [:index]
 
   def add_swagger_route http_method, path, opts = {}
     full_path = path.gsub(/{(.*?)}/, ':\1')
     match full_path, to: "#{opts.fetch(:controller_name)}##{opts[:action_name]}", via: http_method
   end
 
-  # add_swagger_route 'GET', '//reports/publishers', controller_name: 'publishers', action_name: 'index'
   add_swagger_route 'DELETE', '//publishers/{id}', controller_name: 'publishers', action_name: 'destroy'
   add_swagger_route 'PUT', '//publishers/{id}', controller_name: 'publishers', action_name: 'update'
   add_swagger_route 'POST', '//publishers', controller_name: 'publishers', action_name: 'create'
@@ -25,7 +23,9 @@ Rails.application.routes.draw do
 
   get 'repositories-usage-reports/:id', :to => 'publishers#show', constraints: { :id => /.+/ }
 
-
   resources :publishers, constraints: { :id => /.+/ }, format: false, defaults: { format: false }
   resources :repositories_usage_reports, constraints: { :id => /.+/ }, format: false, defaults: { format: false }
+
+  get '/public/favicon.ico', to: redirect('/public/favicon.ico')
+  get '/favicon.ico', to: redirect('/public/favicon.ico')
 end
