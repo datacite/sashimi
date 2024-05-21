@@ -78,10 +78,11 @@ module Sashimi
     config.logger = config.lograge.logger
     config.log_level = ENV["LOG_LEVEL"].to_sym
 
-    config.lograge.ignore_actions = ["HeartbeatController#index", "IndexController#index"]
-    config.lograge.ignore_custom = lambda do |event|
-      event.payload.inspect.length > 100000
-    end
+    # config.lograge.ignore_actions = ["HeartbeatController#index", "IndexController#index"]
+    # config.lograge.ignore_custom = lambda do |event|
+    #   event.payload.inspect.length > 100000
+    # end
+
     config.lograge.base_controller_class = "ActionController::API"
 
     config.lograge.custom_options = lambda do |event|

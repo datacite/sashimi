@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem "rails", "~> 7.1", ">= 7.1.3"
-gem "bootsnap", "~> 1.4"
+gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
 gem "mysql2", "~> 0.5.3"
 gem "dotenv"
 gem "oj", ">= 2.8.3"
@@ -11,7 +11,7 @@ gem "nokogiri", "~> 1.16", ">= 1.16.4"
 gem "iso8601", "~> 0.12.1"
 gem "maremma", "~> 5.0"
 gem "dalli", "~> 3.2", ">= 3.2.8"
-gem "lograge", "~> 0.11.2"
+gem "lograge", "~> 0.14.0"
 gem "logstash-event", "~> 1.2", ">= 1.2.02"
 gem "logstash-logger", "~> 0.26.1"
 gem "active_model_serializers", "~> 0.10.10"
@@ -35,11 +35,11 @@ gem "sprockets", "~> 3.7", ">= 3.7.2"
 gem "kt-paperclip", "~> 6.4.1"
 
 group :development, :test do
-  gem "rspec-rails", "~> 3.8"
-  gem "rubocop-rspec", "~> 1.35"
-  gem "rubocop", "~> 0.77.0"
+  gem "rspec-rails", "~> 6.1", ">= 6.1.1"
+  gem "rubocop-rspec", "~> 2.0", require: false
+  gem "rubocop", "~> 1.3", ">= 1.3.1"
   gem "rubocop-performance", "~> 1.5", ">= 1.5.1"
-  gem "rubocop-rails", "~> 2.4"
+  gem "rubocop-rails", "~> 2.8", ">= 2.8.1"
   gem "binding_of_caller"
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
 end
@@ -48,7 +48,6 @@ group :development do
   gem "listen", "~> 3.9"
   gem "spring"
   gem "spring-watcher-listen", "~> 2.0.0"
-  gem "httplog", "~> 1.3"
 end
 
 group :test do
