@@ -60,7 +60,7 @@ Rails.application.configure do
     use_timestamp: false,
   }
 
-  config.action_dispatch.show_exceptions = false
+  config.action_dispatch.show_exceptions = :none
 end
 
 #BetterErrors::Middleware.allow_ip! ENV['TRUSTED_IP']

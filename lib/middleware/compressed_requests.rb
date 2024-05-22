@@ -29,8 +29,13 @@ module Middleware
         env['rack.input'] = StringIO.new(extracted)
       end
 
-      status, headers, response = @app.call(env)
-      [status, headers, response]
+      begin
+        status, headers, response = @app.call(env)
+        [status, headers, response]
+      rescue => err
+        Rails.logger.error(err.inspect)
+        [500, {}, [{"status": 500, "title": err.message}.to_json]]
+      end
     end
 
     def decode(input, content_encoding)
