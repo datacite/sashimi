@@ -34,7 +34,7 @@ module Middleware
         [status, headers, response]
       rescue => err
         Rails.logger.error(err.inspect)
-        [500, {}, [{"status": 500, "title": err.message}.to_json]]
+        [406, {}, [{"status": 406, "title": err.message}.to_json]]
       end
     end
 
