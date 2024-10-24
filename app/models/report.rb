@@ -10,7 +10,8 @@ class Report < ApplicationRecord
   validates_attachment_file_name :attachment, matches: [/json\z/]
 
   # has_one_attached :report
-  COMPRESSED_HASH_MESSAGE = { "code" => 69, "severity" => "warning", "message" => "report is compressed using gzip", "help-url" => "https://github.com/datacite/sashimi", "data" => "usage data needs to be uncompressed" }.freeze
+  COMPRESSED_HASH_MESSAGE = { "code" => 69, "severity" => "warning",
+                              "message" => "report is compressed using gzip", "help-url" => "https://github.com/datacite/sashimi", "data" => "usage data needs to be uncompressed" }.freeze
 
   # include validation methods for sushi
   include Metadatable
@@ -19,9 +20,11 @@ class Report < ApplicationRecord
   include Queueable
 
   # attr_accessor :month, :year, :compressed
-  validates_presence_of :report_id, :created_by, :user_id, :created, :reporting_period
+  validates_presence_of :report_id, :created_by, :user_id, :created,
+                        :reporting_period
   validates_presence_of :report_datasets, if: :normal_report?
-  validates_format_of :created_by, with: /[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, on: :create
+  validates_format_of :created_by, with: /[-._;()\/:a-zA-Z0-9*~$=]+\z/,
+                                   on: :create
 
   # , :report_datasets
   validates :uid, uniqueness: true
@@ -36,16 +39,15 @@ class Report < ApplicationRecord
   # before_create :set_id
   after_commit :push_report, unless: :resolution_report?
 
-
   def clean_data
     update_column("compressed", nil)
-    if !self.resolution_report?
+    if !resolution_report?
       update_column("report_datasets", [])
     end
 
-    update_column("release", self.release.downcase)
+    update_column("release", release.downcase)
 
-    report_subsets.each do | report_subset |
+    report_subsets.each do |report_subset|
       report_subset.clean_data
     end
   end
@@ -121,26 +123,29 @@ class Report < ApplicationRecord
   end
 
   def normal_report?
-    return nil if self.compressed_report? || self.resolution_report?
+    return nil if compressed_report? || resolution_report?
+
     true
   end
 
   def compressed_report?
-    return nil if self.exceptions.nil? || self.exceptions.empty?
+    return nil if exceptions.nil? || exceptions.empty?
+
     codes = exceptions.map { |exception| exception.fetch("code", "") }
 
     codes.include?(69) && ((release.downcase == "rd1") || (release.downcase == "rd2"))
   end
 
   def resolution_report?
-    return nil if self.exceptions.nil? || self.exceptions.empty?
-    code = self.exceptions.first.fetch("code", "")
-    (code == 69) && (self.release.downcase == "drl")
+    return nil if exceptions.nil? || exceptions.empty?
+
+    code = exceptions.first.fetch("code", "")
+    (code == 69) && (release.downcase == "drl")
   end
 
   # Builds attachment from (rendered) content and saves it.
   def save_as_attachment(content)
-    file_name = "#{self.uid}.json"
+    file_name = "#{uid}.json"
 
     # Use Tempfile - so we can handle large amounts of data.
     tmp = File.new("tmp/" + file_name, "w")
@@ -148,7 +153,7 @@ class Report < ApplicationRecord
     tmp.flush
 
     self.attachment_file_name = file_name
-    self.update(:attachment => tmp)
+    update(attachment: tmp)
 
     # Make sure the tmp file is deleted.
     File.delete(tmp)
@@ -158,9 +163,9 @@ class Report < ApplicationRecord
   def load_attachment
     if attachment.present?
       begin
-				content = Paperclip.io_adapters.for(self.attachment).read
+        content = Paperclip.io_adapters.for(attachment).read
       rescue StandardError
-        fail "The attachment for this report cannot be found: " + self.attachment.url.to_s
+        fail "The attachment for this report cannot be found: " + attachment.url.to_s
       end
     end
   end
@@ -172,9 +177,9 @@ class Report < ApplicationRecord
       fail "[UsageReports] All reports should have an attachment."
     end
 
-		content = load_attachment
+    content = load_attachment
     attachment = AttachmentParser.new(content)
-		uuid = attachment.uuid
+    uuid = attachment.uuid
 
     if uuid.blank?
       fail "[UsageReports] Report-uid missing from attachment."
@@ -185,7 +190,7 @@ class Report < ApplicationRecord
 
     # set report.compressed from the attachment.
     if compressed_report? || resolution_report?
-      report_subset = report_subsets.order("created_at ASC").first
+      report_subset = report_subsets.order("created_at DESC").first
       attachment_subset = attachment.search_subsets(checksum: report_subset.checksum)
       fail "[UsageReports] cannot find gzip for a report-subset" if attachment_subset.blank?
 
@@ -200,7 +205,7 @@ class Report < ApplicationRecord
     self.report_datasets = attachment.datasets
 
     # Loop over report_subsets setting report_subset gzip from the attachment.
-    self.report_subsets.each do | report_subset |
+    report_subsets.each do |report_subset|
       attachment_subset = attachment.search_subsets(checksum: report_subset.checksum)
 
       if attachment_subset.blank?
@@ -215,7 +220,7 @@ class Report < ApplicationRecord
   end
 
   def destroy_attachment
-    if self.attachment.present?
+    if attachment.present?
       self.attachment = nil
     end
   end
