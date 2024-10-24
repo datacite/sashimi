@@ -185,7 +185,7 @@ class Report < ApplicationRecord
 
     # set report.compressed from the attachment.
     if compressed_report? || resolution_report?
-      report_subset = report_subsets.order("created_at ASC").first
+      report_subset = report_subsets.order("created_at DESC").first
       attachment_subset = attachment.search_subsets(checksum: report_subset.checksum)
       fail "[UsageReports] cannot find gzip for a report-subset" if attachment_subset.blank?
 
