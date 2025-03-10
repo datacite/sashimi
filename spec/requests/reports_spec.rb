@@ -3,6 +3,7 @@ require "rails_helper"
 describe "Reports", type: :request do
   let(:bearer) { User.generate_token(exp: Time.now.to_i + 300, uid: "datacite.datacite", role_id: "client_admin") }
   let(:headers) { { "ACCEPT" => "application/json", "CONTENT_TYPE" => "application/json", "Authorization" => "Bearer " + bearer } }
+  let(:gzip_headers) { { "ACCEPT" => "gzip", "CONTENT_TYPE" => "application/json", "Authorization" => "Bearer " + bearer } }
 
   # OK to use factory because we don't go to file system for this request.
   describe "GET /reports" do
@@ -100,6 +101,37 @@ describe "Reports", type: :request do
 
       before do
         post "/reports", params: params, headers: headers
+        @report_id = json.dig("report", "id")
+      end
+
+      it "creates a report" do
+        # Check response for correct values.
+        expect(json.dig("report", "report-header", "report-name")).to eq("dataset report")
+        expect(response).to have_http_status(201)
+
+        report = Report.where(uid: @report_id).first
+
+        # Check DB values are as expected.
+        expect(report).not_to be_nil
+        expect(report.report_datasets).to be_empty
+
+        expect(report.report_subsets.count).to eq(1)
+        report.report_subsets.each { |subset| expect(subset.compressed).to be_nil }
+
+        # CHECK FILE FOR CORRECT CONTENTS - DATASETS, COMPRESSED FIELDS, CHECKSUM?
+
+        # Check for the file (initialized and exists in the filesystem):
+        expect(report.attachment_file_name).to eq(@report_id + '.json')
+        expect(report.attachment.present?).to be true
+        expect(report.attachment.exists?).to be true
+      end
+    end
+
+    context "when the request is valid with gzip Accept header" do
+      let(:params) { file_fixture("make-data-count-report_old_researchdata_22Feb2025.json").read }
+
+      before do
+        post "/reports", params: params, headers: gzip_headers
         @report_id = json.dig("report", "id")
       end
 
