@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 7.1", ">= 7.1.3"
+gem "rails", "~> 8.1", ">= 8.1.2.1"
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
 gem "mysql2", "~> 0.5.3"
 gem "dotenv"
@@ -9,7 +9,7 @@ gem "oj_mimic_json", "~> 1.0", ">= 1.0.1"
 gem "equivalent-xml", "~> 0.6.0"
 gem "nokogiri", "~> 1.16", ">= 1.16.4"
 gem "iso8601", "~> 0.12.1"
-gem "maremma", "~> 5.0"
+gem "maremma", "~> 6.0"
 gem "dalli", "~> 3.2", ">= 3.2.8"
 gem "lograge", "~> 0.14.0"
 gem "logstash-event", "~> 1.2", ">= 1.2.02"
@@ -41,7 +41,7 @@ group :development, :test do
   gem "rubocop-performance", "~> 1.5", ">= 1.5.1"
   gem "rubocop-rails", "~> 2.8", ">= 2.8.1"
   gem "binding_of_caller"
-  gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
+  gem "byebug", platforms: [:mri, :windows]
 end
 
 group :development do
