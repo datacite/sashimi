@@ -1,16 +1,13 @@
 source "https://rubygems.org"
 
 gem "rails", "~> 8.1", ">= 8.1.2.1"
-gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
-gem "mysql2", "~> 0.5.3"
-gem "dotenv"
-gem "oj", ">= 2.8.3"
-gem "oj_mimic_json", "~> 1.0", ">= 1.0.1"
-gem "equivalent-xml", "~> 0.6.0"
-gem "nokogiri", "~> 1.16", ">= 1.16.4"
-gem "iso8601", "~> 0.12.1"
+gem "bootsnap", "~> 1.24", ">= 1.24.3", require: false
+gem "mysql2", "~> 0.5.7"
+gem "dotenv", "~> 3.2"
+gem "oj", "~> 3.17"
+gem "nokogiri", "~> 1.19", ">= 1.19.3"
 gem "maremma", "~> 6.0"
-gem "dalli", "~> 3.2", ">= 3.2.8"
+gem "dalli", "~> 5.0", ">= 5.0.2"
 gem "lograge", "~> 0.14.0"
 gem "logstash-event", "~> 1.2", ">= 1.2.02"
 gem "logstash-logger", "~> 0.26.1"
