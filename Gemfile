@@ -15,7 +15,7 @@ gem "lograge", "~> 0.14.0"
 gem "logstash-event", "~> 1.2", ">= 1.2.02"
 gem "logstash-logger", "~> 0.26.1"
 gem "active_model_serializers", "~> 0.10.10"
-gem "jwt"
+gem "jwt", "~> 3.1", ">= 3.1.2"
 gem "bcrypt", "~> 3.1.13"
 gem "simple_command"
 gem "kaminari", "~> 1.2"
@@ -47,7 +47,7 @@ end
 group :development do
   gem "listen", "~> 3.9"
   gem "spring"
-  gem "spring-watcher-listen", "~> 2.0.0"
+  gem "spring-watcher-listen", "~> 2.1"
 end
 
 group :test do

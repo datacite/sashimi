@@ -200,7 +200,8 @@ GEM
     json-schema (2.8.1)
       addressable (>= 2.4)
     jsonapi-renderer (0.2.2)
-    jwt (2.4.1)
+    jwt (3.1.2)
+      base64
     kaminari (1.2.2)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.2)
@@ -424,10 +425,10 @@ GEM
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
-    spring (2.1.1)
-    spring-watcher-listen (2.0.1)
+    spring (4.5.0)
+    spring-watcher-listen (2.1.0)
       listen (>= 2.7, < 4.0)
-      spring (>= 1.2, < 3.0)
+      spring (>= 4)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -489,7 +490,7 @@ DEPENDENCIES
   iso8601 (~> 0.12.1)
   iso_country_codes
   json-schema (~> 2.8, >= 2.8.1)
-  jwt
+  jwt (~> 3.1, >= 3.1.2)
   kaminari (~> 1.2)
   kt-paperclip (~> 6.4.1)
   listen (~> 3.9)
@@ -514,7 +515,7 @@ DEPENDENCIES
   simple_command
   simplecov
   spring
-  spring-watcher-listen (~> 2.0.0)
+  spring-watcher-listen (~> 2.1)
   sprockets (~> 3.7, >= 3.7.2)
   vcr (~> 3.0.3)
   webmock (~> 3.1)
