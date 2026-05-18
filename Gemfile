@@ -23,6 +23,7 @@ gem "iso_country_codes", "~> 0.7.8"
 gem "sentry-ruby", "~> 6.5"
 gem "sentry-rails", "~> 6.5"
 gem "kt-paperclip", "~> 7.3"
+gem "benchmark", "~> 0.5.0"
 
 group :development, :test do
   gem "rspec-rails", "~> 8.0", ">= 8.0.4"
