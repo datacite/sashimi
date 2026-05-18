@@ -54,12 +54,11 @@ ENV['RACK_TIMEOUT_SERVICE_TIMEOUT'] ||= "40"
 module Sashimi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
-    config.autoload_once_paths << Rails.root.join('lib')
-    config.autoload_paths << Rails.root.join("app", "models", "concerns")
-
-    config.eager_load_paths << Rails.root.join("lib")
-    config.eager_load_paths << Rails.root.join("app", "models", "concerns")
+    config.load_defaults 8.1
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w[tasks])
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

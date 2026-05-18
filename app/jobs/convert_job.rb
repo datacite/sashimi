@@ -15,7 +15,7 @@ class ConvertJob < ActiveJob::Base
     Rails.logger.info message
     true
   rescue StandardError => e
-    Raven.capture_exception(e)
+    Sentry.capture_exception(e)
     message = "[ConvertJobError] Subset #{id} of Usage Report #{subset.report.uid} could not be converted. #{e.message}."
     Rails.logger.error message
     false

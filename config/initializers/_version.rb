@@ -1,11 +1,5 @@
 module Sashimi
   class Application
-    g = Git.open(Rails.root)
-    begin
-      VERSION = g.tags.map { |t| Gem::Version.new(t.name) }.sort.last.to_s
-    rescue ArgumentError
-      VERSION = "1.0"
-    end
-    REVISION = g.object('HEAD').sha
+    VERSION = ENV.fetch("GIT_TAG", "1.0")
   end
 end
