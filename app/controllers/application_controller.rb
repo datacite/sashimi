@@ -1,6 +1,4 @@
 class ApplicationController < ActionController::API
-  require 'facets/string/snakecase'
-
   # include base controller methods
   include Authenticable
   include CanCan::ControllerAdditions
