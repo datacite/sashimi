@@ -23,7 +23,7 @@ module Metadatable
       schema = load_schema
       JSON::Validator.validate!(schema, sushi.to_json)
     rescue JSON::Schema::ValidationError => exception
-      Raven.capture_exception(exception)
+      Sentry.capture_exception(exception)
       false
     end
 

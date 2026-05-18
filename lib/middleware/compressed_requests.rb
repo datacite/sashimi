@@ -36,7 +36,7 @@ module Middleware
         Rails.logger.error(err.inspect)
         [406, {}, [{"status": 406, "title": err.message}.to_json]]
       rescue => err
-        Raven.capture_exception(err)
+        Sentry.capture_exception(err)
         [500, {}, [{"status": 400, "title": err.message}.to_json]]
       end
     end
