@@ -2,10 +2,6 @@ name: Test workflow
 
 on:
   workflow_call:
-    inputs:
-      ref:
-        required: true
-        type: string
     secrets:
       SECRET_KEY_BASE:
         required: true
@@ -55,8 +51,6 @@ jobs:
       AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: ${{ inputs.ref }}
       - name: Set up Ruby 4.0.1
         uses: ruby/setup-ruby@v1
         with:
