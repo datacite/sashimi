@@ -3,10 +3,18 @@ on:
   push:
     branches:
       - "master"
+  workflow_dispatch:
+    inputs:
+      deploy_ref:
+        description: "Branch, tag, or SHA to deploy to staging"
+        required: true
+        default: "master"
 
 jobs:
   test:
     uses: ./.github/workflows/test.yml
+    with:
+      ref: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_ref || github.ref_name }}
     secrets: inherit
 
   build:
@@ -15,6 +23,7 @@ jobs:
     with:
       image: ghcr.io/${{ github.repository }}
       dockerfile: ./Dockerfile
+      ref: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_ref || github.ref_name }}
 
   deploy:
     needs: [test, build]
@@ -23,5 +32,6 @@ jobs:
       versionvar_filename: _sashimi
       service_name: metrics-api
       env_name: stage
+      ref: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_ref || github.ref_name }}
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
