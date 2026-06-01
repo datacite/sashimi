@@ -90,7 +90,7 @@ class ReportsController < ApplicationController
       @report.load_attachment!
     end
 
-		if exists && request_encoding == "gzip"
+		if exists && gzip_encoded_request?
       # Deletes report file, we are updating the report
 			@report.attachment = nil
       @report.save
@@ -132,7 +132,7 @@ class ReportsController < ApplicationController
       @report.load_attachment!
     end
 
-    if @report.present? && request_encoding == "gzip"
+    if @report.present? && gzip_encoded_request?
       compressed_payload = report_params[:compressed].presence || request.env['sashimi.compressed_payload'].presence || @report.compress
       @report.report_subsets << ReportSubset.new(compressed: compressed_payload)
     end
@@ -179,17 +179,33 @@ class ReportsController < ApplicationController
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" if params[:report_header].blank?
 
     case true
-    when params[:report_datasets].present? && params[:report_header].fetch(:release) == "rd1" && request_encoding != "gzip"
+    when normal_report?
       usage_report_params
-    when params[:report_header].fetch(:release) == "drl" && request_encoding == "gzip"
+    when resolution_report?
       resolution_report_params
-    when (params[:compressed].present? || request.env['sashimi.compressed_payload'].present?) && request_encoding == "gzip" && params[:report_header].fetch(:release) == "rd1"
+    when compressed_rd1_report?
       compressed_report_params
-    when request_encoding == "gzip" && params[:compressed].nil? && request.env['sashimi.compressed_payload'].nil? && params[:report_header].fetch(:release) == "rd1"
+    when gzip_encoded_request? && params[:report_header].fetch(:release) == "rd1"
       decompressed_report_params
     else
       fail JSON::ParserError, "Report protocol is incorrect"
     end
+  end
+
+  def normal_report?
+    params[:report_datasets].present? &&
+      params[:report_header].fetch(:release) == "rd1" &&
+      !gzip_encoded_request?
+  end
+
+  def resolution_report?
+    params[:report_header].fetch(:release) == "drl" && gzip_encoded_request?
+  end
+
+  def compressed_rd1_report?
+    has_compressed_payload? &&
+      gzip_encoded_request? &&
+      params[:report_header].fetch(:release) == "rd1"
   end
 
   def usage_report_params
@@ -230,11 +246,8 @@ class ReportsController < ApplicationController
 
   def resolution_report_params
     Rails.logger.info "Resolutions Report"
-    fail fail JSON::ParserError, "Resolution Reports need to be compressed" unless (params[:compressed].present? || request.env['sashimi.compressed_payload'].present?) && (request_encoding == "gzip") && params[:report_header].present?
+    fail JSON::ParserError, "Resolution Reports need to be compressed" unless has_compressed_payload? && gzip_encoded_request?
 
-    # header, report = params.require([:report_header, :gzip])
-    # header[:compressed] = Base64.decode64(report)
-    # header
     header = params.require(:report_header)
     payload = params[:compressed].presence || request.env['sashimi.compressed_payload']
     header[:compressed] = extract_compressed_payload(payload)
@@ -243,7 +256,7 @@ class ReportsController < ApplicationController
 
   def compressed_report_params
     Rails.logger.info "Compressed Report"
-    fail JSON::ParserError, "You need to provide a payload following the SUSHI specification and int compressed" unless (params[:compressed].present? || request.env['sashimi.compressed_payload'].present?) && params[:report_header].present?
+    fail JSON::ParserError, "You need to provide a payload following the SUSHI specification and compressed data" unless has_compressed_payload?
 
     header = params.require(:report_header)
     payload = params[:compressed].presence || request.env['sashimi.compressed_payload']
@@ -252,7 +265,7 @@ class ReportsController < ApplicationController
   end
 
   def decompressed_report_params
-    Rails.logger.info "not posssible"
+    Rails.logger.info "Decompressed report (gzip encoding but no compressed payload)"
     fail JSON::ParserError, "You need to provide a payload following the SUSHI specification" unless params[:report_datasets].present? && params[:report_header].present?
 
     header, datasets = params.require(%i[report_header report_datasets])
@@ -271,8 +284,16 @@ class ReportsController < ApplicationController
       params[:encoding].presence ||
       request.env['sashimi.request_encoding'].presence ||
       request.headers['Content-Encoding'].presence ||
-      request.headers['HTTP_CONTENT_ENCODING'].presence
-    ).to_s.downcase
+      request.env['HTTP_CONTENT_ENCODING'].presence
+    ).to_s.downcase.presence
+  end
+
+  def gzip_encoded_request?
+    request_encoding.present? && %w[gzip deflate].include?(request_encoding)
+  end
+
+  def has_compressed_payload?
+    params[:compressed].present? || request.env['sashimi.compressed_payload'].present?
   end
 
   def extract_compressed_payload(payload)
