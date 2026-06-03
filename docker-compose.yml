@@ -16,7 +16,7 @@ services:
     networks:
       - public
   memcached:
-    image: memcached:1.4.31
+    image: memcached:1.6.27
     networks:
       - public
   mysql:

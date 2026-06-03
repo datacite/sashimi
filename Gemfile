@@ -1,65 +1,55 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 7.1", ">= 7.1.3"
-gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
-gem "mysql2", "~> 0.5.3"
-gem "dotenv"
-gem "oj", ">= 2.8.3"
-gem "oj_mimic_json", "~> 1.0", ">= 1.0.1"
-gem "equivalent-xml", "~> 0.6.0"
-gem "nokogiri", "~> 1.16", ">= 1.16.4"
-gem "iso8601", "~> 0.12.1"
-gem "maremma", "~> 5.0"
-gem "dalli", "~> 3.2", ">= 3.2.8"
+gem "rails", "~> 8.1", ">= 8.1.2.1"
+gem "bootsnap", "~> 1.24", ">= 1.24.3", require: false
+gem "mysql2", "~> 0.5.7"
+gem "dotenv", "~> 3.2"
+gem "oj", "~> 3.17"
+gem "nokogiri", "~> 1.19", ">= 1.19.3"
+gem "maremma", "~> 6.0"
+gem "dalli", "~> 5.0", ">= 5.0.2"
 gem "lograge", "~> 0.14.0"
-gem "logstash-event", "~> 1.2", ">= 1.2.02"
-gem "logstash-logger", "~> 0.26.1"
-gem "active_model_serializers", "~> 0.10.10"
-gem "jwt"
-gem "bcrypt", "~> 3.1.13"
-gem "simple_command"
-gem "kaminari", "~> 1.2"
-gem "api-pagination"
-gem "cancancan", "~> 3.5"
-gem "facets", require: false
-gem "base32-url", "~> 0.3"
-gem "rack-cors", "~> 1.0", :require => "rack/cors"
-gem "json-schema", "~> 2.8", ">= 2.8.1"
-gem "shoryuken", "~> 3.2", ">= 3.2.2"
-gem "aws-sdk-s3", require: false
-gem "aws-sdk-sqs", "~> 1.22"
-gem "iso_country_codes"
-gem "sentry-raven", "~> 3.1", ">= 3.1.2"
-gem "git", "~> 1.5"
-gem "sprockets", "~> 3.7", ">= 3.7.2"
-gem "kt-paperclip", "~> 6.4.1"
+gem "logstash-logger", "~> 1.0"
+gem "active_model_serializers", "~> 0.10.16"
+gem "jwt", "~> 3.2"
+gem "kaminari", "~> 1.2", ">= 1.2.2"
+gem "cancancan", "~> 3.6", ">= 3.6.1"
+gem "rack-cors", "~> 3.0"
+gem "json-schema", "~> 6.2"
+gem "shoryuken", "~> 7.0", ">= 7.0.2"
+gem "aws-sdk-s3", "~> 1.222", require: false
+gem "aws-sdk-sqs", "~> 1.113"
+gem "iso_country_codes", "~> 0.7.8"
+gem "sentry-ruby", "~> 6.5"
+gem "sentry-rails", "~> 6.5"
+gem "kt-paperclip", "~> 7.3"
+gem "benchmark", "~> 0.5.0"
 
 group :development, :test do
-  gem "rspec-rails", "~> 6.1", ">= 6.1.1"
-  gem "rubocop-rspec", "~> 2.0", require: false
-  gem "rubocop", "~> 1.3", ">= 1.3.1"
-  gem "rubocop-performance", "~> 1.5", ">= 1.5.1"
-  gem "rubocop-rails", "~> 2.8", ">= 2.8.1"
-  gem "binding_of_caller"
-  gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
+  gem "rspec-rails", "~> 8.0", ">= 8.0.4"
+  gem "rubocop-rspec", "~> 3.9", require: false
+  gem "rubocop", "~> 1.86", ">= 1.86.2"
+  gem "rubocop-performance", "~> 1.26", ">= 1.26.1"
+  gem "rubocop-rails", "~> 2.35", ">= 2.35.1"
+  gem "binding_of_caller", "~> 2.0"
+  gem "byebug", "~> 13.0", platforms: [:mri, :windows]
 end
 
 group :development do
-  gem "listen", "~> 3.9"
-  gem "spring"
-  gem "spring-watcher-listen", "~> 2.0.0"
+  gem "listen", "~> 3.10"
+  gem "spring", "~> 4.5"
+  gem "spring-watcher-listen", "~> 2.1"
 end
 
 group :test do
-  gem "capybara"
-  gem "webmock", "~> 3.1"
-  gem "hashdiff", [">= 1.0.0.beta1", "< 2.0.0"]
-  gem "vcr", "~> 3.0.3"
-  gem "codeclimate-test-reporter", "~> 1.0.0"
-  gem "simplecov"
-  gem "factory_bot_rails", "~> 4.8", ">= 4.8.2"
-  gem "shoulda-matchers", "~> 3.1"
-  gem "faker"
-  gem "database_cleaner"
-  gem "database_cleaner-active_record", "~> 2.1"
+  gem "capybara", "~> 3.40"
+  gem "webmock", "~> 3.26", ">= 3.26.2"
+  gem "hashdiff", "~> 1.2", ">= 1.2.1"
+  gem "vcr", "~> 6.4"
+  gem "simplecov", "~> 0.22.0"
+  gem "factory_bot_rails", "~> 6.5", ">= 6.5.1"
+  gem "shoulda-matchers", "~> 7.0", ">= 7.0.1"
+  gem "faker", "~> 3.8"
+  gem "database_cleaner", "~> 2.1"
+  gem "database_cleaner-active_record", "~> 2.2", ">= 2.2.2"
 end
