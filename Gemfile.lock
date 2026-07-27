@@ -190,7 +190,7 @@ GEM
       reline (>= 0.4.2)
     iso_country_codes (0.7.8)
     jmespath (1.6.1)
-    json (2.19.5)
+    json (2.19.9)
     json-schema (6.2.0)
       addressable (~> 2.8)
       bigdecimal (>= 3.1, < 5)
