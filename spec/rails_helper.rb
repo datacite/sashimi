@@ -7,7 +7,15 @@ SimpleCov.start
 
 require File.expand_path('../../config/environment', __FILE__)
 
+# Test JWT keys and other support load after boot so they override .env.
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+
+%w[AWS_REGION AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_S3_BUCKET].each do |key|
+  ENV.delete(key)
+end
+
+require "aws-sdk-sqs"
+Aws.config.update(stub_responses: true)
 
 require "rspec/rails"
 require "shoulda-matchers"
@@ -45,18 +53,8 @@ RSpec.configure do |config|
 
   ActiveJob::Base.queue_adapter = :test
 
-  ## To do: find another way to track and delete test files.
-  ## Dev/Test/Stage- {Rails.root}/public/report_files.
-  ## Production - AWS S3 BUCKET (report_files directory)
-  # Cleans up generated reports files after test run.
-  # Make sure we are not doing this in production.
-  config.after(:each) do # :suite or :each or :all
-    # Never delete files in production. This is dangerous, should find another way to clean up.
-    if Rails.env.development? || Rails.env.test? || Rails.env.stage?
-      Dir["#{Rails.root}/public/report_files/**"].each do |file|
-          # File.delete(file)
-      end
-    end
+  config.after(:suite) do
+    FileUtils.rm_rf(Rails.root.join("tmp/report_files"))
   end
 end
 
@@ -67,7 +65,5 @@ VCR.configure do |c|
   c.ignore_hosts "codeclimate.com"
   c.configure_rspec_metadata!
   c.default_cassette_options = { :match_requests_on => [:method, :path] }
-  # Allow AWS S3 requests to go through in testing without VCR, for now.
-  c.allow_http_connections_when_no_cassette = true
+  c.allow_http_connections_when_no_cassette = false
 end
-

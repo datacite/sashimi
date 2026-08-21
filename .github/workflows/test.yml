@@ -2,21 +2,6 @@ name: Test workflow
 
 on:
   workflow_call:
-    secrets:
-      SECRET_KEY_BASE:
-        required: true
-      SESSION_ENCRYPTED_COOKIE_SALT:
-        required: true
-      JWT_PRIVATE_KEY:
-        required: true
-      JWT_PUBLIC_KEY:
-        required: true
-      MDS_USERNAME:
-        required: true
-      MDS_PASSWORD:
-        required: true
-      AWS_REGION:
-        required: true
 
 jobs:
   test:
@@ -42,13 +27,6 @@ jobs:
       MYSQL_HOST: "127.0.0.1"
       MYSQL_DATABASE: metrics_test
       MYSQL_USER: root
-      SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
-      SESSION_ENCRYPTED_COOKIE_SALT: ${{ secrets.SESSION_ENCRYPTED_COOKIE_SALT }}
-      JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
-      JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
-      MDS_USERNAME: ${{ secrets.MDS_USERNAME }}
-      MDS_PASSWORD: ${{ secrets.MDS_PASSWORD }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby 4.0.1
@@ -76,9 +54,6 @@ jobs:
         env:
           MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
           MEMCACHE_SERVERS: "localhost:11211"
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_S3_BUCKET: 'metrics-api.stage.datacite.org'
         run: |
           bundle exec rspec
           echo $?
