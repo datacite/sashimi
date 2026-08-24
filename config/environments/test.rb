@@ -9,6 +9,7 @@ Rails.application.configure do
   # While tests run files are not watched, reloading is not necessary.
   config.enable_reloading = false
 
+  config.log_level = :warn
   # Eager loading loads your entire application. When running a single test locally,
   # this is usually not necessary, and can slow down your test suite. However, it's
   # recommended that you enable it in continuous integration systems to ensure eager
@@ -40,19 +41,10 @@ Rails.application.configure do
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
 
-# kt-paperclip global defaults - note bucket is different per environment.
-config.paperclip_defaults = {
-  storage: :s3,
-  s3_protocol: "https",
-  # s3_host_alias: 's3-eu-west-1.amazonaws.com',
-  s3_credentials: {
-    access_key_id: ENV["AWS_ACCESS_KEY_ID"].to_s,
-    secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"].to_s,
-    s3_region: ENV["AWS_REGION"] || "eu-west-1",
-  },
-  bucket: ENV["AWS_S3_BUCKET"] || "metrics-api.test.datacite.org",
-  path: "/report_files/:filename",
-  url: ":s3_domain_url",
-  use_timestamp: false,
-}
+  config.paperclip_defaults = {
+    storage: :filesystem,
+    path: ":rails_root/tmp/report_files/:filename",
+    url: "/system/report_files/:filename",
+    use_timestamp: false,
+  }
 end
