@@ -1,46 +1,7 @@
 # Test-only RSA keypair for JWT encode/decode in specs.
-# Not used in any deployed environment.
-# rubocop:disable Layout/LineLength -- PEM blocks
-ENV["JWT_PRIVATE_KEY"] = <<~PEM
-  -----BEGIN PRIVATE KEY-----
-  MIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQC9GgZ7N3VRwhNX
-  zDYJugGV50CyabTx/aZYe0JIL5j1ZFJEwG7fhRz03EQAkD6897mhgpHM2MsmPtYx
-  AybxC7Qs9q7eKCbX/z9CVRNJF4ayQoGDJdiaVAhInmtBwl3zU0p4Di+Nms/zJQFL
-  rOikzy/m5lS5gnXN4B6k/6V/A9YGH+nFmTuegwk0+MkSyrVvODG47nUvo8TCn4NP
-  yHSg2GwYO8mJ5M9sTtVNWGJ0Bn8BXjMgLTD0j23cdcPO43xD70S7dI+5l+vfaF0j
-  TnoCdimyIPD/flJpVlwmzjjbC2kOV2SehiffNHcJDvB1PSTzI9pxn3AfGYBW68a9
-  RW4xir2LAgMBAAECgf8ZZuWUbtB+Vb5f4jlgFRx2v28cFojUar5RQOgmdOkI8UZU
-  vRMLSOSMqpg/CVpHssZniDDU05/Lyoil8GLnN0e1phgsv41by9+lUI9xUFQrSKdW
-  BOoiCe7aC1FdIHfTt9yQJ5CREYHdp5rogUNpw8CA4FOBQqGQhkOXkTGb0BLFTdc7
-  ePUnaY3cRhGiS9XMsiweJYl70NNc7Rn1Q8Z6a5qrRaxu0mGQKbw9QB18hrne9Rr8
-  sw19Yib9ftRq54rawGNQqGf5J9s0z5E8d1/kYBN7/9+eorDqZIufzy63mG1wOF7V
-  C5zxquKqWv66m3K/4q2Lss1+8tN+u+IdB0dZ7sECgYEA42uQvWACw+WrvPNBqGk3
-  nw8P0JAZUkYUZU6F8PS/BPH6vGMUxzCgr9T3so+Accl5KcdD8YI397D+UZ6/9C0E
-  XXvPysiggFvo2WOG0M8ldvBVt/C9D5AQnvMGuJpKeWafppjeYvhWSa9TibW5U1DL
-  JjCV6bFzKf+MH0fcsu/2/8sCgYEA1N2ytfZEaIAkoUg+AsxIvjv3i6qQAKo6vG/a
-  Ni4ogV3EFYz/vJRE8hZ3sJxWJmJd+aF/fbpdb0CzGYEb+LiA4PaDsPDrdGYhqkZa
-  exuJLjfs8+5t41ja6iegaOVaiNaXqpuUvR+BkQYNVZO+DddH38cgkqEhQG2sPk7H
-  AGP8AUECgYB4aoMoEsdEDL8DfFYeox+lY+c+yp3tt1ejUJGRRTZDmxDlYR0mXzQm
-  BgDlliAvn7s9CNqL7SRPTXNLql//HTr7eMxMljCN5pyDRrSiqZwvvw/UJm8k52Y1
-  k37Sjjey0kjkgHr4MoAV4fS8rPElEVmPrhgitifBbCM4iOduA6toQwKBgQCeFAms
-  Qbdpl4gcUcbjUwvOYkAic0a/h6tY1wPI6pxf/d8pVe1xAPb2hSLbgC4mETTStlE0
-  cFsEzJp0nUHFglcLOWZw12kzpsjnZ5m4BKnqLdQFDpKCnDDuZQEmBPUn250EMMfT
-  bvtMVJ9AZxhjtPUGRR12ZryH2Spplx0HuDikQQKBgDI8VJlgH2oGWD4Ojr3ooR9Z
-  gvAYEZ8jol9Ja4pQcPUVmmNc1CtvNHrQRLH3MdinNUOnKPbujjn9j+fJ+IMgfw+s
-  KHh/Pn1+8SUTD+RTTjakQFYTzryMrIpRy0GdksHGU+oTThrGjigBo4jpF0YJXv+9
-  KvQnQF4urs6knvgIZuW0
-  -----END PRIVATE KEY-----
-PEM
+# Generated once per RSpec process. Not used in any deployed environment.
+require "openssl"
 
-ENV["JWT_PUBLIC_KEY"] = <<~PEM
-  -----BEGIN PUBLIC KEY-----
-  MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvRoGezd1UcITV8w2CboB
-  ledAsmm08f2mWHtCSC+Y9WRSRMBu34Uc9NxEAJA+vPe5oYKRzNjLJj7WMQMm8Qu0
-  LPau3igm1/8/QlUTSReGskKBgyXYmlQISJ5rQcJd81NKeA4vjZrP8yUBS6zopM8v
-  5uZUuYJ1zeAepP+lfwPWBh/pxZk7noMJNPjJEsq1bzgxuO51L6PEwp+DT8h0oNhs
-  GDvJieTPbE7VTVhidAZ/AV4zIC0w9I9t3HXDzuN8Q+9Eu3SPuZfr32hdI056AnYp
-  siDw/35SaVZcJs442wtpDldknoYn3zR3CQ7wdT0k8yPacZ9wHxmAVuvGvUVuMYq9
-  iwIDAQAB
-  -----END PUBLIC KEY-----
-PEM
-# rubocop:enable Layout/LineLength
+key = OpenSSL::PKey::RSA.generate(2048)
+ENV["JWT_PRIVATE_KEY"] = key.to_pem
+ENV["JWT_PUBLIC_KEY"] = key.public_key.to_pem
