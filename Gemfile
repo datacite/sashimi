@@ -5,7 +5,7 @@ gem "bootsnap", "~> 1.24", ">= 1.24.3", require: false
 gem "mysql2", "~> 0.5.7"
 gem "dotenv", "~> 3.2"
 gem "oj", "~> 3.17"
-gem "nokogiri", "~> 1.19", ">= 1.19.3"
+gem "nokogiri", "~> 1.19"
 gem "maremma", "~> 6.0"
 gem "dalli", "~> 5.0", ">= 5.0.2"
 gem "lograge", "~> 0.14.0"
